@@ -2,45 +2,54 @@
 #define warn_error_stuff_hpp
 
 #include "misc_includes.hpp"
+//#include "lexer_class.hpp"
 
 namespace assembler
 {
 
+class lexer;
+
 class warn_error
 {
 private:		// variables
-	size_t* internal_pass;
-	
-	
-private:		// functions
-	gen_setter_by_val(pass);
-	
-	inline size_t pass() const
-	{
-		return *internal_pass;
-	}
+	lexer* lex = nullptr;
 	
 public:		// functions
-	inline warn_error( auto s_pass )
+	inline warn_error()
 	{
-		set_pass(s_pass);
 	}
 	virtual inline ~warn_error()
 	{
 	}
 	
-	void warn( const std::string& msg );
-	
-	inline void warn1( const std::string& msg )
+	inline void init( lexer* s_lex )
 	{
-		if ( pass() == 1 )
+		lex = s_lex;
+	}
+	
+	template< typename... arg_types >
+	void warn( arg_types&&... args )
+	{
+		printerr( lex->lineno(), ":  warning:  ", args..., "\n" );
+	}
+	
+	template< typename... arg_types >
+	void warn1( arg_types&&... args )
+	{
+		if ( lex->pass() == 1 )
 		{
-			warn(msg);
+			warn(args...);
 		}
 	}
 	
-	void error( const std::string& msg );
-}
+	template< typename... arg_types >
+	void error( arg_types&&... args )
+	{
+		printerr( lex->lineno(), ":  error:  ", args..., "\n" );
+		exit(1);
+	}
+	
+};
 
 
 

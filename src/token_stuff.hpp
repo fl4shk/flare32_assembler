@@ -36,9 +36,9 @@ enum class tok_defn : tok
 	instr_ra_rb_abs,
 	
 	
-	// add.f rA, rB
-	// add.f rA, rB, rC
-	dot_f,
+	//// add.f rA, rB
+	//// add.f rA, rB, rC
+	//dot_f,
 	
 };
 
