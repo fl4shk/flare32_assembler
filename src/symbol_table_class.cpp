@@ -16,15 +16,6 @@ bool symbol_table::sym_name_has_dot_f( const string_view& name ) const
 
 string_view symbol_table::get_name( std::string&& name_as_str )
 {
-	//auto maybe_ret = str_set().find(name_as_str);
-	//
-	//if ( maybe_ret != str_set().end() )
-	//{
-	//	return string_view(*maybe_ret);
-	//}
-	//
-	//return string_view();
-	
 	return string_view(*str_set().insert(std::move(name_as_str)).first);
 }
 
