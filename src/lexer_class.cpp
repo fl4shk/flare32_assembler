@@ -83,25 +83,26 @@ tok lexer::lex_no_ws()
 			{
 				update();
 				
-				//if (!isspace(nextc()))
-				//{
-				//	invalid_ident();
-				//}
-				//else
+				if (!isspace(nextc()))
+				{
+					invalid_ident();
+				}
+				else
 				{
 					do_enter(static_cast<tok>(tok_defn::ident_dot_f));
 				}
 			}
-			//else
-			//{
-			//	invalid_ident();
-			//}
+			else
+			{
+				invalid_ident();
+			}
 		}
 		else
 		{
 			do_enter(static_cast<tok>(tok_defn::ident));
 		}
 		
+		return nextt();
 	}
 	
 	// A number? (allows leading zeros)
@@ -118,6 +119,7 @@ tok lexer::lex_no_ws()
 		
 		return set_nextt(static_cast<tok>(tok_defn::number));
 	}
+	
 	
 	// Must be punctuation?
 	set_nextt(nextc());
