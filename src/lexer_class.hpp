@@ -17,10 +17,12 @@ private:		// variables
 	std::FILE* internal_infile = nullptr;
 	warn_error* internal_we = nullptr;
 	size_t* internal_pass = nullptr;
+	symbol_table* internal_sym_tbl = nullptr;
 	size_t internal_lineno = 1;
 	tok internal_nextc = ' ';
 	tok internal_nextt = ' ';
 	int internal_nextval = 0;
+	symbol* internal_nextsym = nullptr;
 	
 	
 	
@@ -30,13 +32,20 @@ private:		// functions
 	void eat_ws();
 	tok lex_no_ws();
 	
+	inline void invalid_ident()
+	{
+		we()->error("Invalid identifier");
+	}
+	
 	gen_setter_by_val(infile);
 	gen_setter_by_val(we);
 	gen_setter_by_val(pass);
+	gen_setter_by_val(sym_tbl);
 	gen_setter_by_val(lineno);
 	gen_setter_by_val(nextc);
 	gen_setter_by_val(nextt);
 	gen_setter_by_val(nextval);
+	gen_setter_by_val(nextsym);
 	
 	
 	
@@ -67,10 +76,12 @@ public:		// functions
 	{
 		return *internal_pass;
 	}
+	gen_getter_by_val(sym_tbl);
 	gen_getter_by_val(lineno);
 	gen_getter_by_val(nextc);
 	gen_getter_by_val(nextt);
 	gen_getter_by_val(nextval);
+	gen_getter_by_val(nextsym);
 	
 };
 

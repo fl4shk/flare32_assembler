@@ -31,8 +31,4 @@ symbol& symbol_table::enter( std::string&& name_as_str, tok typ,
 }
 
 
-
-
-
-
 }

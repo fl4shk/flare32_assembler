@@ -56,8 +56,11 @@ public:		// functions
 class symbol_table
 {
 private:		// variables
+	// Prevent duplicate std::strings, should be okay, not the fastest
+	// thing I could ever do, though.
 	std::unordered_set<std::string> internal_str_set;
 	std::unordered_map< string_view, symbol > internal_table;
+	symbol* internal_nextsym;
 	
 	
 private:		// functions

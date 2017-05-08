@@ -52,7 +52,50 @@ tok lexer::lex_no_ws()
 	// An ident?
 	if ( isalpha(nextc()) || ( nextc() == '_' ) )
 	{
+		std::string ident_str;
 		
+		auto update = [&]() -> void
+		{
+			ident_str += nextc();
+			advance();
+		};
+		
+		update();
+		
+		while ( isalnum(nextc()) || ( nextc() == '_' ) )
+		{
+			update();
+		}
+		
+		if ( nextc() == '.' )
+		{
+			update();
+			
+			if ( nextc() == 'f' )
+			{
+				update();
+				
+				if (!isspace(nextc()))
+				{
+					invalid_ident();
+				}
+				else
+				{
+					set_nextsym(&sym_tbl()->enter( std::move(ident_str), 
+						tok_defn::ident, 0 ));
+					set_nextval(nextsym()->val());
+					set_nextt(nextsym()->typ());
+				}
+			}
+			else
+			{
+				invalid_ident();
+			}
+		}
+		else
+		{
+			
+		}
 	}
 	
 	// A number? (allows leading zeros)
