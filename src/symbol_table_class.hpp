@@ -10,10 +10,10 @@ class symbol
 {
 private:		// variables
 	string_view internal_name;
-	tok internal_typ;
-	int internal_val;
-	size_t internal_instr_grp;
-	bool internal_has_dot_f;
+	tok internal_typ = 0;
+	int internal_val = 0;
+	size_t internal_instr_grp = 0;
+	bool internal_has_dot_f = false;
 	
 private:		// functions
 	gen_setter_by_con_ref(name);
@@ -48,8 +48,6 @@ public:		// functions
 	gen_getter_by_val(has_dot_f);
 	
 	
-	
-	
 };
 
 
@@ -60,7 +58,6 @@ private:		// variables
 	// thing I could ever do, though.
 	std::unordered_set<std::string> internal_str_set;
 	std::unordered_map< string_view, symbol > internal_table;
-	symbol* internal_nextsym;
 	
 	
 private:		// functions
@@ -79,8 +76,9 @@ public:		// functions
 	{
 	}
 	
-	symbol& enter( std::string&& name_as_str, tok typ, int val, 
-		size_t instr_grp=-1 );
+	symbol& enter( std::string&& name_as_str, tok typ, 
+		int val, size_t instr_grp=-1 );
+	void erase( const std::string& name_as_str );
 	
 	gen_getter_by_con_ref(str_set);
 	gen_getter_by_con_ref(table);

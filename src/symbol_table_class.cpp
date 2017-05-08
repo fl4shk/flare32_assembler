@@ -20,14 +20,20 @@ string_view symbol_table::get_name( std::string&& name_as_str )
 }
 
 
-symbol& symbol_table::enter( std::string&& name_as_str, tok typ, 
-	int val, size_t instr_grp )
+symbol& symbol_table::enter( std::string&& name_as_str, tok typ, int val, 
+	size_t instr_grp )
 {
 	string_view name = get_name(std::move(name_as_str));
 	
 	return table().insert( { name,
 		symbol( name, typ, val, instr_grp, sym_name_has_dot_f(name) ) } )
 		.first->second;
+}
+
+void symbol_table::erase( const std::string& name_as_str )
+{
+	str_set().erase(name_as_str);
+	table().erase(string_view(name_as_str));
 }
 
 

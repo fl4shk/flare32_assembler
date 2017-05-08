@@ -4,11 +4,13 @@
 namespace assembler
 {
 
-void lexer::init( std::FILE* s_infile, warn_error* s_we, size_t* s_pass )
+void lexer::init( std::FILE* s_infile, warn_error* s_we, size_t* s_pass,
+	symbol_table* s_sym_tbl )
 {
 	set_infile(s_infile);
 	set_we(s_we);
 	set_pass(s_pass);
+	set_sym_tbl(s_sym_tbl);
 	set_lineno(1);
 	set_nextc(' ');
 	set_nextt(' ');
@@ -59,6 +61,13 @@ tok lexer::lex_no_ws()
 			ident_str += nextc();
 			advance();
 		};
+		auto do_enter = [&]() -> void
+		{
+			set_nextsym(&sym_tbl()->enter(std::move(ident_str), 
+				static_cast<tok>(tok_defn::ident), 0 ));
+			set_nextval(nextsym()->val());
+			set_nextt(nextsym()->typ());
+		};
 		
 		update();
 		
@@ -79,23 +88,23 @@ tok lexer::lex_no_ws()
 				{
 					invalid_ident();
 				}
-				else
-				{
-					set_nextsym(&sym_tbl()->enter( std::move(ident_str), 
-						static_cast<tok>(tok_defn::ident), 0 ));
-					set_nextval(nextsym()->val());
-					set_nextt(nextsym()->typ());
-				}
+				//else
+				//{
+				//	do_enter();
+				//}
 			}
 			else
 			{
 				invalid_ident();
 			}
 		}
-		else
-		{
-			
-		}
+		//else
+		//{
+		//	do_enter();
+		//}
+		
+		do_enter();
+		
 	}
 	
 	// A number? (allows leading zeros)

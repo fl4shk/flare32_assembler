@@ -47,15 +47,17 @@ private:		// functions
 	
 	
 public:		// functions
-	inline lexer( std::FILE* s_infile, warn_error* s_we, size_t* s_pass )
+	inline lexer( std::FILE* s_infile, warn_error* s_we, size_t* s_pass,
+		symbol_table* s_sym_tbl )
 	{
-		init( s_infile, s_we, s_pass );
+		init( s_infile, s_we, s_pass, s_sym_tbl );
 	}
 	virtual inline ~lexer()
 	{
 	}
 	
-	void init( std::FILE* s_infile, warn_error* s_we, size_t* s_pass );
+	void init( std::FILE* s_infile, warn_error* s_we, size_t* s_pass,
+		symbol_table* s_sym_tbl );
 	
 	bool match( tok typ );
 	bool match_no_ws( tok typ );
