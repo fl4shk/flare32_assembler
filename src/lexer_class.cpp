@@ -82,7 +82,7 @@ tok lexer::lex_no_ws()
 				else
 				{
 					set_nextsym(&sym_tbl()->enter( std::move(ident_str), 
-						tok_defn::ident, 0 ));
+						static_cast<tok>(tok_defn::ident), 0 ));
 					set_nextval(nextsym()->val());
 					set_nextt(nextsym()->typ());
 				}

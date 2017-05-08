@@ -32,10 +32,7 @@ private:		// functions
 	void eat_ws();
 	tok lex_no_ws();
 	
-	inline void invalid_ident()
-	{
-		we()->error("Invalid identifier");
-	}
+	inline void invalid_ident();
 	
 	gen_setter_by_val(infile);
 	gen_setter_by_val(we);
@@ -89,5 +86,11 @@ public:		// functions
 }
 
 #include "warn_error_stuff.hpp"
+
+inline void assembler::lexer::invalid_ident()
+{
+	we()->error("Invalid identifier");
+}
+
 
 #endif		// lexer_class_hpp
