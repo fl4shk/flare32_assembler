@@ -13,7 +13,9 @@ typedef int tok;
 enum class tok_defn : tok
 {
 	ident = 9001,
+	ident_dot_f,
 	number,
+	
 	
 	
 	instr_noargs,

@@ -61,10 +61,9 @@ tok lexer::lex_no_ws()
 			ident_str += nextc();
 			advance();
 		};
-		auto do_enter = [&]() -> void
+		auto do_enter = [&]( tok typ ) -> void
 		{
-			set_nextsym(&sym_tbl()->enter(std::move(ident_str), 
-				static_cast<tok>(tok_defn::ident), 0 ));
+			set_nextsym(&sym_tbl()->enter(std::move(ident_str), typ, 0 ));
 			set_nextval(nextsym()->val());
 			set_nextt(nextsym()->typ());
 		};
@@ -88,22 +87,20 @@ tok lexer::lex_no_ws()
 				{
 					invalid_ident();
 				}
-				//else
-				//{
-				//	do_enter();
-				//}
+				else
+				{
+					do_enter(static_cast<tok>(tok_defn::ident_dot_f));
+				}
 			}
 			else
 			{
 				invalid_ident();
 			}
 		}
-		//else
-		//{
-		//	do_enter();
-		//}
-		
-		do_enter();
+		else
+		{
+			do_enter(static_cast<tok>(tok_defn::ident));
+		}
 		
 	}
 	
