@@ -83,19 +83,19 @@ tok lexer::lex_no_ws()
 			{
 				update();
 				
-				if (!isspace(nextc()))
-				{
-					invalid_ident();
-				}
-				else
+				//if (!isspace(nextc()))
+				//{
+				//	invalid_ident();
+				//}
+				//else
 				{
 					do_enter(static_cast<tok>(tok_defn::ident_dot_f));
 				}
 			}
-			else
-			{
-				invalid_ident();
-			}
+			//else
+			//{
+			//	invalid_ident();
+			//}
 		}
 		else
 		{
