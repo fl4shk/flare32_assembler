@@ -56,13 +56,17 @@ public:		// functions
 class symbol_table
 {
 private:		// variables
+	std::unordered_set<std::string> internal_str_set;
 	std::unordered_map< string_view, symbol > internal_table;
 	
 	
 private:		// functions
+	gen_getter_by_ref(str_set);
 	gen_getter_by_ref(table);
 	
 	bool sym_name_has_dot_f( const string_view& name ) const;
+	
+	string_view get_name( std::string&& name_as_str );
 	
 public:		// functions
 	inline symbol_table()
@@ -72,10 +76,10 @@ public:		// functions
 	{
 	}
 	
-	symbol& enter( const string_view& name, tok typ, int val, 
+	symbol& enter( std::string&& name_as_str, tok typ, int val, 
 		size_t instr_grp=-1 );
 	
-	
+	gen_getter_by_con_ref(str_set);
 	gen_getter_by_con_ref(table);
 	
 };

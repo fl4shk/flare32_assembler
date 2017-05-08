@@ -14,19 +14,29 @@ bool symbol_table::sym_name_has_dot_f( const string_view& name ) const
 	return false;
 }
 
-
-symbol& symbol_table::enter( const string_view& name, tok typ, int val,
-	size_t instr_grp )
+string_view symbol_table::get_name( std::string&& name_as_str )
 {
-	auto maybe_ret = table().find(name);
+	//auto maybe_ret = str_set().find(name_as_str);
+	//
+	//if ( maybe_ret != str_set().end() )
+	//{
+	//	return string_view(*maybe_ret);
+	//}
+	//
+	//return string_view();
 	
-	if ( maybe_ret != table().end() )
-	{
-		return maybe_ret->second;
-	}
+	return string_view(*str_set().insert(std::move(name_as_str)).first);
+}
+
+
+symbol& symbol_table::enter( std::string&& name_as_str, tok typ, 
+	int val, size_t instr_grp )
+{
+	string_view name = get_name(std::move(name_as_str));
 	
-	return( table()[name] = std::move(symbol( name, typ, val, instr_grp,
-		sym_name_has_dot_f(name) )) );
+	return table().insert( { name,
+		symbol( name, typ, val, instr_grp, sym_name_has_dot_f(name) ) } )
+		.first->second;
 }
 
 
