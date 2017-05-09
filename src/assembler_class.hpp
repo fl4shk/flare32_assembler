@@ -1,5 +1,5 @@
-#ifndef parser_class_hpp
-#define parser_class_hpp
+#ifndef assembler_class_hpp
+#define assembler_class_hpp
 
 #include "lexer_class.hpp"
 
@@ -7,7 +7,7 @@
 namespace navichip32
 {
 
-class parser
+class assembler
 {
 private:		// variables
 	std::vector<string_view> internal_args_vec;
@@ -35,9 +35,9 @@ private:		// functions
 	
 	
 public:		// functions
-	parser( int argc, char** argv, std::FILE* s_infile );
+	assembler( int argc, char** argv, std::FILE* s_infile );
 	
-	virtual ~parser();
+	virtual ~assembler();
 	
 	
 	int run();
@@ -52,4 +52,4 @@ public:		// functions
 }
 
 
-#endif		// parser_class_hpp
+#endif		// assembler_class_hpp

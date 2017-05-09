@@ -20,13 +20,12 @@ string_view symbol_table::get_name( std::string&& name_as_str )
 }
 
 
-symbol& symbol_table::enter( std::string&& name_as_str, tok typ, int val, 
-	size_t instr_grp, instr_args iargs )
+symbol& symbol_table::enter( std::string&& name_as_str, tok typ, int val )
 {
 	string_view name = get_name(std::move(name_as_str));
 	
-	return table().insert( { name, symbol( name, typ, val, instr_grp, 
-		iargs, sym_name_has_dot_f(name) ) } ).first->second;
+	return table().insert( { name, symbol( name, typ, val, 
+		sym_name_has_dot_f(name) ) } ).first->second;
 }
 bool symbol_table::find( symbol*& ret, const std::string& name_as_str )
 {

@@ -14,7 +14,7 @@ enum class tok_defn : tok
 {
 	reg = 9001,
 	ident,
-	bad_ident,
+	//bad_ident,
 	number,
 	
 	instr,

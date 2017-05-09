@@ -70,7 +70,8 @@ tok lexer::lex_no_ws()
 		{
 			set_nextsym(&(sym_tbl()->enter( std::move(ident_str), typ, 
 				0 )));
-			update_nextval_and_nextt(); };
+			update_nextval_and_nextt();
+		};
 		
 		update();
 		
@@ -85,24 +86,6 @@ tok lexer::lex_no_ws()
 		{
 			update();
 			
-			//if ( nextc() == 'f' )
-			//{
-			//	update();
-			//	
-			//	if (!isspace(nextc()))
-			//	{
-			//		invalid_ident();
-			//	}
-			//	else
-			//	{
-			//		//do_enter(static_cast<tok>(tok_defn::bad_ident));
-			//	}
-			//}
-			//else
-			//{
-			//	invalid_ident();
-			//}
-			
 			while ( isalnum(nextc()) || ( nextc() == '_' ) )
 			{
 				update();
@@ -111,6 +94,7 @@ tok lexer::lex_no_ws()
 			symbol* ident_sym;
 			const bool did_find = sym_tbl()->find( ident_sym, ident_str );
 			
+			// Only permit pre-inserted identifiers that have ".whatever"
 			if (!did_find)
 			{
 				invalid_ident();

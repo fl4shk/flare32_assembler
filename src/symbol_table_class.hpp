@@ -2,6 +2,7 @@
 #define symbol_table_class_hpp
 
 #include "token_stuff_etc.hpp"
+#include "instr_table_class.hpp"
 
 namespace navichip32
 {
@@ -12,16 +13,12 @@ private:		// variables
 	string_view internal_name;
 	tok internal_typ = 0;
 	int internal_val = 0;
-	size_t internal_instr_grp = 0;
-	instr_args internal_iargs = instr_args::noargs;
 	bool internal_has_dot_f = false;
 	
 private:		// functions
 	gen_setter_by_con_ref(name);
 	gen_setter_by_val(typ);
 	gen_setter_by_val(val);
-	gen_setter_by_val(instr_grp);
-	gen_setter_by_val(iargs);
 	gen_setter_by_val(has_dot_f);
 	
 public:		// functions
@@ -29,13 +26,11 @@ public:		// functions
 	{
 	}
 	inline symbol( const string_view& s_name, tok s_typ, int s_val,
-		size_t s_instr_grp, instr_args s_iargs, bool s_has_dot_f )
+		bool s_has_dot_f )
 	{
 		set_name(s_name);
 		set_typ(s_typ);
 		set_val(s_val);
-		set_instr_grp(s_instr_grp);
-		set_iargs(s_iargs);
 		set_has_dot_f(s_has_dot_f);
 	}
 	virtual inline ~symbol()
@@ -47,8 +42,6 @@ public:		// functions
 	gen_getter_by_con_ref(name);
 	gen_getter_by_val(typ);
 	gen_getter_by_val(val);
-	gen_getter_by_val(instr_grp);
-	gen_getter_by_val(iargs);
 	gen_getter_by_val(has_dot_f);
 	
 	
@@ -80,8 +73,7 @@ public:		// functions
 	{
 	}
 	
-	symbol& enter( std::string&& name_as_str, tok typ, int val, 
-		size_t instr_grp=-1, instr_args iargs=instr_args::noargs );
+	symbol& enter( std::string&& name_as_str, tok typ, int val );
 	bool find( symbol*& ret, const std::string& name_as_str );
 	void erase( const std::string& name_as_str );
 	
