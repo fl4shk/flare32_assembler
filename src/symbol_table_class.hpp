@@ -2,7 +2,7 @@
 #define symbol_table_class_hpp
 
 #include "token_stuff_etc.hpp"
-#include "instr_table_class.hpp"
+#include "instruction_table_class.hpp"
 
 namespace navichip32
 {

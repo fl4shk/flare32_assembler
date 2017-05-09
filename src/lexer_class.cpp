@@ -81,7 +81,7 @@ tok lexer::lex_no_ws()
 		}
 		
 		
-		// Handle instructions with a ".f" suffix.
+		// Handle instructionuctions with a ".f" suffix.
 		if ( nextc() == '.' )
 		{
 			update();
@@ -94,10 +94,12 @@ tok lexer::lex_no_ws()
 			symbol* ident_sym;
 			const bool did_find = sym_tbl()->find( ident_sym, ident_str );
 			
-			// Only permit pre-inserted identifiers that have ".whatever"
+			// Only permit pre-inserted identifiers that have ".whatever".
+			// This can be used for internal identifiers (besides
+			// instructionuctions)
 			if (!did_find)
 			{
-				invalid_ident();
+				we()->invalid("identifier");
 			}
 			else
 			{

@@ -44,6 +44,17 @@ public:		// functions
 		exit(1);
 	}
 	
+	template< typename... arg_types >
+	void invalid( arg_types&&... args )
+	{
+		error( "Invalid ", args... );
+	}
+	template< typename... arg_types >
+	void expected( arg_types&&... args )
+	{
+		error( "Expected ", args... );
+	}
+	
 };
 
 

@@ -7,6 +7,7 @@
 namespace navichip32
 {
 
+
 class assembler
 {
 private:		// variables
@@ -23,14 +24,26 @@ private:		// variables
 private:		// functions
 	gen_setter_by_val(pass);
 	
+	
 	s32 expr();
 	s32 unary();
 	
+	s32 mask_immed( s32 to_mask, size_t mask );
+	
 	s32 reg();
-	s32 immed16u();
-	s32 immed16s();
-	s32 immed12s();
-	s32 absolute();
+	
+	inline s32 immed16()
+	{
+		return mask_immed( expr(), ( ( 1 << 16 ) - 1 ) );
+	}
+	inline s32 immed12()
+	{
+		return mask_immed( expr(), ( ( 1 << 12 ) - 1 ) );
+	}
+	inline s32 absolute()
+	{
+		return expr();
+	}
 	s32 line();
 	
 	
@@ -38,7 +51,6 @@ public:		// functions
 	assembler( int argc, char** argv, std::FILE* s_infile );
 	
 	virtual ~assembler();
-	
 	
 	int run();
 	

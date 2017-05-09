@@ -7,14 +7,13 @@
 namespace navichip32
 {
 
-typedef int32_t tok;
+typedef s32 tok;
 
 // Pre-defined tokens
 enum class tok_defn : tok
 {
 	reg = 9001,
 	ident,
-	//bad_ident,
 	number,
 	
 	instr,

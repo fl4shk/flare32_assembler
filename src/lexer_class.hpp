@@ -32,8 +32,6 @@ private:		// functions
 	void eat_ws();
 	tok lex_no_ws();
 	
-	inline void invalid_ident();
-	
 	gen_setter_by_val(infile);
 	gen_setter_by_val(we);
 	gen_setter_by_val(pass);
@@ -88,11 +86,6 @@ public:		// functions
 }
 
 #include "warn_error_stuff.hpp"
-
-inline void navichip32::lexer::invalid_ident()
-{
-	we()->error("Invalid identifier");
-}
 
 
 #endif		// lexer_class_hpp
