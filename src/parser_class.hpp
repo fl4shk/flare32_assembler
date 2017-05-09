@@ -23,6 +23,9 @@ private:		// variables
 private:		// functions
 	gen_setter_by_val(pass);
 	
+	int expr();
+	int unary();
+	
 	
 public:		// functions
 	parser( int argc, char** argv, std::FILE* s_infile );

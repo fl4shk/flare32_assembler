@@ -15,16 +15,11 @@ private:		// variables
 	lexer* lex = nullptr;
 	
 public:		// functions
-	inline warn_error()
+	inline warn_error( lexer* s_lex ) : lex(s_lex)
 	{
 	}
 	virtual inline ~warn_error()
 	{
-	}
-	
-	inline void init( lexer* s_lex )
-	{
-		lex = s_lex;
 	}
 	
 	template< typename... arg_types >
