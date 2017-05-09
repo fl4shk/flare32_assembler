@@ -3,7 +3,7 @@
 
 #include <cstdio>
 
-namespace assembler
+namespace navichip32
 {
 
 std::FILE* get_copy_of_stdin();

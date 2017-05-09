@@ -4,7 +4,7 @@
 #include "misc_includes.hpp"
 //#include "lexer_class.hpp"
 
-namespace assembler
+namespace navichip32
 {
 
 class lexer;

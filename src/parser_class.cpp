@@ -1,6 +1,6 @@
 #include "parser_class.hpp"
 
-namespace assembler
+namespace navichip32
 {
 
 
@@ -24,6 +24,36 @@ int parser::run()
 {
 	
 	return 0;
+}
+
+s32 parser::expr()
+{
+	
+}
+
+s32 parser::unary()
+{
+	
+}
+
+
+s32 parser::reg()
+{
+}
+s32 parser::immed16u()
+{
+}
+s32 parser::immed16s()
+{
+}
+s32 parser::immed12s()
+{
+}
+s32 parser::absolute()
+{
+}
+s32 parser::line()
+{
 }
 
 

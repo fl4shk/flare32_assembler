@@ -4,7 +4,7 @@
 #include "lexer_class.hpp"
 
 
-namespace assembler
+namespace navichip32
 {
 
 class parser
@@ -23,8 +23,15 @@ private:		// variables
 private:		// functions
 	gen_setter_by_val(pass);
 	
-	int expr();
-	int unary();
+	s32 expr();
+	s32 unary();
+	
+	s32 reg();
+	s32 immed16u();
+	s32 immed16s();
+	s32 immed12s();
+	s32 absolute();
+	s32 line();
 	
 	
 public:		// functions

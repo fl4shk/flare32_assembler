@@ -1,7 +1,7 @@
 #include "lexer_class.hpp"
 
 
-namespace assembler
+namespace navichip32
 {
 
 void lexer::init( std::FILE* s_infile, warn_error* s_we, size_t* s_pass,
@@ -39,7 +39,7 @@ void lexer::eat_ws()
 
 tok lexer::lex_no_ws()
 {
-	// Comment in assembler becomes end of line
+	// Comment in navichip32 becomes end of line
 	if ( nextc() == ';' )
 	{
 		do
@@ -61,12 +61,16 @@ tok lexer::lex_no_ws()
 			ident_str += nextc();
 			advance();
 		};
-		auto do_enter = [&]( tok typ ) -> void
+		auto update_nextval_and_nextt = [&]() -> void
 		{
-			set_nextsym(&sym_tbl()->enter(std::move(ident_str), typ, 0 ));
 			set_nextval(nextsym()->val());
 			set_nextt(nextsym()->typ());
 		};
+		auto do_enter = [&]( tok typ ) -> void
+		{
+			set_nextsym(&(sym_tbl()->enter( std::move(ident_str), typ, 
+				0 )));
+			update_nextval_and_nextt(); };
 		
 		update();
 		
@@ -75,26 +79,46 @@ tok lexer::lex_no_ws()
 			update();
 		}
 		
+		
+		// Handle instructions with a ".f" suffix.
 		if ( nextc() == '.' )
 		{
 			update();
 			
-			if ( nextc() == 'f' )
+			//if ( nextc() == 'f' )
+			//{
+			//	update();
+			//	
+			//	if (!isspace(nextc()))
+			//	{
+			//		invalid_ident();
+			//	}
+			//	else
+			//	{
+			//		//do_enter(static_cast<tok>(tok_defn::bad_ident));
+			//	}
+			//}
+			//else
+			//{
+			//	invalid_ident();
+			//}
+			
+			while ( isalnum(nextc()) || ( nextc() == '_' ) )
 			{
 				update();
-				
-				if (!isspace(nextc()))
-				{
-					invalid_ident();
-				}
-				else
-				{
-					do_enter(static_cast<tok>(tok_defn::ident_dot_f));
-				}
+			}
+			
+			symbol* ident_sym;
+			const bool did_find = sym_tbl()->find( ident_sym, ident_str );
+			
+			if (!did_find)
+			{
+				invalid_ident();
 			}
 			else
 			{
-				invalid_ident();
+				set_nextsym(ident_sym);
+				update_nextval_and_nextt();
 			}
 		}
 		else

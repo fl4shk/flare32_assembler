@@ -1,11 +1,11 @@
 #ifndef lexer_class_hpp
 #define lexer_class_hpp
 
-#include "token_stuff.hpp"
+#include "token_stuff_etc.hpp"
 #include "symbol_table_class.hpp"
 //#include "warn_error_stuff.hpp"
 
-namespace assembler
+namespace navichip32
 {
 
 class warn_error;
@@ -21,7 +21,7 @@ private:		// variables
 	size_t internal_lineno = 1;
 	tok internal_nextc = ' ';
 	tok internal_nextt = ' ';
-	int internal_nextval = 0;
+	int32_t internal_nextval = 0;
 	symbol* internal_nextsym = nullptr;
 	
 	
@@ -89,7 +89,7 @@ public:		// functions
 
 #include "warn_error_stuff.hpp"
 
-inline void assembler::lexer::invalid_ident()
+inline void navichip32::lexer::invalid_ident()
 {
 	we()->error("Invalid identifier");
 }

@@ -5,9 +5,9 @@
 
 int main( int argc, char** argv )
 {
-	//std::FILE* copy_of_stdin = assembler::get_copy_of_stdin();
-	assembler::parser the_parser( argc, argv,
-		assembler::get_copy_of_stdin() );
+	//std::FILE* copy_of_stdin = navichip32::get_copy_of_stdin();
+	navichip32::parser the_parser( argc, argv,
+		navichip32::get_copy_of_stdin() );
 	
 	return the_parser.run();
 }

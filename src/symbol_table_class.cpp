@@ -1,6 +1,6 @@
 #include "symbol_table_class.hpp"
 
-namespace assembler
+namespace navichip32
 {
 
 bool symbol_table::sym_name_has_dot_f( const string_view& name ) const
@@ -21,13 +21,25 @@ string_view symbol_table::get_name( std::string&& name_as_str )
 
 
 symbol& symbol_table::enter( std::string&& name_as_str, tok typ, int val, 
-	size_t instr_grp )
+	size_t instr_grp, instr_args iargs )
 {
 	string_view name = get_name(std::move(name_as_str));
 	
-	return table().insert( { name,
-		symbol( name, typ, val, instr_grp, sym_name_has_dot_f(name) ) } )
-		.first->second;
+	return table().insert( { name, symbol( name, typ, val, instr_grp, 
+		iargs, sym_name_has_dot_f(name) ) } ).first->second;
+}
+bool symbol_table::find( symbol*& ret, const std::string& name_as_str )
+{
+	auto temp = table().find(string_view(name_as_str));
+	
+	if ( temp == table().end() )
+	{
+		ret = nullptr;
+		return false;
+	}
+	
+	ret = &(temp->second);
+	return true;
 }
 
 void symbol_table::erase( const std::string& name_as_str )
