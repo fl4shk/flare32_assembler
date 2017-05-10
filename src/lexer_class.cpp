@@ -5,16 +5,21 @@ namespace navichip32
 {
 
 void lexer::init( std::FILE* s_infile, warn_error* s_we, size_t* s_pass,
-	symbol_table* s_sym_tbl )
+	symbol_table* s_user_sym_tbl, symbol_table* s_special_sym_tbl )
 {
 	set_infile(s_infile);
 	set_we(s_we);
 	set_pass(s_pass);
-	set_sym_tbl(s_sym_tbl);
+	set_user_sym_tbl(s_user_sym_tbl);
+	set_special_sym_tbl(s_special_sym_tbl);
 	set_lineno(1);
 	set_nextc(' ');
 	set_nextt(' ');
 	set_nextval(0);
+	set_nextsym(nullptr);
+	set_special_nextt(' ');
+	set_special_nextval(0);
+	set_special_nextsym(nullptr);
 }
 
 tok lexer::advance()
@@ -66,11 +71,10 @@ tok lexer::lex_no_ws()
 			set_nextval(nextsym()->val());
 			set_nextt(nextsym()->typ());
 		};
-		auto do_enter = [&]( tok typ ) -> void
+		auto update_special_nextval_and_special_nextt = [&]() -> void
 		{
-			set_nextsym(&(sym_tbl()->enter( std::move(ident_str), typ, 
-				0 )));
-			update_nextval_and_nextt();
+			set_special_nextval(special_nextsym()->val());
+			set_special_nextt(special_nextsym()->typ());
 		};
 		
 		update();
@@ -80,6 +84,7 @@ tok lexer::lex_no_ws()
 			update();
 		}
 		
+		symbol* ident_sym;
 		
 		// Handle instructionuctions with a ".f" suffix.
 		if ( nextc() == '.' )
@@ -91,25 +96,41 @@ tok lexer::lex_no_ws()
 				update();
 			}
 			
-			symbol* ident_sym;
-			const bool did_find = sym_tbl()->find( ident_sym, ident_str );
+			const bool did_find = special_sym_tbl()->find( ident_sym, 
+				ident_str );
 			
 			// Only permit pre-inserted identifiers that have ".whatever".
 			// This can be used for internal identifiers (besides
-			// instructionuctions)
+			// instructions)
 			if (!did_find)
 			{
 				we()->invalid("identifier");
 			}
 			else
 			{
-				set_nextsym(ident_sym);
-				update_nextval_and_nextt();
+				set_special_nextsym(ident_sym);
+				update_special_nextval_and_special_nextt();
+				set_nextsym(nullptr);
 			}
 		}
 		else
 		{
-			do_enter(static_cast<tok>(tok_defn::ident));
+			const bool did_find = special_sym_tbl()->find( ident_sym,
+				ident_str );
+			
+			if (did_find)
+			{
+				set_special_nextsym(ident_sym);
+				update_special_nextval_and_special_nextt();
+			}
+			else
+			{
+				set_special_nextsym(nullptr);
+			}
+			
+			set_nextsym(&(user_sym_tbl()->enter( std::move(ident_str), 
+				static_cast<tok>(tok_defn::ident), 0, false )));
+			update_nextval_and_nextt();
 		}
 		
 		return nextt();
