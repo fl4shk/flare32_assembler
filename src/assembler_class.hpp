@@ -26,8 +26,8 @@ private:		// variables
 	
 	// Class instances
 	lexer lex;
-	symbol_table sym_tbl;
 	warn_error we;
+	symbol_table sym_tbl;
 	instruction_table instr_tbl;
 	
 	
@@ -42,6 +42,7 @@ private:		// functions
 	void insert_grp_1_instructions();
 	void insert_grp_2_instructions();
 	void insert_grp_3_instructions();
+	void insert_dot_f_instructions( const std::vector<symbol*>& sym_vec );
 	
 	// Code generator stuff
 	void genb( s32 v );
