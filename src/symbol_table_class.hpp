@@ -89,6 +89,15 @@ public:		// functions
 	bool find( symbol*& ret, const std::string& name_as_str );
 	void erase( const std::string& name_as_str );
 	
+	inline auto cbegin() const
+	{
+		return table().cbegin();
+	}
+	inline auto cend() const
+	{
+		return table().cend();
+	}
+	
 	gen_getter_by_con_ref(str_set);
 	gen_getter_by_con_ref(table);
 	
