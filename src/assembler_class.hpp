@@ -66,9 +66,55 @@ private:		// functions
 	
 	
 	// Parser stuff
+	inline bool at_end_of_line() const
+	{
+		return ( !( ( lex.nextc() != '\n' ) && ( lex.nextc() != EOF )
+			&& ( lex.nextt() != '\n' ) ) );
+	}
 	const instruction* determine_instr( std::vector<real_iarg>& iarg_vec );
-	bool instr_compat_with_iargs( const instruction& some_instr, 
-		const std::vector<real_iarg>& iarg_vec );
+	//bool instr_compat_with_iargs( const instruction& some_instr, 
+	//	const std::vector<real_iarg>& iarg_vec );
+	bool test_iargs( const instruction& iter, 
+		std::vector<real_iarg>& iarg_vec );
+	
+	bool test_instr_noargs( const instruction& iter,
+		std::vector<real_iarg>& iarg_vec );
+	bool test_instr_ra( const instruction& iter,
+		std::vector<real_iarg>& iarg_vec );
+	bool test_instr_ra_rb( const instruction& iter,
+		std::vector<real_iarg>& iarg_vec );
+	bool test_instr_ra_imm16u( const instruction& iter,
+		std::vector<real_iarg>& iarg_vec );
+	bool test_instr_imm16u( const instruction& iter,
+		std::vector<real_iarg>& iarg_vec );
+	bool test_instr_imm16s( const instruction& iter,
+		std::vector<real_iarg>& iarg_vec );
+	bool test_instr_branchoffset( const instruction& iter,
+		std::vector<real_iarg>& iarg_vec );
+	bool test_instr_flags( const instruction& iter,
+		std::vector<real_iarg>& iarg_vec );
+	bool test_instr_ra_flags( const instruction& iter,
+		std::vector<real_iarg>& iarg_vec );
+	bool test_instr_flags_ra( const instruction& iter,
+		std::vector<real_iarg>& iarg_vec );
+	bool test_instr_ira( const instruction& iter,
+		std::vector<real_iarg>& iarg_vec );
+	bool test_instr_ira_ra( const instruction& iter,
+		std::vector<real_iarg>& iarg_vec );
+	bool test_instr_ra_ira( const instruction& iter,
+		std::vector<real_iarg>& iarg_vec );
+	bool test_instr_ra_pc( const instruction& iter,
+		std::vector<real_iarg>& iarg_vec );
+	bool test_instr_ra_rb_imm16u( const instruction& iter,
+		std::vector<real_iarg>& iarg_vec );
+	bool test_instr_ra_rb_imm16s( const instruction& iter,
+		std::vector<real_iarg>& iarg_vec );
+	bool test_instr_ra_rb_rc_imm12s( const instruction& iter,
+		std::vector<real_iarg>& iarg_vec );
+	bool test_instr_ra_rb_rc( const instruction& iter,
+		std::vector<real_iarg>& iarg_vec );
+	bool test_instr_ra_rb_abs( const instruction& iter,
+		std::vector<real_iarg>& iarg_vec );
 	
 	
 	s32 unary( bool use_special, bool keep_lineno=false );

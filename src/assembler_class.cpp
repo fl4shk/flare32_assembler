@@ -130,178 +130,187 @@ const instruction* assembler::determine_instr
 	
 	const std::vector<instruction>& instr_vec = instr_tbl.at(instr_sym);
 	
-	iarg_vec.clear();
 	
-	// Go to the end of the line
-	while ( ( lex.nextc() != '\n' ) && ( lex.nextc() != EOF )
-		&& ( lex.nextt() != '\n' ) )
-	{
-		//lex();
-		
-		if ( ( lex.nextc() != '\n' ) && ( lex.nextc() != EOF )
-			&& ( lex.nextt() != '\n' ) )
-		{
-			////real_iarg to_push = { lex.nextt(), lex.nextval(),
-			////	lex.nextsym(), lex.special_nextt(), lex.special_nextval(),
-			////	lex.special_nextsym() };
-			////iarg_vec.push_back(to_push);
-			//real_iarg to_push = { lex.nextt(), lex.nextval(),
-			//	lex.nextsym() };
-		}
-	}
+	//// Go to the end of the line
+	//while (!at_end_of_line())
+	//{
+	//	lex(true);
+	//	
+	//	if (!at_end_of_line())
+	//	{
+	//		////real_iarg to_push = { lex.nextt(), lex.nextval(),
+	//		////	lex.nextsym(), lex.special_nextt(), lex.special_nextval(),
+	//		////	lex.special_nextsym() };
+	//		////iarg_vec.push_back(to_push);
+	//		//real_iarg to_push = { lex.nextt(), lex.nextval(),
+	//		//	lex.nextsym() };
+	//	}
+	//}
 	
 	for ( size_t i=0; i<instr_vec.size(); ++i )
 	{
 		const instruction& iter = instr_vec.at(i);
-		if ( instr_compat_with_iargs( iter, iarg_vec ) )
+		
+		lex(true);
+		iarg_vec.clear();
+		
+		if ( test_iargs( iter, iarg_vec ) )
 		{
 			return &iter;
-			break;
 		}
 	}
 	
 	
 	return nullptr;
 }
-bool assembler::instr_compat_with_iargs( const instruction& some_instr,
-	const std::vector<assembler::real_iarg>& iarg_vec )
+bool assembler::test_iargs( const instruction& iter,
+	std::vector<assembler::real_iarg>& iarg_vec )
 {
-	//switch ( some_instr.iargs() )
-	//{
-	//	case instr_args::noargs:
-	//	{
-	//		if ( iarg_vec.size() == 0 )
-	//		{
-	//			return true;
-	//		}
-	//	}
-	//	break;
-	//	
-	//	case instr_args::ra:
-	//	{
-	//		if ( iarg_vec.size() == 1 )
-	//		{
-	//			return ( iarg_vec.front().comp_nextt(tok_defn::reg) );
-	//		}
-	//	}
-	//	break;
-	//	
-	//	case instr_args::ra_rb:
-	//	{
-	//		if ( iarg_vec.size() == 2 )
-	//		{
-	//			return ( iarg_vec.front().comp_nextt(tok_defn::reg) 
-	//				&& iarg_vec.back().comp_nextt(tok_defn::reg) );
-	//		}
-	//	}
-	//	break;
-	//	
-	//	case instr_args::ra_imm16u:
-	//	{
-	//		
-	//	}
-	//	break;
-	//	
-	//	case instr_args::imm16u:
-	//	{
-	//		
-	//	}
-	//	break;
-	//	
-	//	case instr_args::imm16s:
-	//	{
-	//		
-	//	}
-	//	break;
-	//	
-	//	case instr_args::branchoffset:
-	//	{
-	//		
-	//	}
-	//	break;
-	//	
-	//	case instr_args::flags:
-	//	{
-	//		
-	//	}
-	//	break;
-	//	
-	//	case instr_args::ra_flags:
-	//	{
-	//		
-	//	}
-	//	break;
-	//	
-	//	case instr_args::flags_ra:
-	//	{
-	//		
-	//	}
-	//	break;
-	//	
-	//	case instr_args::ira:
-	//	{
-	//		
-	//	}
-	//	break;
-	//	
-	//	case instr_args::ira_ra:
-	//	{
-	//		
-	//	}
-	//	break;
-	//	
-	//	case instr_args::ra_ira:
-	//	{
-	//		
-	//	}
-	//	break;
-	//	
-	//	case instr_args::ra_pc:
-	//	{
-	//		
-	//	}
-	//	break;
-	//	
-	//	case instr_args::ra_rb_imm16u:
-	//	{
-	//		
-	//	}
-	//	break;
-	//	
-	//	case instr_args::ra_rb_imm16s:
-	//	{
-	//		
-	//	}
-	//	break;
-	//	
-	//	case instr_args::ra_rb_rc_imm12s:
-	//	{
-	//		
-	//	}
-	//	break;
-	//	
-	//	case instr_args::ra_rb_rc:
-	//	{
-	//		
-	//	}
-	//	break;
-	//	
-	//	case instr_args::ra_rb_abs:
-	//	{
-	//		
-	//	}
-	//	break;
-	//	
-	//	
-	//	default:
-	//	{
-	//		we.unknown("instr_args!");
-	//	}
-	//	break;
-	//}
+	switch ( iter.iargs() )
+	{
+		case instr_args::noargs:
+			return test_instr_noargs( iter, iarg_vec );
+		case instr_args::ra:
+			return test_instr_ra( iter, iarg_vec );
+		case instr_args::ra_rb:
+			return test_instr_ra_rb( iter, iarg_vec );
+		case instr_args::ra_imm16u:
+			return test_instr_ra_imm16u( iter, iarg_vec );
+		case instr_args::imm16u:
+			return test_instr_imm16u( iter, iarg_vec );
+		case instr_args::imm16s:
+			return test_instr_imm16s( iter, iarg_vec );
+		case instr_args::branchoffset:
+			return test_instr_branchoffset( iter, iarg_vec );
+		case instr_args::flags:
+			return test_instr_flags( iter, iarg_vec );
+		case instr_args::ra_flags:
+			return test_instr_ra_flags( iter, iarg_vec );
+		case instr_args::flags_ra:
+			return test_instr_flags_ra( iter, iarg_vec );
+		case instr_args::ira:
+			return test_instr_ira( iter, iarg_vec );
+		case instr_args::ira_ra:
+			return test_instr_ira_ra( iter, iarg_vec );
+		case instr_args::ra_ira:
+			return test_instr_ra_ira( iter, iarg_vec );
+		case instr_args::ra_pc:
+			return test_instr_ra_pc( iter, iarg_vec );
+		case instr_args::ra_rb_imm16u:
+			return test_instr_ra_rb_imm16u( iter, iarg_vec );
+		case instr_args::ra_rb_imm16s:
+			return test_instr_ra_rb_imm16s( iter, iarg_vec );
+		case instr_args::ra_rb_rc_imm12s:
+			return test_instr_ra_rb_rc_imm12s( iter, iarg_vec );
+		case instr_args::ra_rb_rc:
+			return test_instr_ra_rb_rc( iter, iarg_vec );
+		case instr_args::ra_rb_abs:
+			return test_instr_ra_rb_abs( iter, iarg_vec );
+		
+		default:
+			we.unknown("instr_args!");
+			break;
+	}
 	
 	
 	return false;
+}
+
+
+bool assembler::test_instr_noargs( const instruction& iter,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
+}
+bool assembler::test_instr_ra( const instruction& iter,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
+}
+bool assembler::test_instr_ra_rb( const instruction& iter,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
+}
+bool assembler::test_instr_ra_imm16u( const instruction& iter,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
+}
+bool assembler::test_instr_imm16u( const instruction& iter,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
+}
+bool assembler::test_instr_imm16s( const instruction& iter,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
+}
+bool assembler::test_instr_branchoffset( const instruction& iter,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
+}
+bool assembler::test_instr_flags( const instruction& iter,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
+}
+bool assembler::test_instr_ra_flags( const instruction& iter,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
+}
+bool assembler::test_instr_flags_ra( const instruction& iter,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
+}
+bool assembler::test_instr_ira( const instruction& iter,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
+}
+bool assembler::test_instr_ira_ra( const instruction& iter,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
+}
+bool assembler::test_instr_ra_ira( const instruction& iter,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
+}
+bool assembler::test_instr_ra_pc( const instruction& iter,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
+}
+bool assembler::test_instr_ra_rb_imm16u( const instruction& iter,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
+}
+bool assembler::test_instr_ra_rb_imm16s( const instruction& iter,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
+}
+bool assembler::test_instr_ra_rb_rc_imm12s( const instruction& iter,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
+}
+bool assembler::test_instr_ra_rb_rc( const instruction& iter,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
+}
+bool assembler::test_instr_ra_rb_abs( const instruction& iter,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
 }
 
 s32 assembler::unary( bool use_special, bool keep_lineno )

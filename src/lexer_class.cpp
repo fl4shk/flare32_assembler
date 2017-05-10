@@ -90,7 +90,7 @@ void lexer::lex_no_ws( bool keep_lineno )
 		
 		symbol* ident_sym;
 		
-		// Handle instructionuctions with a ".f" suffix.
+		// Handle instructions with a ".f" suffix.
 		if ( nextc() == '.' )
 		{
 			update();
