@@ -117,9 +117,14 @@ void assembler::gen( s32 v )
 const instruction* assembler::determine_instr
 	( std::vector<assembler::real_iarg>& iarg_vec )
 {
-	lex();
-	
 	const long orig_pos = std::ftell(infile);
+	
+	// Keep lineno so that the function that called this one doesn't have
+	// to know about what happened to the lexer.
+	lex_keep_lineno();
+	
+	const long reset_pos = std::ftell(infile);
+	
 	const symbol* instr_sym = lex.special_nextsym();
 	
 	if ( ( lex.special_nextsym() == nullptr )
@@ -150,15 +155,19 @@ const instruction* assembler::determine_instr
 	for ( size_t i=0; i<instr_vec.size(); ++i )
 	{
 		const instruction& iter = instr_vec.at(i);
-		
-		lex(true);
 		iarg_vec.clear();
+		
+		lex_keep_lineno();
 		
 		if ( test_iargs( iter, iarg_vec ) )
 		{
 			return &iter;
 		}
+		
+		std::fseek( infile, reset_pos, SEEK_SET );
 	}
+	
+	std::fseek( infile, orig_pos, SEEK_SET );
 	
 	
 	return nullptr;
@@ -220,98 +229,121 @@ bool assembler::test_iargs( const instruction& iter,
 bool assembler::test_instr_noargs( const instruction& iter,
 	std::vector<real_iarg>& iarg_vec )
 {
-	
+	if (lex_match_keep_lineno('\n'))
+	{
+		return true;
+	}
+	return false;
 }
 bool assembler::test_instr_ra( const instruction& iter,
 	std::vector<real_iarg>& iarg_vec )
 {
 	
+	return false;
 }
 bool assembler::test_instr_ra_rb( const instruction& iter,
 	std::vector<real_iarg>& iarg_vec )
 {
 	
+	return false;
 }
 bool assembler::test_instr_ra_imm16u( const instruction& iter,
 	std::vector<real_iarg>& iarg_vec )
 {
 	
+	return false;
 }
 bool assembler::test_instr_imm16u( const instruction& iter,
 	std::vector<real_iarg>& iarg_vec )
 {
 	
+	return false;
 }
 bool assembler::test_instr_imm16s( const instruction& iter,
 	std::vector<real_iarg>& iarg_vec )
 {
 	
+	return false;
 }
 bool assembler::test_instr_branchoffset( const instruction& iter,
 	std::vector<real_iarg>& iarg_vec )
 {
 	
+	return false;
 }
 bool assembler::test_instr_flags( const instruction& iter,
 	std::vector<real_iarg>& iarg_vec )
 {
 	
+	return false;
 }
 bool assembler::test_instr_ra_flags( const instruction& iter,
 	std::vector<real_iarg>& iarg_vec )
 {
 	
+	return false;
 }
 bool assembler::test_instr_flags_ra( const instruction& iter,
 	std::vector<real_iarg>& iarg_vec )
 {
 	
+	return false;
 }
 bool assembler::test_instr_ira( const instruction& iter,
 	std::vector<real_iarg>& iarg_vec )
 {
 	
+	return false;
 }
 bool assembler::test_instr_ira_ra( const instruction& iter,
 	std::vector<real_iarg>& iarg_vec )
 {
 	
+	return false;
 }
 bool assembler::test_instr_ra_ira( const instruction& iter,
 	std::vector<real_iarg>& iarg_vec )
 {
 	
+	return false;
 }
 bool assembler::test_instr_ra_pc( const instruction& iter,
 	std::vector<real_iarg>& iarg_vec )
 {
 	
+	return false;
 }
 bool assembler::test_instr_ra_rb_imm16u( const instruction& iter,
 	std::vector<real_iarg>& iarg_vec )
 {
 	
+	return false;
 }
 bool assembler::test_instr_ra_rb_imm16s( const instruction& iter,
 	std::vector<real_iarg>& iarg_vec )
 {
 	
+	return false;
 }
 bool assembler::test_instr_ra_rb_rc_imm12s( const instruction& iter,
 	std::vector<real_iarg>& iarg_vec )
 {
 	
+	return false;
 }
 bool assembler::test_instr_ra_rb_rc( const instruction& iter,
 	std::vector<real_iarg>& iarg_vec )
 {
 	
+	return false;
 }
 bool assembler::test_instr_ra_rb_abs( const instruction& iter,
 	std::vector<real_iarg>& iarg_vec )
 {
 	
+	return false;
 }
+
 
 s32 assembler::unary( bool use_special, bool keep_lineno )
 {
@@ -347,7 +379,7 @@ s32 assembler::unary( bool use_special, bool keep_lineno )
 			lex(keep_lineno);
 			v = expr( use_special, keep_lineno );
 			
-			if (!lex.match(')'))
+			if (!lex.match( ')', keep_lineno ))
 			{
 				we.warn1("Missing ')' assumed");
 			}
@@ -414,7 +446,8 @@ s32 assembler::mask_immed( s32 to_mask, size_t mask )
 
 s32 assembler::reg( bool keep_lineno )
 {
-	expr( true, keep_lineno );
+	//expr( true, keep_lineno );
+	lex(keep_lineno);
 	
 	if ( ( lex.special_nextsym() != nullptr )
 		&& ( lex.special_nextsym()->typ() 

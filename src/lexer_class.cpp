@@ -166,28 +166,28 @@ void lexer::lex_no_ws( bool keep_lineno )
 
 
 
-bool lexer::match( tok typ )
+bool lexer::match( tok typ, bool keep_lineno )
 {
 	if ( nextt() == typ )
 	{
-		this->operator () ();
+		this->operator () (keep_lineno);
 		return true;
 	}
 	return false;
 }
-bool lexer::match_no_ws( tok typ )
+bool lexer::match_no_ws( tok typ, bool keep_lineno )
 {
 	if ( nextt() == typ )
 	{
-		lex_no_ws();
+		lex_no_ws(keep_lineno);
 		return true;
 	}
 	return false;
 }
 
-void lexer::assume( tok typ )
+void lexer::assume( tok typ, bool keep_lineno )
 {
-	if (!match(typ))
+	if (!match( typ, keep_lineno ))
 	{
 		we()->warn1( "Missing ", static_cast<char>(typ), " assumed" );
 	}

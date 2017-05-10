@@ -133,6 +133,16 @@ private:		// functions
 	}
 	s32 line();
 	
+	inline void lex_keep_lineno()
+	{
+		lex(true);
+	}
+	
+	inline bool lex_match_keep_lineno( tok typ )
+	{
+		return lex.match( typ, true );
+	}
+	
 	
 public:		// functions
 	assembler( int argc, char** argv, std::FILE* s_infile );

@@ -40,10 +40,10 @@ private:		// variables
 	
 	
 private:		// functions
-	tok advance( bool lineno=false );
+	tok advance( bool lineno );
 	
-	void eat_ws( bool keep_lineno=false );
-	void lex_no_ws( bool keep_lineno=false );
+	void eat_ws( bool keep_lineno );
+	void lex_no_ws( bool keep_lineno );
 	
 	gen_setter_by_val(infile);
 	gen_setter_by_val(we);
@@ -74,11 +74,11 @@ public:		// functions
 	void init( std::FILE* s_infile, warn_error* s_we, size_t* s_pass,
 		symbol_table* s_user_sym_tbl, symbol_table* s_special_sym_tbl );
 	
-	bool match( tok typ );
-	bool match_no_ws( tok typ );
-	void assume( tok typ );
+	bool match( tok typ, bool keep_lineno );
+	bool match_no_ws( tok typ, bool keep_lineno );
+	void assume( tok typ, bool keep_lineno );
 	
-	inline void operator () ( bool keep_lineno=false )
+	inline void operator () ( bool keep_lineno )
 	{
 		eat_ws(keep_lineno);
 		lex_no_ws(keep_lineno);
