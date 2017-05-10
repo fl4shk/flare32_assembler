@@ -14,6 +14,9 @@ private:		// variables
 	// Symbol table entry
 	symbol* internal_sym = nullptr;
 	
+	// Opcode
+	size_t internal_opcode = -1;
+	
 	// Instruction encoding group
 	size_t internal_grp = -1;
 	
@@ -23,6 +26,7 @@ private:		// variables
 	
 private:		// functions
 	gen_setter_by_val(sym);
+	gen_setter_by_val(opcode);
 	gen_setter_by_val(grp);
 	gen_setter_by_val(iargs);
 	
@@ -32,9 +36,11 @@ public:		// functions
 	{
 	}
 	inline instruction( const instruction& to_copy ) = default;
-	inline instruction( symbol* s_sym, size_t s_grp, instr_args s_iargs )
+	inline instruction( symbol* s_sym, size_t s_opcode, size_t s_grp, 
+		instr_args s_iargs )
 	{
 		set_sym(s_sym);
+		set_opcode(s_opcode);
 		set_grp(s_grp);
 		set_iargs(s_iargs);
 	}
@@ -48,22 +54,40 @@ public:		// functions
 	
 	
 	gen_getter_by_val(sym);
+	gen_getter_by_val(opcode);
 	gen_getter_by_val(grp);
 	gen_getter_by_val(iargs);
 	
 };
 
+
 class instruction_table
 {
 private:		// variables
+	std::unordered_map< symbol*, std::vector<instruction> > 
+		internal_table;
 	
-	//std::unordered_set<instruction> internal_
+	
+private:		// functions
+	gen_getter_by_ref(table);
 	
 public:		// functions
+	inline instruction_table()
+	{
+	}
+	inline instruction_table( const instruction_table& to_copy ) = delete;
+	virtual inline ~instruction_table()
+	{
+	}
+	
+	inline instruction_table& operator = 
+		( const instruction_table& to_copy ) = delete;
+	
+	void enter( symbol* sym, size_t opcode, size_t grp, instr_args iargs );
+	
+	gen_getter_by_con_ref(table);
 	
 };
-
-
 
 }
 

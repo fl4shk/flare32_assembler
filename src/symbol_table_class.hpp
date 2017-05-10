@@ -69,9 +69,12 @@ public:		// functions
 	inline symbol_table()
 	{
 	}
+	inline symbol_table( const symbol_table& to_copy ) = delete;
 	virtual inline ~symbol_table()
 	{
 	}
+	symbol_table& operator = ( const symbol_table& to_copy ) = delete;
+	
 	
 	symbol& enter( std::string&& name_as_str, tok typ, int val );
 	bool find( symbol*& ret, const std::string& name_as_str );

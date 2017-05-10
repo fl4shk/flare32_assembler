@@ -13,10 +13,14 @@ typedef s32 tok;
 enum class tok_defn : tok
 {
 	reg = 9001,
+	reg_flags,
+	reg_ira,
+	reg_pc,
+	instr,
+	
+	
 	ident,
 	number,
-	
-	instr,
 };
 
 enum class instr_args : tok
@@ -27,6 +31,7 @@ enum class instr_args : tok
 	ra_imm16u,
 	imm16u,
 	imm16s,
+	branchoffset,
 	flags,
 	ra_flags,
 	flags_ra,
@@ -40,6 +45,7 @@ enum class instr_args : tok
 	ra_rb_rc,
 	ra_rb_abs,
 };
+
 
 }
 
