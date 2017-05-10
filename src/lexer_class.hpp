@@ -31,19 +31,19 @@ private:		// variables
 	tok internal_nextc = ' ';
 	
 	tok internal_nextt = ' ';
-	int32_t internal_nextval = 0;
+	s32 internal_nextval = 0;
 	symbol* internal_nextsym = nullptr;
 	
 	tok internal_special_nextt = ' ';
-	int32_t internal_special_nextval = 0;
+	s32 internal_special_nextval = 0;
 	symbol* internal_special_nextsym = nullptr;
 	
 	
 private:		// functions
-	tok advance();
+	tok advance( bool lineno=false );
 	
-	void eat_ws();
-	tok lex_no_ws();
+	void eat_ws( bool keep_lineno=false );
+	void lex_no_ws( bool keep_lineno=false );
 	
 	gen_setter_by_val(infile);
 	gen_setter_by_val(we);
@@ -78,10 +78,10 @@ public:		// functions
 	bool match_no_ws( tok typ );
 	void assume( tok typ );
 	
-	inline tok operator () ()
+	inline void operator () ( bool keep_lineno=false )
 	{
-		eat_ws();
-		return lex_no_ws();
+		eat_ws(keep_lineno);
+		lex_no_ws(keep_lineno);
 	}
 	
 	gen_getter_by_val(infile);

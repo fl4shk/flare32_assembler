@@ -55,11 +55,11 @@ assembler::assembler( int argc, char** argv, std::FILE* s_infile )
 	
 	// Special purpose registers
 	special_sym_tbl.enter( "flags", 
-		static_cast<tok>(tok_defn::reg_special), 0, true );
+		static_cast<tok>(tok_defn::reg_flags), 0, true );
 	special_sym_tbl.enter( "ira", 
-		static_cast<tok>(tok_defn::reg_special), 0, true );
+		static_cast<tok>(tok_defn::reg_ira), 0, true );
 	special_sym_tbl.enter( "pc", 
-		static_cast<tok>(tok_defn::reg_special), 0, true );
+		static_cast<tok>(tok_defn::reg_pc), 0, true );
 	
 	
 	insert_grp_0_instructions();
@@ -114,53 +114,229 @@ void assembler::gen( s32 v )
 }
 
 // Parser stuff
-const instruction* assembler::determine_instr()
+const instruction* assembler::determine_instr
+	( std::vector<assembler::real_iarg>& iarg_vec )
 {
-	instruction* ret = nullptr;
-	
-	
-	
-	
 	lex();
+	
 	const long orig_pos = std::ftell(infile);
-	
-	if ( lex.special_nextsym() == nullptr )
-	{
-		we.expected("instruction");
-	}
-	
 	const symbol* instr_sym = lex.special_nextsym();
 	
-	if ( instr_sym->typ() != static_cast<tok>(tok_defn::instr) )
+	if ( ( lex.special_nextsym() == nullptr )
+		|| ( instr_sym->typ() != static_cast<tok>(tok_defn::instr) ) )
 	{
 		we.expected("instruction");
 	}
 	
-	const std::vector<instruction>* instr_vec = instr_tbl.at(instr_sym);
+	const std::vector<instruction>& instr_vec = instr_tbl.at(instr_sym);
+	
+	iarg_vec.clear();
+	
+	// Go to the end of the line
+	while ( ( lex.nextc() != '\n' ) && ( lex.nextc() != EOF )
+		&& ( lex.nextt() != '\n' ) )
+	{
+		//lex();
+		
+		if ( ( lex.nextc() != '\n' ) && ( lex.nextc() != EOF )
+			&& ( lex.nextt() != '\n' ) )
+		{
+			////real_iarg to_push = { lex.nextt(), lex.nextval(),
+			////	lex.nextsym(), lex.special_nextt(), lex.special_nextval(),
+			////	lex.special_nextsym() };
+			////iarg_vec.push_back(to_push);
+			//real_iarg to_push = { lex.nextt(), lex.nextval(),
+			//	lex.nextsym() };
+		}
+	}
+	
+	for ( size_t i=0; i<instr_vec.size(); ++i )
+	{
+		const instruction& iter = instr_vec.at(i);
+		if ( instr_compat_with_iargs( iter, iarg_vec ) )
+		{
+			return &iter;
+			break;
+		}
+	}
 	
 	
-	return ret;
+	return nullptr;
+}
+bool assembler::instr_compat_with_iargs( const instruction& some_instr,
+	const std::vector<assembler::real_iarg>& iarg_vec )
+{
+	//switch ( some_instr.iargs() )
+	//{
+	//	case instr_args::noargs:
+	//	{
+	//		if ( iarg_vec.size() == 0 )
+	//		{
+	//			return true;
+	//		}
+	//	}
+	//	break;
+	//	
+	//	case instr_args::ra:
+	//	{
+	//		if ( iarg_vec.size() == 1 )
+	//		{
+	//			return ( iarg_vec.front().comp_nextt(tok_defn::reg) );
+	//		}
+	//	}
+	//	break;
+	//	
+	//	case instr_args::ra_rb:
+	//	{
+	//		if ( iarg_vec.size() == 2 )
+	//		{
+	//			return ( iarg_vec.front().comp_nextt(tok_defn::reg) 
+	//				&& iarg_vec.back().comp_nextt(tok_defn::reg) );
+	//		}
+	//	}
+	//	break;
+	//	
+	//	case instr_args::ra_imm16u:
+	//	{
+	//		
+	//	}
+	//	break;
+	//	
+	//	case instr_args::imm16u:
+	//	{
+	//		
+	//	}
+	//	break;
+	//	
+	//	case instr_args::imm16s:
+	//	{
+	//		
+	//	}
+	//	break;
+	//	
+	//	case instr_args::branchoffset:
+	//	{
+	//		
+	//	}
+	//	break;
+	//	
+	//	case instr_args::flags:
+	//	{
+	//		
+	//	}
+	//	break;
+	//	
+	//	case instr_args::ra_flags:
+	//	{
+	//		
+	//	}
+	//	break;
+	//	
+	//	case instr_args::flags_ra:
+	//	{
+	//		
+	//	}
+	//	break;
+	//	
+	//	case instr_args::ira:
+	//	{
+	//		
+	//	}
+	//	break;
+	//	
+	//	case instr_args::ira_ra:
+	//	{
+	//		
+	//	}
+	//	break;
+	//	
+	//	case instr_args::ra_ira:
+	//	{
+	//		
+	//	}
+	//	break;
+	//	
+	//	case instr_args::ra_pc:
+	//	{
+	//		
+	//	}
+	//	break;
+	//	
+	//	case instr_args::ra_rb_imm16u:
+	//	{
+	//		
+	//	}
+	//	break;
+	//	
+	//	case instr_args::ra_rb_imm16s:
+	//	{
+	//		
+	//	}
+	//	break;
+	//	
+	//	case instr_args::ra_rb_rc_imm12s:
+	//	{
+	//		
+	//	}
+	//	break;
+	//	
+	//	case instr_args::ra_rb_rc:
+	//	{
+	//		
+	//	}
+	//	break;
+	//	
+	//	case instr_args::ra_rb_abs:
+	//	{
+	//		
+	//	}
+	//	break;
+	//	
+	//	
+	//	default:
+	//	{
+	//		we.unknown("instr_args!");
+	//	}
+	//	break;
+	//}
+	
+	
+	return false;
 }
 
-s32 assembler::unary()
+s32 assembler::unary( bool use_special, bool keep_lineno )
 {
 	s32 v;
 	
-	switch (lex.nextt())
+	decltype(lex.nextt()) some_nextt;
+	decltype(lex.nextval()) some_nextval;
+	
+	if (!use_special)
+	{
+		some_nextt = lex.nextt();
+		some_nextval = lex.nextval();
+	}
+	else
+	{
+		some_nextt = lex.special_nextt();
+		some_nextval = lex.special_nextval();
+	}
+	
+	switch (some_nextt)
 	{
 		case static_cast<tok>(tok_defn::ident):
 		case static_cast<tok>(tok_defn::number):
-			v = lex.nextval();
-			lex();
+			v = some_nextval;
+			lex(keep_lineno);
 			break;
 		
 		case '-':
-			lex();
-			return -unary();
+			lex(keep_lineno);
+			return -unary( use_special, keep_lineno );
 		
 		case '(':
-			lex();
-			v = expr();
+			lex(keep_lineno);
+			v = expr( use_special, keep_lineno );
 			
 			if (!lex.match(')'))
 			{
@@ -176,21 +352,35 @@ s32 assembler::unary()
 	return v;
 }
 
-s32 assembler::expr()
+s32 assembler::expr( bool use_special, bool keep_lineno )
 {
-	s32 v = unary();
+	s32 v = unary( use_special, keep_lineno );
 	
-	while ( ( lex.nextt() == '+' ) || ( lex.nextt() == '-' ) )
+	decltype(lex.nextt()) some_nextt;
+	decltype(lex.nextval()) some_nextval;
+	
+	if (!use_special)
 	{
-		switch (lex.nextt())
+		some_nextt = lex.nextt();
+		some_nextval = lex.nextval();
+	}
+	else
+	{
+		some_nextt = lex.special_nextt();
+		some_nextval = lex.special_nextval();
+	}
+	
+	while ( ( some_nextt == '+' ) || ( some_nextt == '-' ) )
+	{
+		switch (some_nextt)
 		{
 			case '+':
-				lex();
-				v += unary();
+				lex(keep_lineno);
+				v += unary( use_special, keep_lineno );
 				break;
 			case '-':
-				lex();
-				v -= unary();
+				lex(keep_lineno);
+				v -= unary( use_special, keep_lineno );
 				break;
 		}
 	}
@@ -215,20 +405,22 @@ s32 assembler::mask_immed( s32 to_mask, size_t mask )
 	return static_cast<s32>(temp_1);
 }
 
-s32 assembler::reg()
-{
-	if ( lex.nextsym()->typ() == static_cast<tok>(tok_defn::reg) )
-	{
-		return lex.nextsym()->val();
-	}
-	
-	we.expected("register");
-	return -1;
-}
+//s32 assembler::reg( bool use_special, bool keep_lineno )
+//{
+//	decltype(lex.nextsym()) some_nextsym;
+//	
+//	if ( lex.nextsym()->typ() == static_cast<tok>(tok_defn::reg) )
+//	{
+//		return lex.nextsym()->val();
+//	}
+//	
+//	we.expected("register");
+//	return -1;
+//}
 
-s32 assembler::braoffs()
+s32 assembler::braoffs( bool use_special, bool keep_lineno )
 {
-	const s32 temp_0 = expr();
+	const s32 temp_0 = expr( use_special, keep_lineno );
 	const s32 temp_1 = mask_immed( temp_0, ( ( 1 << 16 ) - 1 ) );
 	
 	if ( temp_1 != temp_0 )
@@ -238,9 +430,9 @@ s32 assembler::braoffs()
 	
 	return temp_1;
 }
-s32 assembler::immed16()
+s32 assembler::immed16( bool use_special, bool keep_lineno )
 {
-	const s32 temp_0 = expr();
+	const s32 temp_0 = expr( use_special, keep_lineno );
 	const s32 temp_1 = mask_immed( temp_0, ( ( 1 << 16 ) - 1 ) );
 	
 	if ( temp_1 != temp_0 )
@@ -250,9 +442,9 @@ s32 assembler::immed16()
 	
 	return temp_1;
 }
-s32 assembler::immed12()
+s32 assembler::immed12( bool use_special, bool keep_lineno )
 {
-	const s32 temp_0 = expr();
+	const s32 temp_0 = expr( use_special, keep_lineno );
 	const s32 temp_1 = mask_immed( temp_0, ( ( 1 << 12 ) - 1 ) );
 	
 	if ( temp_1 != temp_0 )

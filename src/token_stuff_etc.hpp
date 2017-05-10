@@ -13,7 +13,9 @@ typedef s32 tok;
 enum class tok_defn : tok
 {
 	reg = 9001,
-	reg_special,
+	reg_flags,
+	reg_ira,
+	reg_pc,
 	instr,
 	
 	

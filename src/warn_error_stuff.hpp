@@ -54,6 +54,11 @@ public:		// functions
 	{
 		error( "Expected ", args... );
 	}
+	template< typename... arg_types >
+	void unknown( arg_types&&... args )
+	{
+		error( "Unknown ", args... );
+	}
 	
 };
 

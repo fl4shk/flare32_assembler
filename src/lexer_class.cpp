@@ -22,38 +22,42 @@ void lexer::init( std::FILE* s_infile, warn_error* s_we, size_t* s_pass,
 	set_special_nextsym(nullptr);
 }
 
-tok lexer::advance()
+tok lexer::advance( bool keep_lineno )
 {
 	if ( nextc() != EOF )
 	{
-		set_lineno( lineno() + ( nextc() == '\n' ) );
+		if (!keep_lineno)
+		{
+			set_lineno( lineno() + ( nextc() == '\n' ) );
+		}
 		set_nextc(getc(infile()));
 	}
 	
 	return nextc();
 }
 
-void lexer::eat_ws()
+void lexer::eat_ws( bool keep_lineno )
 {
 	// Ignore leading whitespace
 	while ( isspace(nextc()) && ( nextc() != '\n' ) )
 	{
-		advance();
+		advance(keep_lineno);
 	}
 }
 
-tok lexer::lex_no_ws()
+void lexer::lex_no_ws( bool keep_lineno )
 {
-	// Comment in navichip32 becomes end of line
+	// Comment in assembler becomes end of line
 	if ( nextc() == ';' )
 	{
 		do
 		{
-			advance();
+			advance(keep_lineno);
 		} while ( ( nextc() != '\n' ) && ( nextc() != EOF ) );
-		advance();
+		advance(keep_lineno);
 		
-		return set_nextt('\n');
+		//return set_nextt('\n');
+		set_nextt('\n');
 	}
 	
 	// An ident?
@@ -64,7 +68,7 @@ tok lexer::lex_no_ws()
 		auto update = [&]() -> void
 		{
 			ident_str += nextc();
-			advance();
+			advance(keep_lineno);
 		};
 		auto update_nextval_and_nextt = [&]() -> void
 		{
@@ -133,29 +137,30 @@ tok lexer::lex_no_ws()
 			update_nextval_and_nextt();
 		}
 		
-		return nextt();
+		//return nextt();
 	}
 	
 	// A number? (allows leading zeros)
 	if ( isdigit(nextc()) )
 	{
 		set_nextval( nextc() - '0' );
-		advance();
+		advance(keep_lineno);
 		
 		while ( isdigit(nextc()) )
 		{
 			set_nextval( ( nextval() * 10 ) + nextc() - '0' );
-			advance();
+			advance(keep_lineno);
 		}
 		
-		return set_nextt(static_cast<tok>(tok_defn::number));
+		//return set_nextt(static_cast<tok>(tok_defn::number));
+		set_nextt(static_cast<tok>(tok_defn::number));
 	}
 	
 	
 	// Must be punctuation?
 	set_nextt(nextc());
-	advance();
-	return nextt();
+	advance(keep_lineno);
+	//return nextt();
 }
 
 
