@@ -308,25 +308,25 @@ s32 assembler::unary( bool use_special, bool keep_lineno )
 {
 	s32 v;
 	
-	decltype(lex.nextt()) some_nextt;
-	decltype(lex.nextval()) some_nextval;
+	decltype(&lexer::nextt) some_nextt;
+	decltype(&lexer::nextval) some_nextval;
 	
 	if (!use_special)
 	{
-		some_nextt = lex.nextt();
-		some_nextval = lex.nextval();
+		some_nextt = &lexer::nextt;
+		some_nextval = &lexer::nextval;
 	}
 	else
 	{
-		some_nextt = lex.special_nextt();
-		some_nextval = lex.special_nextval();
+		some_nextt = &lexer::special_nextt;
+		some_nextval = &lexer::special_nextval;
 	}
 	
-	switch (some_nextt)
+	switch ((lex.*some_nextt)())
 	{
 		case static_cast<tok>(tok_defn::ident):
 		case static_cast<tok>(tok_defn::number):
-			v = some_nextval;
+			v = (lex.*some_nextval)();
 			lex(keep_lineno);
 			break;
 		
@@ -356,23 +356,21 @@ s32 assembler::expr( bool use_special, bool keep_lineno )
 {
 	s32 v = unary( use_special, keep_lineno );
 	
-	decltype(lex.nextt()) some_nextt;
-	decltype(lex.nextval()) some_nextval;
+	decltype(&lexer::nextt) some_nextt;
 	
 	if (!use_special)
 	{
-		some_nextt = lex.nextt();
-		some_nextval = lex.nextval();
+		some_nextt = &lexer::nextt;
 	}
 	else
 	{
-		some_nextt = lex.special_nextt();
-		some_nextval = lex.special_nextval();
+		some_nextt = &lexer::special_nextt;
 	}
 	
-	while ( ( some_nextt == '+' ) || ( some_nextt == '-' ) )
+	while ( ( (lex.*some_nextt)() == '+' ) 
+		|| ( (lex.*some_nextt)() == '-' ) )
 	{
-		switch (some_nextt)
+		switch ((lex.*some_nextt)())
 		{
 			case '+':
 				lex(keep_lineno);
@@ -405,22 +403,24 @@ s32 assembler::mask_immed( s32 to_mask, size_t mask )
 	return static_cast<s32>(temp_1);
 }
 
-//s32 assembler::reg( bool use_special, bool keep_lineno )
-//{
-//	decltype(lex.nextsym()) some_nextsym;
-//	
-//	if ( lex.nextsym()->typ() == static_cast<tok>(tok_defn::reg) )
-//	{
-//		return lex.nextsym()->val();
-//	}
-//	
-//	we.expected("register");
-//	return -1;
-//}
-
-s32 assembler::braoffs( bool use_special, bool keep_lineno )
+s32 assembler::reg( bool keep_lineno )
 {
-	const s32 temp_0 = expr( use_special, keep_lineno );
+	expr( true, keep_lineno );
+	
+	if ( ( lex.special_nextsym() != nullptr )
+		&& ( lex.special_nextsym()->typ() 
+		== static_cast<tok>(tok_defn::reg) ) )
+	{
+		return lex.special_nextsym()->val();
+	}
+	
+	we.expected("register");
+	return -1;
+}
+
+s32 assembler::braoffs( bool keep_lineno )
+{
+	const s32 temp_0 = expr( false, keep_lineno );
 	const s32 temp_1 = mask_immed( temp_0, ( ( 1 << 16 ) - 1 ) );
 	
 	if ( temp_1 != temp_0 )
@@ -430,9 +430,9 @@ s32 assembler::braoffs( bool use_special, bool keep_lineno )
 	
 	return temp_1;
 }
-s32 assembler::immed16( bool use_special, bool keep_lineno )
+s32 assembler::immed16( bool keep_lineno )
 {
-	const s32 temp_0 = expr( use_special, keep_lineno );
+	const s32 temp_0 = expr( false, keep_lineno );
 	const s32 temp_1 = mask_immed( temp_0, ( ( 1 << 16 ) - 1 ) );
 	
 	if ( temp_1 != temp_0 )
@@ -442,9 +442,9 @@ s32 assembler::immed16( bool use_special, bool keep_lineno )
 	
 	return temp_1;
 }
-s32 assembler::immed12( bool use_special, bool keep_lineno )
+s32 assembler::immed12( bool keep_lineno )
 {
-	const s32 temp_0 = expr( use_special, keep_lineno );
+	const s32 temp_0 = expr( false, keep_lineno );
 	const s32 temp_1 = mask_immed( temp_0, ( ( 1 << 12 ) - 1 ) );
 	
 	if ( temp_1 != temp_0 )

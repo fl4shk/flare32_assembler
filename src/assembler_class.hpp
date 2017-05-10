@@ -76,11 +76,11 @@ private:		// functions
 	
 	s32 mask_immed( s32 to_mask, size_t mask );
 	
-	//s32 reg( bool use_special, bool keep_lineno );
+	s32 reg( bool keep_lineno=false );
 	
-	s32 braoffs( bool use_special, bool keep_lineno=false );
-	s32 immed16( bool use_special, bool keep_lineno=false );
-	s32 immed12( bool use_special, bool keep_lineno=false );
+	s32 braoffs( bool keep_lineno=false );
+	s32 immed16( bool keep_lineno=false );
+	s32 immed12( bool keep_lineno=false );
 	inline s32 absolute( bool use_special, bool keep_lineno=false )
 	{
 		return expr( use_special, keep_lineno );
