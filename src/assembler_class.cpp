@@ -114,9 +114,32 @@ void assembler::gen( s32 v )
 }
 
 // Parser stuff
-const instruction& assembler::determine_instr()
+const instruction* assembler::determine_instr()
 {
+	instruction* ret = nullptr;
 	
+	
+	
+	
+	lex();
+	const long orig_pos = std::ftell(infile);
+	
+	if ( lex.special_nextsym() == nullptr )
+	{
+		we.expected("instruction");
+	}
+	
+	const symbol* instr_sym = lex.special_nextsym();
+	
+	if ( instr_sym->typ() != static_cast<tok>(tok_defn::instr) )
+	{
+		we.expected("instruction");
+	}
+	
+	const std::vector<instruction>* instr_vec = instr_tbl.at(instr_sym);
+	
+	
+	return ret;
 }
 
 s32 assembler::unary()
@@ -243,6 +266,8 @@ s32 assembler::immed12()
 
 s32 assembler::line()
 {
+	
+	
 }
 
 

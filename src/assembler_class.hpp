@@ -50,7 +50,7 @@ private:		// functions
 	
 	
 	// Parser stuff
-	const instruction& determine_instr();
+	const instruction* determine_instr();
 	s32 unary();
 	s32 expr();
 	

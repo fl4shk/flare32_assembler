@@ -85,6 +85,11 @@ public:		// functions
 	
 	void enter( symbol* sym, size_t opcode, size_t grp, instr_args iargs );
 	
+	inline std::vector<instruction>* at( const symbol* where )
+	{
+		return &table().at(const_cast<symbol*>(where));
+	}
+	
 	gen_getter_by_con_ref(table);
 	
 };
