@@ -28,6 +28,7 @@ private:		// variables
 	lexer lex;
 	symbol_table sym_tbl;
 	warn_error we;
+	instruction_table instr_tbl;
 	
 	
 private:		// functions
@@ -37,10 +38,10 @@ private:		// functions
 	gen_setter_by_val(changed);
 	
 	// Constructor stuff
-	void enter_grp_0_instructions();
-	void enter_grp_1_instructions();
-	void enter_grp_2_instructions();
-	void enter_grp_3_instructions();
+	void insert_grp_0_instructions();
+	void insert_grp_1_instructions();
+	void insert_grp_2_instructions();
+	void insert_grp_3_instructions();
 	
 	// Code generator stuff
 	void genb( s32 v );

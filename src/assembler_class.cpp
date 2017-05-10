@@ -41,10 +41,10 @@ assembler::assembler( int argc, char** argv, std::FILE* s_infile )
 	sym_tbl.enter( "pc", static_cast<tok>(tok_defn::reg_pc), 0 );
 	
 	
-	enter_grp_0_instructions();
-	enter_grp_1_instructions();
-	enter_grp_2_instructions();
-	enter_grp_3_instructions();
+	insert_grp_0_instructions();
+	insert_grp_1_instructions();
+	insert_grp_2_instructions();
+	insert_grp_3_instructions();
 	
 }
 
@@ -59,17 +59,230 @@ int assembler::run()
 }
 
 // Constructor stuff
-void assembler::enter_grp_0_instructions()
+void assembler::insert_grp_0_instructions()
 {
+	static constexpr size_t grp = 0;
+	size_t opcode = 0;
+	symbol* sym;
+	
+	//sym = sym_tbl.enter(
+	
+	// Instructions:
+	// rA = rA + rB
+	// This instruction can affect N, V, Z, and C flags.
+	//add rA, rB
+	sym = &sym_tbl.enter( "add", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	
+	// rA = rA + rB + carry_flag
+	// Add with carry
+	// This instruction can affect N, V, Z, and C flags.
+	//adc rA, rB
+	sym = &sym_tbl.enter( "adc", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	
+	// rA = rA - rB
+	// This instruction can affect N, V, Z, and C flags.
+	//sub rA, rB
+	sym = &sym_tbl.enter( "sub", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	
+	// rA = rA + (~rB) + carry_flag
+	// Subtract with borrow (6502 style)
+	// This instruction can affect N, V, Z, and C flags.
+	//sbc rA, rB
+	sym = &sym_tbl.enter( "sbc", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	
+	
+	
+	// rA = rB - rA
+	// This instruction can affect N, V, Z, and C flags.
+	//rsb rA, rB
+	sym = &sym_tbl.enter( "rsb", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	
+	// rA = rA * rB
+	//mul rA, rB
+	sym = &sym_tbl.enter( "mul", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	
+	// rA = rA & rB
+	// This instruction can affect the N and Z flags.
+	//and rA, rB
+	sym = &sym_tbl.enter( "and", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	
+	// rA = rA | rB
+	// This instruction can affect the N and Z flags.
+	//or rA, rB
+	sym = &sym_tbl.enter( "or", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	
+	
+	
+	// rA = rA ^ rB
+	// This instruction can affect the N and Z flags.
+	//xor rA, rB
+	sym = &sym_tbl.enter( "xor", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	
+	// Logical shift left
+	// rA = rA << rB
+	//lsl rA, rB
+	sym = &sym_tbl.enter( "lsl", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	
+	// Logical shift right
+	//lsr rA, rB
+	sym = &sym_tbl.enter( "lsr", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	
+	// Arithmetic shift right
+	//asr rA, rB
+	sym = &sym_tbl.enter( "asr", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	
+	
+	
+	// Rotate rB left by rB bits, then store result in rA.
+	//rol rA, rB
+	sym = &sym_tbl.enter( "rol", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	
+	// Rotate rB right by rB bits, then store result in rA.
+	//ror rA, rB
+	sym = &sym_tbl.enter( "ror", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	
+	// Rotate rB left (THROUGH carry) by 1 bit, then store result in rA.
+	// This instruction can only affect the C flag.
+	//rlc rA, rB
+	sym = &sym_tbl.enter( "rlc", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	
+	// Rotate rB right (THROUGH carry) by 1 bit, then store result in rA.
+	// This instruction can only affect the C flag.
+	//rrc rA, rB
+	sym = &sym_tbl.enter( "rrc", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	
+	
+	
+	// rA = Sign extend of low 16 bits in rB
+	// Note that the high 16 bits of rB are ignored
+	//seh rA, rB
+	sym = &sym_tbl.enter( "seh", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	
+	// rA = Sign extend of low 8 bits in rB
+	//seb rA, rB
+	sym = &sym_tbl.enter( "seb", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	
+	// Push registers rA and rb (as a pair) onto the 
+	// stack (in that order)
+	//push rA, rB
+	sym = &sym_tbl.enter( "push", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	
+	// Pop two 32-bit values off the stack, storing the first popped
+	// value into rB and the second popped value into rA
+	//pop rA, rB
+	sym = &sym_tbl.enter( "pop", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	
+	
+	
+	// Push flags as 8-bit value onto the stack (high 4 bits of pushed
+	// value are set to zero before the push)
+	//push flags
+	sym = &sym_tbl.enter( "push", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::flags );
+	
+	// Pop 8-bit value from the stack and store low 4 bits to flags
+	//pop flags
+	sym = &sym_tbl.enter( "pop", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::flags );
+	
+	// Clear rA, then CoPY FRom Flags to rA
+	//cpy rA, flags
+	sym = &sym_tbl.enter( "cpy", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_flags );
+	
+	// Copy to flags from rA
+	// This instruction can affect N, V, Z, and C flags.
+	//cpy flags, rA
+	sym = &sym_tbl.enter( "cpy", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::flags_ra );
+	
+	
+	
+	// ENable Interrupts
+	//eni
+	sym = &sym_tbl.enter( "en", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::noargs );
+	
+	// DIsable Interrupts
+	//dii
+	sym = &sym_tbl.enter( "di", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::noargs );
+	
+	// Set the PC to interrupt RETurn address and enable Interrupts
+	//reti
+	sym = &sym_tbl.enter( "ret", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::noargs );
+	
+	// Set the PC to the Interrupt Return Address, but DON'T enable
+	// interrupts
+	//jump ira
+	sym = &sym_tbl.enter( "jump", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ira );
+	
+	
+	
+	// Copy rA to the Interrupt Return Address
+	//cpy ira, rA
+	sym = &sym_tbl.enter( "cpy", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ira_ra );
+	
+	// Copy the Interrupt Return Address to rA
+	//cpy rA, ira
+	sym = &sym_tbl.enter( "cpy", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_ira );
+	
+	// Subroutine call using (rA + rB) as destination address. 
+	// The return address is stored in the link register (lr).
+	//callx rA, rB
+	sym = &sym_tbl.enter( "callx", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	
+	// Copy pc to rA (this can be used for pc-relative loads
+	// and stores)
+	//cpy rA, pc
+	sym = &sym_tbl.enter( "cpy", static_cast<tok>(tok_defn::instr), 0 );
+	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_pc );
+	
+	
+	// Pseudo instruction:
+	//// Subroutine call using rB as destination address. 
+	//// Encoded like this:  callx r0, rB
+	//call rB
 }
-void assembler::enter_grp_1_instructions()
+void assembler::insert_grp_1_instructions()
 {
+	static constexpr size_t grp = 1;
+	size_t opcode = 0;
 }
-void assembler::enter_grp_2_instructions()
+void assembler::insert_grp_2_instructions()
 {
+	static constexpr size_t grp = 2;
+	size_t opcode = 0;
 }
-void assembler::enter_grp_3_instructions()
+void assembler::insert_grp_3_instructions()
 {
+	static constexpr size_t grp = 3;
+	size_t opcode = 0;
 }
 
 // Code generator stuff
