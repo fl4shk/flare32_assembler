@@ -8,236 +8,188 @@ void assembler::insert_grp_0_instructions()
 {
 	static constexpr size_t grp = 0;
 	size_t opcode = 0;
-	symbol* sym;
+	symbol * sym, * sym_dot_f;
 	
+	// This inserts an instruction and also one with ".f" appended to its
+	// name
+	auto insert_instr_and_with_dot_f = [&]( std::string&& orig_name, 
+		const instr_args& iargs ) -> void
+	{
+		std::string temp_name_0 = std::move(orig_name);
+		std::string temp_name_1 = temp_name_0 + std::string(".f");
+		sym = &special_sym_tbl.enter( std::move(temp_name_0), 
+			cast_typ(tok_defn::instr), 0, true );
+		sym_dot_f = &special_sym_tbl.enter( std::move(temp_name_1),
+			cast_typ(tok_defn::instr), 0, true );
+		instr_tbl.enter( sym, opcode, grp, iargs );
+		instr_tbl.enter( sym_dot_f, opcode, grp, iargs );
+		
+		++opcode;
+	};
 	
 	// Instructions:
 	// rA = rA + rB
 	// This instruction can affect N, V, Z, and C flags.
 	//add rA, rB
-	sym = &special_sym_tbl.enter( "add", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "add", instr_args::ra_rb );
 	
 	// rA = rA + rB + carry_flag
 	// Add with carry
 	// This instruction can affect N, V, Z, and C flags.
 	//adc rA, rB
-	sym = &special_sym_tbl.enter( "adc", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "adc", instr_args::ra_rb );
 	
 	// rA = rA - rB
 	// This instruction can affect N, V, Z, and C flags.
 	//sub rA, rB
-	sym = &special_sym_tbl.enter( "sub", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "sub", instr_args::ra_rb );
 	
 	// rA = rA + (~rB) + carry_flag
 	// Subtract with borrow (6502 style)
 	// This instruction can affect N, V, Z, and C flags.
 	//sbc rA, rB
-	sym = &special_sym_tbl.enter( "sbc", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "sbc", instr_args::ra_rb );
 	
 	
 	
 	// rA = rB - rA
 	// This instruction can affect N, V, Z, and C flags.
 	//rsb rA, rB
-	sym = &special_sym_tbl.enter( "rsb", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "rsb", instr_args::ra_rb );
 	
 	// rA = rA * rB
 	//mul rA, rB
-	sym = &special_sym_tbl.enter( "mul", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "mul", instr_args::ra_rb );
 	
 	// rA = rA & rB
 	// This instruction can affect the N and Z flags.
 	//and rA, rB
-	sym = &special_sym_tbl.enter( "and", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "and", instr_args::ra_rb );
 	
 	// rA = rA | rB
 	// This instruction can affect the N and Z flags.
 	//or rA, rB
-	sym = &special_sym_tbl.enter( "or", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "or", instr_args::ra_rb );
 	
 	
 	
 	// rA = rA ^ rB
 	// This instruction can affect the N and Z flags.
 	//xor rA, rB
-	sym = &special_sym_tbl.enter( "xor", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "xor", instr_args::ra_rb );
 	
 	// Logical shift left
 	// rA = rA << rB
 	//lsl rA, rB
-	sym = &special_sym_tbl.enter( "lsl", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "lsl", instr_args::ra_rb );
 	
 	// Logical shift right
 	//lsr rA, rB
-	sym = &special_sym_tbl.enter( "lsr", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "lsr", instr_args::ra_rb );
 	
 	// Arithmetic shift right
 	//asr rA, rB
-	sym = &special_sym_tbl.enter( "asr", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "asr", instr_args::ra_rb );
 	
 	
 	
 	// Rotate rB left by rB bits, then store result in rA.
 	//rol rA, rB
-	sym = &special_sym_tbl.enter( "rol", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "rol", instr_args::ra_rb );
 	
 	// Rotate rB right by rB bits, then store result in rA.
 	//ror rA, rB
-	sym = &special_sym_tbl.enter( "ror", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "ror", instr_args::ra_rb );
 	
 	// Rotate rB left (THROUGH carry) by 1 bit, then store result in rA.
 	// This instruction can only affect the C flag.
 	//rlc rA, rB
-	sym = &special_sym_tbl.enter( "rlc", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "rlc", instr_args::ra_rb );
 	
 	// Rotate rB right (THROUGH carry) by 1 bit, then store result in rA.
 	// This instruction can only affect the C flag.
 	//rrc rA, rB
-	sym = &special_sym_tbl.enter( "rrc", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "rrc", instr_args::ra_rb );
 	
 	
 	
 	// rA = Sign extend of low 16 bits in rB
 	// Note that the high 16 bits of rB are ignored
 	//seh rA, rB
-	sym = &special_sym_tbl.enter( "seh", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "seh", instr_args::ra_rb );
 	
 	// rA = Sign extend of low 8 bits in rB
 	//seb rA, rB
-	sym = &special_sym_tbl.enter( "seb", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "seb", instr_args::ra_rb );
 	
 	// Push registers rA and rb (as a pair) onto the 
 	// stack (in that order)
 	//push rA, rB
-	sym = &special_sym_tbl.enter( "push", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "push", instr_args::ra_rb );
 	
 	// Pop two 32-bit values off the stack, storing the first popped
 	// value into rB and the second popped value into rA
 	//pop rA, rB
-	sym = &special_sym_tbl.enter( "pop", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "pop", instr_args::ra_rb );
 	
 	
 	
 	// Push flags as 8-bit value onto the stack (high 4 bits of pushed
 	// value are set to zero before the push)
 	//push flags
-	sym = &special_sym_tbl.enter( "push", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::flags );
+	insert_instr_and_with_dot_f( "push", instr_args::flags );
 	
 	// Pop 8-bit value from the stack and store low 4 bits to flags
 	//pop flags
-	sym = &special_sym_tbl.enter( "pop", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::flags );
+	insert_instr_and_with_dot_f( "pop", instr_args::flags );
 	
 	// Clear rA, then CoPY FRom Flags to rA
 	//cpy rA, flags
-	sym = &special_sym_tbl.enter( "cpy", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_flags );
+	insert_instr_and_with_dot_f( "cpy", instr_args::ra_flags );
 	
 	// Copy to flags from rA
 	// This instruction can affect N, V, Z, and C flags.
 	//cpy flags, rA
-	sym = &special_sym_tbl.enter( "cpy", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::flags_ra );
+	insert_instr_and_with_dot_f( "cpy", instr_args::flags_ra );
 	
 	
 	
 	// ENable Interrupts
 	//eni
-	sym = &special_sym_tbl.enter( "en", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::noargs );
+	insert_instr_and_with_dot_f( "en", instr_args::noargs );
 	
 	// DIsable Interrupts
 	//dii
-	sym = &special_sym_tbl.enter( "di", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::noargs );
+	insert_instr_and_with_dot_f( "di", instr_args::noargs );
 	
 	// Set the PC to interrupt RETurn address and enable Interrupts
 	//reti
-	sym = &special_sym_tbl.enter( "ret", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::noargs );
+	insert_instr_and_with_dot_f( "ret", instr_args::noargs );
 	
 	// Set the PC to the Interrupt Return Address, but DON'T enable
 	// interrupts
 	//jump ira
-	sym = &special_sym_tbl.enter( "jump", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ira );
+	insert_instr_and_with_dot_f( "jump", instr_args::ira );
 	
 	
 	
 	// Copy rA to the Interrupt Return Address
 	//cpy ira, rA
-	sym = &special_sym_tbl.enter( "cpy", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ira_ra );
+	insert_instr_and_with_dot_f( "cpy", instr_args::ira_ra );
 	
 	// Copy the Interrupt Return Address to rA
 	//cpy rA, ira
-	sym = &special_sym_tbl.enter( "cpy", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_ira );
+	insert_instr_and_with_dot_f( "cpy", instr_args::ra_ira );
 	
 	// Subroutine call using (rA + rB) as destination address. 
 	// The return address is stored in the link register (lr).
 	//callx rA, rB
-	sym = &special_sym_tbl.enter( "callx", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "callx", instr_args::ra_rb );
 	
 	// Copy pc to rA (this can be used for pc-relative loads
 	// and stores)
 	//cpy rA, pc
-	sym = &special_sym_tbl.enter( "cpy", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_pc );
+	insert_instr_and_with_dot_f( "cpy", instr_args::ra_pc );
 	
 	
 	// Pseudo instruction:
@@ -249,126 +201,111 @@ void assembler::insert_grp_1_instructions()
 {
 	static constexpr size_t grp = 1;
 	size_t opcode = 0;
-	symbol* sym;
+	symbol * sym, * sym_dot_f;
+	
+	// This inserts an instruction and also one with ".f" appended to its
+	// name
+	auto insert_instr_and_with_dot_f = [&]( std::string&& orig_name, 
+		const instr_args& iargs ) -> void
+	{
+		std::string temp_name_0 = std::move(orig_name);
+		std::string temp_name_1 = temp_name_0 + std::string(".f");
+		sym = &special_sym_tbl.enter( std::move(temp_name_0), 
+			cast_typ(tok_defn::instr), 0, true );
+		sym_dot_f = &special_sym_tbl.enter( std::move(temp_name_1),
+			cast_typ(tok_defn::instr), 0, true );
+		instr_tbl.enter( sym, opcode, grp, iargs );
+		instr_tbl.enter( sym_dot_f, opcode, grp, iargs );
+		
+		++opcode;
+	};
 	
 	
 	// Instructions:
 	// rA = rB + (zero-extended imm)
 	// This instruction can affect N, V, Z, and C flags.
 	//addi rA, rB, imm
-	sym = &special_sym_tbl.enter( "addi", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_imm16u );
+	insert_instr_and_with_dot_f( "addi", instr_args::ra_rb_imm16u );
 	
 	// rA = rB + (zero-extended imm) + carry_flag
 	// Add with carry
 	// This instruction can affect N, V, Z, and C flags.
 	//adci rA, rB, imm
-	sym = &special_sym_tbl.enter( "adci", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_imm16u );
+	insert_instr_and_with_dot_f( "adci", instr_args::ra_rb_imm16u );
 	
 	// rA = rB - (zero-extended imm)
 	// This instruction can affect N, V, Z, and C flags.
 	//subi rA, rB, imm
-	sym = &special_sym_tbl.enter( "subi", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_imm16u );
+	insert_instr_and_with_dot_f( "subi", instr_args::ra_rb_imm16u );
 	
 	// rA = rB + (~(zero-extended imm)) + carry_flag
 	// Subtract with borrow (6502 style)
 	// This instruction can affect N, V, Z, and C flags.
 	//sbci rA, rB, imm
-	sym = &special_sym_tbl.enter( "sbci", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_imm16u );
+	insert_instr_and_with_dot_f( "sbci", instr_args::ra_rb_imm16u );
 	
 	
 	
 	// rA = (zero-extended imm) - rB
 	// This instruction can affect N, V, Z, and C flags.
 	//rsbi rA, rB, imm
-	sym = &special_sym_tbl.enter( "rsbi", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_imm16u );
+	insert_instr_and_with_dot_f( "rsbi", instr_args::ra_rb_imm16u );
 	
 	// rA = rB * (zero-extended imm)
 	//muli rA, rB, imm
-	sym = &special_sym_tbl.enter( "muli", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_imm16u );
+	insert_instr_and_with_dot_f( "muli", instr_args::ra_rb_imm16u );
 	
 	// rA = rB & (zero-extended imm)
 	// This instruction can affect the N and Z flags.
 	//andi rA, rB, imm
-	sym = &special_sym_tbl.enter( "andi", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_imm16u );
+	insert_instr_and_with_dot_f( "andi", instr_args::ra_rb_imm16u );
 	
 	// rA = rB | (zero-extended imm)
 	// This instruction can affect the N and Z flags.
 	//ori rA, rB, imm
-	sym = &special_sym_tbl.enter( "ori", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_imm16u );
+	insert_instr_and_with_dot_f( "ori", instr_args::ra_rb_imm16u );
 	
 	
 	
 	// rA = rB ^ (zero-extended imm)
 	// This instruction can affect the N and Z flags.
 	//xori rA, rB, imm
-	sym = &special_sym_tbl.enter( "xori", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_imm16u );
+	insert_instr_and_with_dot_f( "xori", instr_args::ra_rb_imm16u );
 	
 	// Logical shift left
 	// rA = rB << (zero-extended imm)
 	//lsli rA, rB, imm
-	sym = &special_sym_tbl.enter( "lsli", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_imm16u );
+	insert_instr_and_with_dot_f( "lsli", instr_args::ra_rb_imm16u );
 	
 	// Logical shift right
 	//lsri rA, rB, imm
-	sym = &special_sym_tbl.enter( "lsri", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_imm16u );
+	insert_instr_and_with_dot_f( "lsri", instr_args::ra_rb_imm16u );
 	
 	// Arithmetic shift right
 	//asri rA, rB, imm
-	sym = &special_sym_tbl.enter( "asri", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_imm16u );
+	insert_instr_and_with_dot_f( "asri", instr_args::ra_rb_imm16u );
 	
 	
 	
 	// Rotate rB left by (zero-extended imm) bits, then store result in rA.
 	//roli rA, rB, imm
-	sym = &special_sym_tbl.enter( "roli", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_imm16u );
+	insert_instr_and_with_dot_f( "roli", instr_args::ra_rb_imm16u );
 	
 	// Rotate rB right by (zero-extended imm) bits, then store result in rA.
 	//rori rA, rB, imm
-	sym = &special_sym_tbl.enter( "rori", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_imm16u );
+	insert_instr_and_with_dot_f( "rori", instr_args::ra_rb_imm16u );
 	
 	// Branch always, 
 	// to ( (pc when instruction starts)
 	// + (sign-extended 16-bit immediate value) )
 	//bra imm
-	sym = &special_sym_tbl.enter( "bra", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::branchoffset );
+	insert_instr_and_with_dot_f( "bra", instr_args::branchoffset );
 	
 	// Branch when Z == 0, 
 	// to ( (pc when instruction starts)
 	// + (sign-extended 16-bit immediate value) )
 	//bne imm
-	sym = &special_sym_tbl.enter( "bne", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::branchoffset );
+	insert_instr_and_with_dot_f( "bne", instr_args::branchoffset );
 	
 	
 	
@@ -376,33 +313,25 @@ void assembler::insert_grp_1_instructions()
 	// to ( (pc when instruction starts)
 	// + (sign-extended 16-bit immediate value) )
 	//beq imm
-	sym = &special_sym_tbl.enter( "beq", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::branchoffset );
+	insert_instr_and_with_dot_f( "beq", instr_args::branchoffset );
 	
 	// Branch when C == 0 [unsigned less than], 
 	// to ( (pc when instruction starts)
 	// + (sign-extended 16-bit immediate value) )
 	//bcc imm
-	sym = &special_sym_tbl.enter( "bcc", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::branchoffset );
+	insert_instr_and_with_dot_f( "bcc", instr_args::branchoffset );
 	
 	// Branch when C == 1 [unsigned greater than or equal], 
 	// to ( (pc when instruction starts)
 	// + (sign-extended 16-bit immediate value) )
 	//bcs imm
-	sym = &special_sym_tbl.enter( "bcs", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::branchoffset );
+	insert_instr_and_with_dot_f( "bcs", instr_args::branchoffset );
 	
 	// Branch when ( C == 0 or Z == 1 ) [unsigned less than or equal], 
 	// to ( (pc when instruction starts)
 	// + (sign-extended 16-bit immediate value) )
 	//bls imm
-	sym = &special_sym_tbl.enter( "bls", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::branchoffset );
+	insert_instr_and_with_dot_f( "bls", instr_args::branchoffset );
 	
 	
 	
@@ -410,33 +339,25 @@ void assembler::insert_grp_1_instructions()
 	// to ( (pc when instruction starts)
 	// + (sign-extended 16-bit immediate value) )
 	//bhi imm
-	sym = &special_sym_tbl.enter( "bhi", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::branchoffset );
+	insert_instr_and_with_dot_f( "bhi", instr_args::branchoffset );
 	
 	// Branch when N == 0, 
 	// to ( (pc when instruction starts)
 	// + (sign-extended 16-bit immediate value) )
 	//bpl imm
-	sym = &special_sym_tbl.enter( "bpl", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::branchoffset );
+	insert_instr_and_with_dot_f( "bpl", instr_args::branchoffset );
 	
 	// Branch when N == 1, 
 	// to ( (pc when instruction starts)
 	// + (sign-extended 16-bit immediate value) )
 	//bmi imm
-	sym = &special_sym_tbl.enter( "bmi", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::branchoffset );
+	insert_instr_and_with_dot_f( "bmi", instr_args::branchoffset );
 	
 	// Branch when V == 0, 
 	// to ( (pc when instruction starts)
 	// + (sign-extended 16-bit immediate value) )
 	//bvc imm
-	sym = &special_sym_tbl.enter( "bvc", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::branchoffset );
+	insert_instr_and_with_dot_f( "bvc", instr_args::branchoffset );
 	
 	
 	
@@ -444,33 +365,25 @@ void assembler::insert_grp_1_instructions()
 	// to ( (pc when instruction starts)
 	// + (sign-extended 16-bit immediate value) )
 	//bvs imm
-	sym = &special_sym_tbl.enter( "bvs", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::branchoffset );
+	insert_instr_and_with_dot_f( "bvs", instr_args::branchoffset );
 	
 	// Branch when N == V [signed greater than or equal], 
 	// to ( (pc when instruction starts)
 	// + (sign-extended 16-bit immediate value) )
 	//bge imm
-	sym = &special_sym_tbl.enter( "bge", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::branchoffset );
+	insert_instr_and_with_dot_f( "bge", instr_args::branchoffset );
 	
 	// Branch when N != V [signed less than], 
 	// to ( (pc when instruction starts)
 	// + (sign-extended 16-bit immediate value) )
 	//blt imm
-	sym = &special_sym_tbl.enter( "blt", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::branchoffset );
+	insert_instr_and_with_dot_f( "blt", instr_args::branchoffset );
 	
 	// Branch when ( N == V and Z == 0 ) [signed greater than], 
 	// to ( (pc when instruction starts)
 	// + (sign-extended 16-bit immediate value) )
 	//bgt imm
-	sym = &special_sym_tbl.enter( "bgt", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::branchoffset );
+	insert_instr_and_with_dot_f( "bgt", instr_args::branchoffset );
 	
 	
 	
@@ -478,30 +391,22 @@ void assembler::insert_grp_1_instructions()
 	// to ( (pc when instruction starts)
 	// + (sign-extended 16-bit immediate value) )
 	//ble imm
-	sym = &special_sym_tbl.enter( "ble", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::branchoffset );
+	insert_instr_and_with_dot_f( "ble", instr_args::branchoffset );
 	
 	// rA = rB & (sign-extended imm)
 	// This instruction can affect the N and Z flags.
 	//andsi rA, rB, imm
-	sym = &special_sym_tbl.enter( "andsi", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::branchoffset );
+	insert_instr_and_with_dot_f( "andsi", instr_args::imm16s );
 	
 	// rA = rB | (sign-extended imm)
 	// This instruction can affect the N and Z flags.
 	//orsi rA, rB, imm
-	sym = &special_sym_tbl.enter( "orsi", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::branchoffset );
+	insert_instr_and_with_dot_f( "orsi", instr_args::imm16s );
 	
 	// rA = rB ^ (sign-extended imm)
 	// This instruction can affect the N and Z flags.
 	//xorsi rA, rB, imm
-	sym = &special_sym_tbl.enter( "xorsi", 
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::branchoffset );
+	insert_instr_and_with_dot_f( "xorsi", instr_args::imm16s );
 	
 	
 	
@@ -551,40 +456,49 @@ void assembler::insert_grp_2_instructions()
 {
 	static constexpr size_t grp = 2;
 	size_t opcode = 0;
-	symbol* sym;
+	symbol * sym, * sym_dot_f;
+	
+	// This inserts an instruction and also one with ".f" appended to its
+	// name
+	auto insert_instr_and_with_dot_f = [&]( std::string&& orig_name, 
+		const instr_args& iargs ) -> void
+	{
+		std::string temp_name_0 = std::move(orig_name);
+		std::string temp_name_1 = temp_name_0 + std::string(".f");
+		sym = &special_sym_tbl.enter( std::move(temp_name_0), 
+			cast_typ(tok_defn::instr), 0, true );
+		sym_dot_f = &special_sym_tbl.enter( std::move(temp_name_1),
+			cast_typ(tok_defn::instr), 0, true );
+		instr_tbl.enter( sym, opcode, grp, iargs );
+		instr_tbl.enter( sym_dot_f, opcode, grp, iargs );
+		
+		++opcode;
+	};
 	
 	
 	// Instructions:
 	// Load 32-bit value from address (rB + rC + (sign-extended imm)) into
 	// rA.
 	//ldr rA, rB, rC, imm
-	sym = &special_sym_tbl.enter( "ldr",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "ldr", instr_args::ra_rb_rc_imm12s );
 	
 	// Load zero-extended 16-bit value from address 
 	// (rB + rC + (sign-extended imm)) into rA.
 	// This zero-extends the value.
 	//ldh rA, rB, rC, imm
-	sym = &special_sym_tbl.enter( "ldh",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "ldh", instr_args::ra_rb_rc_imm12s );
 	
 	// Load sign-extended 16-bit value from address 
 	// (rB + rC + (sign-extended imm)) into rA.
 	// This sign-extends the value.
 	//ldsh rA, rB, rC, imm
-	sym = &special_sym_tbl.enter( "ldsh",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "ldsh", instr_args::ra_rb_rc_imm12s );
 	
 	// Load zero-extended 8-bit value from address 
 	// (rB + rC + (sign-extended imm)) into rA.
 	// This zero-extends the value.
 	//ldb rA, rB, rC, imm
-	sym = &special_sym_tbl.enter( "ldb",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "ldb", instr_args::ra_rb_rc_imm12s );
 	
 	
 	
@@ -592,168 +506,122 @@ void assembler::insert_grp_2_instructions()
 	// (rB + rC + (sign-extended imm)) into rA.
 	// This sign-extends the value.
 	//ldsb rA, rB, rC, imm
-	sym = &special_sym_tbl.enter( "ldsb",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "ldsb", instr_args::ra_rb_rc_imm12s );
 	
 	// Store 32-bit value in rA to address (rB + rC + (sign-extended imm)).
 	//str rA, rB, rC, imm
-	sym = &special_sym_tbl.enter( "str",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "str", instr_args::ra_rb_rc_imm12s );
 	
 	// Store low 16 bits of rA to address (rB + rC + (sign-extended imm)).
 	//sth rA, rB, rC, imm
-	sym = &special_sym_tbl.enter( "sth",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "sth", instr_args::ra_rb_rc_imm12s );
 	
 	// Store low 8 bits of rA to address (rB + rC + (sign-extended imm)).
 	//stb rA, rB, rC, imm
-	sym = &special_sym_tbl.enter( "stb",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "stb", instr_args::ra_rb_rc_imm12s );
 	
 	
 	// rA = rB + rC
 	// This instruction can affect N, V, Z, and C flags.
 	//add rA, rB, rC
-	sym = &special_sym_tbl.enter( "add",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_rc );
+	insert_instr_and_with_dot_f( "add", instr_args::ra_rb_rc );
 	
 	// rA = rB + rC + carry_flag
 	// Add with carry
 	// This instruction can affect N, V, Z, and C flags.
 	//adc rA, rB, rC
-	sym = &special_sym_tbl.enter( "adc",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_rc );
+	insert_instr_and_with_dot_f( "adc", instr_args::ra_rb_rc );
 	
 	// rA = rB - rC
 	// This instruction can affect N, V, Z, and C flags.
 	//sub rA, rB, rC
-	sym = &special_sym_tbl.enter( "sub",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_rc );
+	insert_instr_and_with_dot_f( "sub", instr_args::ra_rb_rc );
 	
 	// rA = rB + (~rC) + carry_flag
 	// Subtract with borrow (6502 style)
 	// This instruction can affect N, V, Z, and C flags.
 	//sbc rA, rB, rC
-	sym = &special_sym_tbl.enter( "sbc",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_rc );
+	insert_instr_and_with_dot_f( "sbc", instr_args::ra_rb_rc );
 	
 	
 	
 	// rA = rC - rB
 	// This instruction can affect N, V, Z, and C flags.
 	//rsb rA, rB, rC
-	sym = &special_sym_tbl.enter( "rsb",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_rc );
+	insert_instr_and_with_dot_f( "rsb", instr_args::ra_rb_rc );
 	
 	// rA = rB * rC
 	//mul rA, rB, rC
-	sym = &special_sym_tbl.enter( "mul",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_rc );
+	insert_instr_and_with_dot_f( "mul", instr_args::ra_rb_rc );
 	
 	// rA = rB & rC
 	// This instruction can affect the N and Z flags.
 	//and rA, rB, rC
-	sym = &special_sym_tbl.enter( "and",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_rc );
+	insert_instr_and_with_dot_f( "and", instr_args::ra_rb_rc );
 	
 	// rA = rB | rC
 	// This instruction can affect the N and Z flags.
 	//or rA, rB, rC
-	sym = &special_sym_tbl.enter( "or",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_rc );
+	insert_instr_and_with_dot_f( "or", instr_args::ra_rb_rc );
 	
 	
 	
 	// rA = rB ^ rC
 	// This instruction can affect the N and Z flags.
 	//xor rA, rB, rC
-	sym = &special_sym_tbl.enter( "xor",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_rc );
+	insert_instr_and_with_dot_f( "xor", instr_args::ra_rb_rc );
 	
 	// Logical shift left
 	// rA = rB << rC
 	//lsl rA, rB, rC
-	sym = &special_sym_tbl.enter( "lsl",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_rc );
+	insert_instr_and_with_dot_f( "lsl", instr_args::ra_rb_rc );
 	
 	// Logical shift right
 	//lsr rA, rB, rC
-	sym = &special_sym_tbl.enter( "lsr",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_rc );
+	insert_instr_and_with_dot_f( "lsr", instr_args::ra_rb_rc );
 	
 	// Arithmetic shift right
 	//asr rA, rB, rC
-	sym = &special_sym_tbl.enter( "asr",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_rc );
+	insert_instr_and_with_dot_f( "asr", instr_args::ra_rb_rc );
 	
 	
 	
 	// Rotate rB left by rC bits, then store result in rA.
 	//rol rA, rB, rC
-	sym = &special_sym_tbl.enter( "rol",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_rc );
+	insert_instr_and_with_dot_f( "rol", instr_args::ra_rb_rc );
 	
 	// Rotate rB right by rC bits, then store result in rA.
 	//ror rA, rB, rC
-	sym = &special_sym_tbl.enter( "ror",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_rc );
+	insert_instr_and_with_dot_f( "ror", instr_args::ra_rb_rc );
 	
 	// Fused multiply-add
 	// rA = rA + (rB * rC)
 	//fma rA, rB, rC
-	sym = &special_sym_tbl.enter( "fma",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_rc );
+	insert_instr_and_with_dot_f( "fma", instr_args::ra_rb_rc );
 	
 	// Copy rC to rA and to rB
 	// If rA is the same register as rB, then the 
 	// register will only be written once.
 	//cpyp rA, rB, rC
-	sym = &special_sym_tbl.enter( "cpyp",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_rc );
+	insert_instr_and_with_dot_f( "cpyp", instr_args::ra_rb_rc );
 	
 	
 	
 	// Set pc to destination address in (rA + rB).
 	//jumpx rA, rB
-	sym = &special_sym_tbl.enter( "jumpx",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "jumpx", instr_args::ra_rb );
 	
 	// Add 4 to rB, then load from address in rB into
 	// rA
 	// LoaD Register, Add Before
 	//ldrpb rA, rB
-	sym = &special_sym_tbl.enter( "ldrpb",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "ldrpb", instr_args::ra_rb );
 	
 	// Store rA to address in rB, then subtract 4 from
 	// rB
 	// STore Register, Subtract After
 	//strma rA, rB
-	sym = &special_sym_tbl.enter( "strma",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "strma", instr_args::ra_rb );
 	
 	// Reserved for future expansion.
 	
@@ -964,39 +832,48 @@ void assembler::insert_grp_3_instructions()
 {
 	static constexpr size_t grp = 3;
 	size_t opcode = 0;
-	symbol* sym;
+	symbol * sym, * sym_dot_f;
+	
+	// This inserts an instruction and also one with ".f" appended to its
+	// name
+	auto insert_instr_and_with_dot_f = [&]( std::string&& orig_name, 
+		const instr_args& iargs ) -> void
+	{
+		std::string temp_name_0 = std::move(orig_name);
+		std::string temp_name_1 = temp_name_0 + std::string(".f");
+		sym = &special_sym_tbl.enter( std::move(temp_name_0), 
+			cast_typ(tok_defn::instr), 0, true );
+		sym_dot_f = &special_sym_tbl.enter( std::move(temp_name_1),
+			cast_typ(tok_defn::instr), 0, true );
+		instr_tbl.enter( sym, opcode, grp, iargs );
+		instr_tbl.enter( sym_dot_f, opcode, grp, iargs );
+		
+		++opcode;
+	};
 	
 	
 	// Instructions:
 	// Load 32-bit value from address (absolute_addr + rB) into rA.
 	//ldra rA, rB, absolute_addr
-	sym = &special_sym_tbl.enter( "ldra",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_abs );
+	insert_instr_and_with_dot_f( "ldra", instr_args::ra_rb_abs );
 	
 	// Load zero-extended 16-bit value from address (absolute_addr + rB)
 	// into rA.
 	// This zero-extends the value.
 	//ldha rA, rB, absolute_addr
-	sym = &special_sym_tbl.enter( "ldha",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_abs );
+	insert_instr_and_with_dot_f( "ldha", instr_args::ra_rb_abs );
 	
 	// Load sign-extended 16-bit value from address (absolute_addr + rB)
 	// into rA.
 	// This sign-extends the value.
 	//ldsha rA, rB, absolute_addr
-	sym = &special_sym_tbl.enter( "ldsha",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_abs );
+	insert_instr_and_with_dot_f( "ldsha", instr_args::ra_rb_abs );
 	
 	// Load zero-extended 8-bit value from address (absolute_addr + rB)
 	// into rA.
 	// This zero-extends the value.
 	//ldba rA, rB, absolute_addr
-	sym = &special_sym_tbl.enter( "ldba",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_abs );
+	insert_instr_and_with_dot_f( "ldba", instr_args::ra_rb_abs );
 	
 	
 	
@@ -1004,51 +881,37 @@ void assembler::insert_grp_3_instructions()
 	// into rA.
 	// This sign-extends the value.
 	//ldsba rA, rB, absolute_addr
-	sym = &special_sym_tbl.enter( "ldsba",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_abs );
+	insert_instr_and_with_dot_f( "ldsba", instr_args::ra_rb_abs );
 	
 	// Store 32-bit value in rA to address (absolute_addr + rB).
 	//stra rA, rB, absolute_addr
-	sym = &special_sym_tbl.enter( "stra",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_abs );
+	insert_instr_and_with_dot_f( "stra", instr_args::ra_rb_abs );
 	
 	// Store low 16 bits of rA to address (absolute_addr + rB).
 	//stha rA, rB, absolute_addr
-	sym = &special_sym_tbl.enter( "stha",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_abs );
+	insert_instr_and_with_dot_f( "stha", instr_args::ra_rb_abs );
 	
 	// Store low 8 bits of rA to address (absolute_addr + rB).
 	//stba rA, rB, absolute_addr
-	sym = &special_sym_tbl.enter( "stba",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_abs );
+	insert_instr_and_with_dot_f( "stba", instr_args::ra_rb_abs );
 	
 	
 	
 	// Set pc to destination address in (rA + rB + absolute_addr).
 	//jumpa rA, rB, absolute_addr
-	sym = &special_sym_tbl.enter( "jumpa",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_abs );
+	insert_instr_and_with_dot_f( "jumpa", instr_args::ra_rb_abs );
 	
 	// Subroutine call using (rA + rB + absolute_addr) as destination
 	// address. 
 	// The return address is stored in the link register (lr).
 	//calla rA, rB, absolute_addr
-	sym = &special_sym_tbl.enter( "calla",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_abs );
+	insert_instr_and_with_dot_f( "calla", instr_args::ra_rb_abs );
 	
 	// rA = 32-bit immediate, rB = same 32-bit immediate
 	// If rA is the same register as rB, then the 
 	// register will only be written once.
 	//cpypi rA, rB, imm
-	sym = &special_sym_tbl.enter( "cpypi",
-		static_cast<tok>(tok_defn::instr), 0, true );
-	instr_tbl.enter( sym, opcode++, grp, instr_args::ra_rb_abs );
+	insert_instr_and_with_dot_f( "cpypi", instr_args::ra_rb_abs );
 	
 	// Reserved for future expansion.
 	
