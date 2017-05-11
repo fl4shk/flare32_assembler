@@ -219,7 +219,8 @@ private:		// functions
 		return expr( false, just_test, did_fail );
 	}
 	
-	inline tok cast_typ( tok_defn typ ) const
+	template< typename typ_type >
+	inline tok cast_typ( typ_type typ ) const
 	{
 		return static_cast<tok>(typ);
 	}
@@ -241,6 +242,11 @@ private:		// functions
 	//{
 	//	return lex.match( typ, true );
 	//}
+	inline bool lex_match_end_of_line( bool just_test )
+	{
+		return ( lex.match_no_ws( '\n', just_test )
+			|| lex.match_no_ws( EOF, just_test ) );
+	}
 	inline void lex_assume_regular( tok typ )
 	{
 		lex.assume( typ, false );

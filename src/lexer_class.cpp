@@ -116,6 +116,8 @@ void lexer::lex_no_ws( bool keep_lineno )
 				set_special_nextsym(ident_sym);
 				update_special_nextval_and_special_nextt();
 				set_nextsym(nullptr);
+				set_nextval(special_nextval());
+				set_nextt(special_nextt());
 			}
 		}
 		else

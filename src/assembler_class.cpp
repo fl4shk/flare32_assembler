@@ -157,20 +157,20 @@ const instruction* assembler::determine_instr()
 	const instruction* ret = nullptr;
 	
 	const long orig_pos = std::ftell(infile);
+	const symbol* instr_sym = lex.special_nextsym();
 	
 	// Keep lineno so that the function that called this one doesn't have
 	// to know about what happened to the lexer.
-	lex_keep_lineno();
+	//lex_keep_lineno();
 	
 	const long reset_pos = std::ftell(infile);
 	
-	const symbol* instr_sym = lex.special_nextsym();
 	
-	if ( ( lex.special_nextsym() == nullptr )
+	if ( ( instr_sym == nullptr )
 		|| ( instr_sym->typ() != static_cast<tok>(tok_defn::instr) ) )
 	{
-		//we.expected("instruction");
-		return ret;
+		we.expected("instruction");
+		//return ret;
 	}
 	
 	const std::vector<instruction>& instr_vec = instr_tbl.at(instr_sym);
@@ -196,7 +196,7 @@ const instruction* assembler::determine_instr()
 	{
 		const instruction& iter = instr_vec.at(i);
 		
-		//lex_keep_lineno();
+		lex_keep_lineno();
 		
 		iarg_vec.clear();
 		
@@ -382,258 +382,234 @@ bool assembler::handle_instr_noargs( bool just_test,
 {
 	return lex.match( '\n', just_test );
 }
+
+#ifdef X
+#error "Can't re-define X"
+#endif
+
+#define X(suffix) if (!handle_iarg_##suffix( just_test, iarg_vec )) \
+	{ \
+		return false; \
+	}
+
 bool assembler::handle_instr_ra( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	if (!handle_iarg_reg( just_test, iarg_vec ) )
-	{
-		return false;
-	}
+	X(reg);
 	
-	return lex.match( '\n', just_test );
+	lex(just_test);
+	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_rb( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
-	
 	// rA
-	if ( !handle_iarg_reg( just_test, iarg_vec )
-		
-		// rB
-		|| !handle_iarg_reg( just_test, iarg_vec ) )
-	{
-		return false;
-	}
+	X(reg);
 	
-	return lex.match( '\n', just_test );
+	// rB
+	X(reg);
+	
+	lex(just_test);
+	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_imm16u( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	if ( !handle_iarg_reg( just_test, iarg_vec )
-		
-		// imm16u
-		|| !handle_iarg_immed16( just_test, iarg_vec ) )
-	{
-		return false;
-	}
-	return lex.match( '\n', just_test );
+	X(reg);
+	
+	// imm16u
+	X(immed16);
+	
+	lex(just_test);
+	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_imm16u( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// imm16u
-	if (!handle_iarg_immed16( just_test, iarg_vec ))
-	{
-		return false;
-	}
+	X(immed16);
 	
-	return lex.match( '\n', just_test );
+	lex(just_test);
+	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_imm16s( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// imm16s
-	if (!handle_iarg_immed16( just_test, iarg_vec ))
-	{
-		return false;
-	}
+	X(immed16);
 	
-	return lex.match( '\n', just_test );
+	lex(just_test);
+	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_branchoffset( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// braoffs
-	if (!handle_iarg_braoffs( just_test, iarg_vec ))
-	{
-		return false;
-	}
+	X(braoffs)
 	
-	return lex.match( '\n', just_test );
+	lex(just_test);
+	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_flags( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// flags, a special-purpose register
-	if (!handle_iarg_reg_flags( just_test, iarg_vec ))
-	{
-		return false;
-	}
+	X(reg_flags)
 	
-	return lex.match( '\n', just_test );
+	lex(just_test);
+	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_flags( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	if ( !handle_iarg_reg( just_test, iarg_vec )
-		
-		// flags, a special-purpose register
-		|| !handle_iarg_reg_flags( just_test, iarg_vec ) )
-	{
-		return false;
-	}
+	X(reg);
 	
-	return lex.match( '\n', just_test );
+	// flags, a special-purpose register
+	X(reg_flags);
+	
+	lex(just_test);
+	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_flags_ra( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// flags, a special-purpose register
-	if ( !handle_iarg_reg_flags( just_test, iarg_vec )
-		
-		// rA
-		|| !handle_iarg_reg( just_test, iarg_vec ) )
-	{
-		return false;
-	}
+	X(reg_flags);
 	
-	return lex.match( '\n', just_test );
+	// rA
+	X(reg);
+	
+	lex(just_test);
+	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ira( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// ira, a special-purpose register
-	if (!handle_iarg_reg_ira( just_test, iarg_vec ))
-	{
-		return false;
-	}
+	X(reg_ira);
 	
-	return lex.match( '\n', just_test );
+	lex(just_test);
+	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ira_ra( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// ira, a special-purpose register
-	if ( !handle_iarg_reg_ira( just_test, iarg_vec )
-		
-		// rA
-		|| !handle_iarg_reg( just_test, iarg_vec ) )
-	{
-		return false;
-	}
+	X(reg_ira);
 	
-	return lex.match( '\n', just_test );
+	// rA
+	X(reg);
+	
+	lex(just_test);
+	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_ira( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	if ( !handle_iarg_reg( just_test, iarg_vec )
-		
-		// ira, a special-purpose register
-		|| !handle_iarg_reg_ira( just_test, iarg_vec ) )
-	{
-		return false;
-	}
+	X(reg);
 	
-	return lex.match( '\n', just_test );
+	// ira, a special-purpose register
+	X(reg_ira);
+	
+	lex(just_test);
+	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_pc( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	if ( !handle_iarg_reg( just_test, iarg_vec )
-		
-		// pc, a special-purpose register
-		|| !handle_iarg_reg_pc( just_test, iarg_vec ) )
-	{
-		return false;
-	}
+	X(reg);
 	
-	return lex.match( '\n', just_test );
+	// pc, a special-purpose register
+	X(reg_pc);
+	
+	lex(just_test);
+	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_rb_imm16u( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	if ( !handle_iarg_reg( just_test, iarg_vec )
-		
-		// rB
-		|| !handle_iarg_reg( just_test, iarg_vec )
-		
-		// imm16u
-		|| !handle_iarg_immed16( just_test, iarg_vec ) )
-	{
-		return false;
-	}
+	X(reg);
 	
-	return lex.match( '\n', just_test );
+	// rB
+	X(reg)
+	
+	// imm16u
+	X(immed16);
+	
+	lex(just_test);
+	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_rb_imm16s( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	if ( !handle_iarg_reg( just_test, iarg_vec )
-		
-		// rB
-		|| !handle_iarg_reg( just_test, iarg_vec )
-		
-		// imm16s
-		|| !handle_iarg_immed16( just_test, iarg_vec ) )
-	{
-		return false;
-	}
+	X(reg);
 	
-	return lex.match( '\n', just_test );
+	// rB
+	X(reg);
+	
+	// imm16s
+	X(immed16);
+	
+	lex(just_test);
+	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_rb_rc_imm12s( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	if ( !handle_iarg_reg( just_test, iarg_vec )
-		
-		// rB
-		|| !handle_iarg_reg( just_test, iarg_vec )
-		
-		// rC
-		|| !handle_iarg_reg( just_test, iarg_vec )
-		
-		// imm12s
-		|| !handle_iarg_immed12( just_test, iarg_vec ) )
-	{
-		return false;
-	}
+	X(reg);
 	
-	return lex.match( '\n', just_test );
+	// rB
+	X(reg);
+	
+	// rC
+	X(reg);
+	
+	// imm12s
+	X(immed12);
+	
+	lex(just_test);
+	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_rb_rc( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	if ( !handle_iarg_reg( just_test, iarg_vec )
-		
-		// rB
-		|| !handle_iarg_reg( just_test, iarg_vec )
-		
-		// rC
-		|| !handle_iarg_reg( just_test, iarg_vec ) )
-	{
-		return false;
-	}
+	X(reg);
 	
-	return lex.match( '\n', just_test );
+	// rB
+	X(reg);
+	
+	// rC
+	X(reg);
+	
+	lex(just_test);
+	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_rb_abs( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	if ( !handle_iarg_reg( just_test, iarg_vec )
-		
-		// rB
-		|| !handle_iarg_reg( just_test, iarg_vec )
-		
-		// 32-bit absolute
-		|| !handle_iarg_abs( just_test, iarg_vec ) )
-	{
-		return false;
-	}
+	X(reg);
 	
-	return lex.match( '\n', just_test );
+	// rB
+	X(reg);
+	
+	// 32-bit absolute
+	X(abs);
+	
+	lex(just_test);
+	return lex_match_end_of_line(just_test);
 }
+
+#undef X
 
 
 s32 assembler::unary( bool use_special, bool just_test, bool* did_fail )
@@ -826,44 +802,57 @@ void assembler::line()
 	// Process labels
 	bool found_label = false;
 	
-	//printout( static_cast<char>(lex.nextt()), "\n" );
+	//if ( isspace(lex.nextt()) )
+	//{
+	//	//lex_match_regular('\n');
+	//	//lex_regular();
+	//	return;
+	//}
 	
-	if ( isspace(lex.nextt()) )
-	{
-		lex_match_regular('\n');
-		return;
-	}
+	const long orig_pos = std::ftell(infile);
 	
-	//printout( "nextsym blank:  ", ( lex.nextsym() == nullptr ), "\n" );
-	if ( lex.nextt() == cast_typ(tok_defn::ident) )
-	{
-		found_label = true;
-		symbol* sym = lex.nextsym();
-		
-		lex_regular();
-		
-		if ( sym->val() != lc() )
-		{
-			set_changed(true);
-			sym->set_val(lc());
-		}
-		lex_assume_regular(':');
-	}
+	//if ( lex.nextt() == cast_typ(tok_defn::ident) )
+	//{
+	//	symbol* sym = lex.nextsym();
+	//	
+	//	//lex_regular();
+	//	
+	//	
+	//	if ( lex.nextt() == ':' )
+	//	{
+	//		lex_regular();
+	//		
+	//		if ( sym->val() != lc() )
+	//		{
+	//			set_changed(true);
+	//			sym->set_val(lc());
+	//		}
+	//		
+	//		found_label = true;
+	//	}
+	//}
 	
-	const instruction * const some_instr = determine_instr();
+	const instruction* some_instr = determine_instr();
 	
 	if ( !found_label && ( some_instr == nullptr ) )
 	{
+		
 		we.expected("instruction or identifier");
 	}
 	
-	//lex_regular();
-	//printout( found_label, "\n" );
+	if ( pass() == 0 )
+	{
+		printout( cast_typ(some_instr->iargs()), "\n" );
+	}
 	
-	//lex_match_regular('\n');
-	//lex_assume_regular('\n');
 	
-	lex_match_regular('\n');
+	// Go to the end of the line
+	//while (!lex_match_regular('\n'))
+	//{
+	//}
+	while (!lex_match_end_of_line(true))
+	{
+	}
 }
 
 
