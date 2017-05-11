@@ -175,43 +175,43 @@ bool assembler::test_iargs( const instruction& iter )
 	switch ( iter.iargs() )
 	{
 		case instr_args::noargs:
-			return test_instr_noargs();
+			return handle_instr_noargs(true);
 		case instr_args::ra:
-			return test_instr_ra();
+			return handle_instr_ra(true);
 		case instr_args::ra_rb:
-			return test_instr_ra_rb();
+			return handle_instr_ra_rb(true);
 		case instr_args::ra_imm16u:
-			return test_instr_ra_imm16u();
+			return handle_instr_ra_imm16u(true);
 		case instr_args::imm16u:
-			return test_instr_imm16u();
+			return handle_instr_imm16u(true);
 		case instr_args::imm16s:
-			return test_instr_imm16s();
+			return handle_instr_imm16s(true);
 		case instr_args::branchoffset:
-			return test_instr_branchoffset();
+			return handle_instr_branchoffset(true);
 		case instr_args::flags:
-			return test_instr_flags();
+			return handle_instr_flags(true);
 		case instr_args::ra_flags:
-			return test_instr_ra_flags();
+			return handle_instr_ra_flags(true);
 		case instr_args::flags_ra:
-			return test_instr_flags_ra();
+			return handle_instr_flags_ra(true);
 		case instr_args::ira:
-			return test_instr_ira();
+			return handle_instr_ira(true);
 		case instr_args::ira_ra:
-			return test_instr_ira_ra();
+			return handle_instr_ira_ra(true);
 		case instr_args::ra_ira:
-			return test_instr_ra_ira();
+			return handle_instr_ra_ira(true);
 		case instr_args::ra_pc:
-			return test_instr_ra_pc();
+			return handle_instr_ra_pc(true);
 		case instr_args::ra_rb_imm16u:
-			return test_instr_ra_rb_imm16u();
+			return handle_instr_ra_rb_imm16u(true);
 		case instr_args::ra_rb_imm16s:
-			return test_instr_ra_rb_imm16s();
+			return handle_instr_ra_rb_imm16s(true);
 		case instr_args::ra_rb_rc_imm12s:
-			return test_instr_ra_rb_rc_imm12s();
+			return handle_instr_ra_rb_rc_imm12s(true);
 		case instr_args::ra_rb_rc:
-			return test_instr_ra_rb_rc();
+			return handle_instr_ra_rb_rc(true);
 		case instr_args::ra_rb_abs:
-			return test_instr_ra_rb_abs();
+			return handle_instr_ra_rb_abs(true);
 		
 		default:
 			we.unknown("instr_args!");
@@ -222,208 +222,86 @@ bool assembler::test_iargs( const instruction& iter )
 	return false;
 }
 
-bool assembler::test_instr_noargs()
+bool assembler::handle_instr_noargs( bool just_test )
 {
-	return lex_match_keep_lineno('\n');
+	return lex.match( '\n', just_test );
 }
-bool assembler::test_instr_ra()
+bool assembler::handle_instr_ra( bool just_test )
 {
-	// rA
-	if (!test_iarg_reg())
-	{
-		return false;
-	}
-	
-	return lex_match_keep_lineno('\n');
+	return lex.match( '\n', just_test );
 }
-bool assembler::test_instr_ra_rb()
+bool assembler::handle_instr_ra_rb( bool just_test )
 {
-	// rA
-	if ( !test_iarg_reg()
-		
-		// Comma
-		|| !lex_match_keep_lineno(',')
-		
-		// rB
-		|| !test_iarg_reg() )
-	{
-		return false;
-	}
-	
-	return lex_match_keep_lineno('\n');
+	return lex.match( '\n', just_test );
 }
-bool assembler::test_instr_ra_imm16u()
+bool assembler::handle_instr_ra_imm16u( bool just_test )
 {
-	// rA
-	if ( !test_iarg_reg()
-		
-		// Comma
-		|| !lex_match_keep_lineno(',')
-		
-		// imm16u
-		|| !test_iarg_immed16() )
-	{
-		return false;
-	}
-	
-	return lex_match_keep_lineno('\n');
+	return lex.match( '\n', just_test );
 }
-bool assembler::test_instr_imm16u()
+bool assembler::handle_instr_imm16u( bool just_test )
 {
-	// imm16u
-	if (!test_iarg_immed16())
-	{
-		return false;
-	}
-	
-	return lex_match_keep_lineno('\n');
+	return lex.match( '\n', just_test );
 }
-bool assembler::test_instr_imm16s()
+bool assembler::handle_instr_imm16s( bool just_test )
 {
-	// imm16s
-	if (!test_iarg_immed16())
-	{
-		return false;
-	}
-	
-	return lex_match_keep_lineno('\n');
+	return lex.match( '\n', just_test );
 }
-bool assembler::test_instr_branchoffset()
+bool assembler::handle_instr_branchoffset( bool just_test )
 {
-	// branch offset (16-bit, signed)
-	if (!test_iarg_braoffs())
-	{
-		return false;
-	}
-	
-	return lex_match_keep_lineno('\n');
+	return lex.match( '\n', just_test );
 }
-bool assembler::test_instr_flags()
+bool assembler::handle_instr_flags( bool just_test )
 {
-	// flags special-purpose register
-	if (!test_iarg_reg_flags())
-	{
-		return false;
-	}
-	
-	return lex_match_keep_lineno('\n');
+	return lex.match( '\n', just_test );
 }
-bool assembler::test_instr_ra_flags()
+bool assembler::handle_instr_ra_flags( bool just_test )
 {
-	// rA
-	if ( !test_iarg_reg()
-		
-		// Comma
-		|| !lex_match_keep_lineno(',')
-		
-		// flags special-purpose register
-		|| !test_iarg_reg_flags() )
-	{
-		return false;
-	}
-	
-	return lex_match_keep_lineno('\n');
+	return lex.match( '\n', just_test );
 }
-bool assembler::test_instr_flags_ra()
+bool assembler::handle_instr_flags_ra( bool just_test )
 {
-	// flags special-purpose register
-	if ( !test_iarg_reg_flags()
-		
-		// Comma
-		|| !lex_match_keep_lineno(',')
-		
-		// rA
-		|| !test_iarg_reg() )
-	{
-		return false;
-	}
-	
-	return lex_match_keep_lineno('\n');
+	return lex.match( '\n', just_test );
 }
-bool assembler::test_instr_ira()
+bool assembler::handle_instr_ira( bool just_test )
 {
-	// ira special-purpose register
-	if (!test_iarg_reg_ira())
-	{
-		return false;
-	}
-	
-	return lex_match_keep_lineno('\n');
+	return lex.match( '\n', just_test );
 }
-bool assembler::test_instr_ira_ra()
+bool assembler::handle_instr_ira_ra( bool just_test )
 {
-	// ira special-purpose register
-	if ( !test_iarg_reg_ira()
-		
-		// Comma
-		|| !lex_match_keep_lineno(',')
-		
-		// rA
-		|| !test_iarg_reg() )
-	{
-		return false;
-	}
-	
-	return lex_match_keep_lineno('\n');
+	return lex.match( '\n', just_test );
 }
-bool assembler::test_instr_ra_ira()
+bool assembler::handle_instr_ra_ira( bool just_test )
 {
-	// rA
-	if ( !test_iarg_reg()
-		
-		// Comma
-		|| !lex_match_keep_lineno(',')
-		
-		// ira special-purpose register
-		|| !test_iarg_reg_ira() )
-	{
-		return false;
-	}
-	
-	
-	return lex_match_keep_lineno('\n');
+	return lex.match( '\n', just_test );
 }
-bool assembler::test_instr_ra_pc()
+bool assembler::handle_instr_ra_pc( bool just_test )
 {
-	// rA
-	if ( !test_iarg_reg()
-		
-		// Comma
-		|| !lex_match_keep_lineno(',')
-		
-		// pc special-purpose register
-		|| !test_iarg_reg_pc() )
-	{
-		return false;
-	}
-	
-	
-	return lex_match_keep_lineno('\n');
+	return lex.match( '\n', just_test );
 }
-bool assembler::test_instr_ra_rb_imm16u()
+bool assembler::handle_instr_ra_rb_imm16u( bool just_test )
 {
 	
-	return lex_match_keep_lineno('\n');
+	return lex.match( '\n', just_test );
 }
-bool assembler::test_instr_ra_rb_imm16s()
+bool assembler::handle_instr_ra_rb_imm16s( bool just_test )
 {
 	
-	return lex_match_keep_lineno('\n');
+	return lex.match( '\n', just_test );
 }
-bool assembler::test_instr_ra_rb_rc_imm12s()
+bool assembler::handle_instr_ra_rb_rc_imm12s( bool just_test )
 {
 	
-	return lex_match_keep_lineno('\n');
+	return lex.match( '\n', just_test );
 }
-bool assembler::test_instr_ra_rb_rc()
+bool assembler::handle_instr_ra_rb_rc( bool just_test )
 {
 	
-	return lex_match_keep_lineno('\n');
+	return lex.match( '\n', just_test );
 }
-bool assembler::test_instr_ra_rb_abs()
+bool assembler::handle_instr_ra_rb_abs( bool just_test )
 {
 	
-	return lex_match_keep_lineno('\n');
+	return lex.match( '\n', just_test );
 }
 
 
@@ -463,7 +341,9 @@ s32 assembler::unary( bool use_special, bool keep_lineno, bool* did_fail,
 			v = expr( use_special, keep_lineno, did_fail, allow_fail );
 			
 			//if (!lex.match( ')', keep_lineno ))
-			if ( !lex_match_keep_lineno(')') && !allow_fail )
+			//if ( !lex_match_keep_lineno(')') && !allow_fail )
+			
+			if ( !allow_fail && !lex.match( ')', keep_lineno ) )
 			{
 				we.warn1("Missing ')' assumed");
 			}

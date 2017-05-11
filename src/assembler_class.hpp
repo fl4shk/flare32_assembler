@@ -146,25 +146,25 @@ private:		// functions
 		return !did_fail;
 	}
 	
-	bool test_instr_noargs();
-	bool test_instr_ra();
-	bool test_instr_ra_rb();
-	bool test_instr_ra_imm16u();
-	bool test_instr_imm16u();
-	bool test_instr_imm16s();
-	bool test_instr_branchoffset();
-	bool test_instr_flags();
-	bool test_instr_ra_flags();
-	bool test_instr_flags_ra();
-	bool test_instr_ira();
-	bool test_instr_ira_ra();
-	bool test_instr_ra_ira();
-	bool test_instr_ra_pc();
-	bool test_instr_ra_rb_imm16u();
-	bool test_instr_ra_rb_imm16s();
-	bool test_instr_ra_rb_rc_imm12s();
-	bool test_instr_ra_rb_rc();
-	bool test_instr_ra_rb_abs();
+	bool handle_instr_noargs( bool just_test );
+	bool handle_instr_ra( bool just_test );
+	bool handle_instr_ra_rb( bool just_test );
+	bool handle_instr_ra_imm16u( bool just_test );
+	bool handle_instr_imm16u( bool just_test );
+	bool handle_instr_imm16s( bool just_test );
+	bool handle_instr_branchoffset( bool just_test );
+	bool handle_instr_flags( bool just_test );
+	bool handle_instr_ra_flags( bool just_test );
+	bool handle_instr_flags_ra( bool just_test );
+	bool handle_instr_ira( bool just_test );
+	bool handle_instr_ira_ra( bool just_test );
+	bool handle_instr_ra_ira( bool just_test );
+	bool handle_instr_ra_pc( bool just_test );
+	bool handle_instr_ra_rb_imm16u( bool just_test );
+	bool handle_instr_ra_rb_imm16s( bool just_test );
+	bool handle_instr_ra_rb_rc_imm12s( bool just_test );
+	bool handle_instr_ra_rb_rc( bool just_test );
+	bool handle_instr_ra_rb_abs( bool just_test );
 	
 	
 	s32 unary( bool use_special, bool keep_lineno, bool* did_fail, 
@@ -219,10 +219,10 @@ private:		// functions
 	{
 		lex(true);
 	}
-	inline bool lex_match_keep_lineno( tok typ )
-	{
-		return lex.match( typ, true );
-	}
+	//inline bool lex_match_keep_lineno( tok typ )
+	//{
+	//	return lex.match( typ, true );
+	//}
 	//inline void lex_assume_keep_lineno( tok typ )
 	//{
 	//	lex.assume( typ, true );
