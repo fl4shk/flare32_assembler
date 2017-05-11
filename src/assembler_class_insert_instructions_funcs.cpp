@@ -12,10 +12,10 @@ void assembler::insert_grp_0_instructions()
 	
 	// This inserts an instruction and also one with ".f" appended to its
 	// name
-	auto insert_instr_and_with_dot_f = [&]( std::string&& orig_name, 
+	auto insert_instr_and_with_dot_f = [&]( const std::string& orig_name, 
 		const instr_args& iargs ) -> void
 	{
-		std::string temp_name_0 = std::move(orig_name);
+		std::string temp_name_0 = orig_name;
 		std::string temp_name_1 = temp_name_0 + std::string(".f");
 		sym = &special_sym_tbl.enter( std::move(temp_name_0), 
 			cast_typ(tok_defn::instr), 0, true );
@@ -156,15 +156,15 @@ void assembler::insert_grp_0_instructions()
 	
 	// ENable Interrupts
 	//eni
-	insert_instr_and_with_dot_f( "en", instr_args::noargs );
+	insert_instr_and_with_dot_f( "eni", instr_args::noargs );
 	
 	// DIsable Interrupts
 	//dii
-	insert_instr_and_with_dot_f( "di", instr_args::noargs );
+	insert_instr_and_with_dot_f( "dii", instr_args::noargs );
 	
 	// Set the PC to interrupt RETurn address and enable Interrupts
 	//reti
-	insert_instr_and_with_dot_f( "ret", instr_args::noargs );
+	insert_instr_and_with_dot_f( "reti", instr_args::noargs );
 	
 	// Set the PC to the Interrupt Return Address, but DON'T enable
 	// interrupts
@@ -205,10 +205,10 @@ void assembler::insert_grp_1_instructions()
 	
 	// This inserts an instruction and also one with ".f" appended to its
 	// name
-	auto insert_instr_and_with_dot_f = [&]( std::string&& orig_name, 
+	auto insert_instr_and_with_dot_f = [&]( const std::string& orig_name, 
 		const instr_args& iargs ) -> void
 	{
-		std::string temp_name_0 = std::move(orig_name);
+		std::string temp_name_0 = orig_name;
 		std::string temp_name_1 = temp_name_0 + std::string(".f");
 		sym = &special_sym_tbl.enter( std::move(temp_name_0), 
 			cast_typ(tok_defn::instr), 0, true );
@@ -460,10 +460,10 @@ void assembler::insert_grp_2_instructions()
 	
 	// This inserts an instruction and also one with ".f" appended to its
 	// name
-	auto insert_instr_and_with_dot_f = [&]( std::string&& orig_name, 
+	auto insert_instr_and_with_dot_f = [&]( const std::string& orig_name, 
 		const instr_args& iargs ) -> void
 	{
-		std::string temp_name_0 = std::move(orig_name);
+		std::string temp_name_0 = orig_name;
 		std::string temp_name_1 = temp_name_0 + std::string(".f");
 		sym = &special_sym_tbl.enter( std::move(temp_name_0), 
 			cast_typ(tok_defn::instr), 0, true );
@@ -836,10 +836,10 @@ void assembler::insert_grp_3_instructions()
 	
 	// This inserts an instruction and also one with ".f" appended to its
 	// name
-	auto insert_instr_and_with_dot_f = [&]( std::string&& orig_name, 
+	auto insert_instr_and_with_dot_f = [&]( const std::string& orig_name, 
 		const instr_args& iargs ) -> void
 	{
-		std::string temp_name_0 = std::move(orig_name);
+		std::string temp_name_0 = orig_name;
 		std::string temp_name_1 = temp_name_0 + std::string(".f");
 		sym = &special_sym_tbl.enter( std::move(temp_name_0), 
 			cast_typ(tok_defn::instr), 0, true );

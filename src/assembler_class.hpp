@@ -104,11 +104,11 @@ private:		// functions
 	
 	
 	// Parser stuff
-	//inline bool at_end_of_line() const
-	//{
-	//	return ( !( ( lex.nextc() != '\n' ) && ( lex.nextc() != EOF )
-	//		&& ( lex.nextt() != '\n' ) ) );
-	//}
+	inline bool at_end_of_line() const
+	{
+		return ( !( ( lex.nextc() != '\n' ) && ( lex.nextc() != EOF )
+			&& ( lex.nextt() != '\n' ) ) );
+	}
 	const instruction* determine_instr();
 	bool handle_iargs( const instruction& iter, bool just_test,
 		std::vector<real_iarg>& iarg_vec );
@@ -244,8 +244,8 @@ private:		// functions
 	//}
 	inline bool lex_match_end_of_line( bool just_test )
 	{
-		return ( lex.match_no_ws( '\n', just_test )
-			|| lex.match_no_ws( EOF, just_test ) );
+		return ( lex.match( '\n', just_test )
+			|| lex.match( EOF, just_test ) );
 	}
 	inline void lex_assume_regular( tok typ )
 	{

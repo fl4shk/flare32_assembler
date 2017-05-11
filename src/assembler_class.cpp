@@ -67,16 +67,6 @@ assembler::assembler( int argc, char** argv, std::FILE* s_infile )
 	insert_grp_2_instructions();
 	insert_grp_3_instructions();
 	
-	// Make copies of all the instructions with ".f" appended to the name
-	for ( auto iter=special_sym_tbl.cbegin(); 
-		iter!=special_sym_tbl.cend();
-		++iter )
-	{
-		const symbol* sym = &iter->second;
-		
-		special_sym_tbl.enter( std::string(sym->name())
-			+ std::string(".f"), sym->typ(), sym->val(), true );
-	}
 }
 
 assembler::~assembler()
@@ -192,6 +182,17 @@ const instruction* assembler::determine_instr()
 	//	}
 	//}
 	
+	auto temp_nextc = lex.nextc();
+	
+	auto temp_nextt = lex.nextt();
+	auto temp_nextval = lex.nextval();
+	auto temp_nextsym = lex.nextsym();
+	
+	auto temp_special_nextt = lex.special_nextt();
+	auto temp_special_nextval = lex.special_nextval();
+	auto temp_special_nextsym = lex.special_nextsym();
+	
+	
 	for ( size_t i=0; i<instr_vec.size(); ++i )
 	{
 		const instruction& iter = instr_vec.at(i);
@@ -208,7 +209,17 @@ const instruction* assembler::determine_instr()
 		}
 		
 		std::fseek( infile, reset_pos, SEEK_SET );
+		
 	}
+	lex.set_nextc(temp_nextc);
+	
+	lex.set_nextt(temp_nextt);
+	lex.set_nextval(temp_nextval);
+	lex.set_nextsym(temp_nextsym);
+	
+	lex.set_special_nextt(temp_special_nextt);
+	lex.set_special_nextval(temp_special_nextval);
+	lex.set_special_nextsym(temp_special_nextsym);
 	
 	std::fseek( infile, orig_pos, SEEK_SET );
 	
@@ -392,13 +403,26 @@ bool assembler::handle_instr_noargs( bool just_test,
 		return false; \
 	}
 
+#ifdef ASSUME_COMMA
+#error "Can't re-define assume_comma"
+#endif
+
+#define ASSUME_COMMA \
+	/* lex(just_test); */ \
+	if ( !lex.match( ',', just_test ) ) \
+	{ \
+		return false; \
+	}
+
 bool assembler::handle_instr_ra( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
 	X(reg);
 	
-	lex(just_test);
+	ASSUME_COMMA
+	
+	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_rb( bool just_test, 
@@ -407,10 +431,12 @@ bool assembler::handle_instr_ra_rb( bool just_test,
 	// rA
 	X(reg);
 	
+	ASSUME_COMMA
+	
 	// rB
 	X(reg);
 	
-	lex(just_test);
+	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_imm16u( bool just_test, 
@@ -419,10 +445,12 @@ bool assembler::handle_instr_ra_imm16u( bool just_test,
 	// rA
 	X(reg);
 	
+	ASSUME_COMMA
+	
 	// imm16u
 	X(immed16);
 	
-	lex(just_test);
+	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_imm16u( bool just_test, 
@@ -431,7 +459,7 @@ bool assembler::handle_instr_imm16u( bool just_test,
 	// imm16u
 	X(immed16);
 	
-	lex(just_test);
+	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_imm16s( bool just_test, 
@@ -440,7 +468,7 @@ bool assembler::handle_instr_imm16s( bool just_test,
 	// imm16s
 	X(immed16);
 	
-	lex(just_test);
+	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_branchoffset( bool just_test, 
@@ -449,7 +477,7 @@ bool assembler::handle_instr_branchoffset( bool just_test,
 	// braoffs
 	X(braoffs)
 	
-	lex(just_test);
+	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_flags( bool just_test, 
@@ -458,7 +486,7 @@ bool assembler::handle_instr_flags( bool just_test,
 	// flags, a special-purpose register
 	X(reg_flags)
 	
-	lex(just_test);
+	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_flags( bool just_test, 
@@ -467,10 +495,12 @@ bool assembler::handle_instr_ra_flags( bool just_test,
 	// rA
 	X(reg);
 	
+	ASSUME_COMMA
+	
 	// flags, a special-purpose register
 	X(reg_flags);
 	
-	lex(just_test);
+	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_flags_ra( bool just_test, 
@@ -482,7 +512,7 @@ bool assembler::handle_instr_flags_ra( bool just_test,
 	// rA
 	X(reg);
 	
-	lex(just_test);
+	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ira( bool just_test, 
@@ -491,7 +521,7 @@ bool assembler::handle_instr_ira( bool just_test,
 	// ira, a special-purpose register
 	X(reg_ira);
 	
-	lex(just_test);
+	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ira_ra( bool just_test, 
@@ -500,10 +530,12 @@ bool assembler::handle_instr_ira_ra( bool just_test,
 	// ira, a special-purpose register
 	X(reg_ira);
 	
+	ASSUME_COMMA
+	
 	// rA
 	X(reg);
 	
-	lex(just_test);
+	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_ira( bool just_test, 
@@ -512,10 +544,12 @@ bool assembler::handle_instr_ra_ira( bool just_test,
 	// rA
 	X(reg);
 	
+	ASSUME_COMMA
+	
 	// ira, a special-purpose register
 	X(reg_ira);
 	
-	lex(just_test);
+	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_pc( bool just_test, 
@@ -524,10 +558,12 @@ bool assembler::handle_instr_ra_pc( bool just_test,
 	// rA
 	X(reg);
 	
+	ASSUME_COMMA
+	
 	// pc, a special-purpose register
 	X(reg_pc);
 	
-	lex(just_test);
+	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_rb_imm16u( bool just_test, 
@@ -536,13 +572,17 @@ bool assembler::handle_instr_ra_rb_imm16u( bool just_test,
 	// rA
 	X(reg);
 	
+	ASSUME_COMMA
+	
 	// rB
 	X(reg)
+	
+	ASSUME_COMMA
 	
 	// imm16u
 	X(immed16);
 	
-	lex(just_test);
+	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_rb_imm16s( bool just_test, 
@@ -551,13 +591,17 @@ bool assembler::handle_instr_ra_rb_imm16s( bool just_test,
 	// rA
 	X(reg);
 	
+	ASSUME_COMMA
+	
 	// rB
 	X(reg);
+	
+	ASSUME_COMMA
 	
 	// imm16s
 	X(immed16);
 	
-	lex(just_test);
+	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_rb_rc_imm12s( bool just_test, 
@@ -566,16 +610,22 @@ bool assembler::handle_instr_ra_rb_rc_imm12s( bool just_test,
 	// rA
 	X(reg);
 	
+	ASSUME_COMMA
+	
 	// rB
 	X(reg);
+	
+	ASSUME_COMMA
 	
 	// rC
 	X(reg);
 	
+	ASSUME_COMMA
+	
 	// imm12s
 	X(immed12);
 	
-	lex(just_test);
+	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_rb_rc( bool just_test, 
@@ -584,13 +634,17 @@ bool assembler::handle_instr_ra_rb_rc( bool just_test,
 	// rA
 	X(reg);
 	
+	ASSUME_COMMA
+	
 	// rB
 	X(reg);
+	
+	ASSUME_COMMA
 	
 	// rC
 	X(reg);
 	
-	lex(just_test);
+	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_rb_abs( bool just_test, 
@@ -599,17 +653,22 @@ bool assembler::handle_instr_ra_rb_abs( bool just_test,
 	// rA
 	X(reg);
 	
+	ASSUME_COMMA
+	
 	// rB
 	X(reg);
+	
+	ASSUME_COMMA
 	
 	// 32-bit absolute
 	X(abs);
 	
-	lex(just_test);
+	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 
 #undef X
+#undef ASSUME_COMMA
 
 
 s32 assembler::unary( bool use_special, bool just_test, bool* did_fail )
@@ -811,48 +870,116 @@ void assembler::line()
 	
 	const long orig_pos = std::ftell(infile);
 	
-	//if ( lex.nextt() == cast_typ(tok_defn::ident) )
-	//{
-	//	symbol* sym = lex.nextsym();
-	//	
-	//	//lex_regular();
-	//	
-	//	
-	//	if ( lex.nextt() == ':' )
-	//	{
-	//		lex_regular();
-	//		
-	//		if ( sym->val() != lc() )
-	//		{
-	//			set_changed(true);
-	//			sym->set_val(lc());
-	//		}
-	//		
-	//		found_label = true;
-	//	}
-	//}
+	if ( lex.nextt() == cast_typ(tok_defn::ident) )
+	{
+		symbol* sym = lex.nextsym();
+		
+		
+		auto temp_nextc = lex.nextc();
+		
+		auto temp_nextt = lex.nextt();
+		auto temp_nextval = lex.nextval();
+		auto temp_nextsym = lex.nextsym();
+		
+		auto temp_special_nextt = lex.special_nextt();
+		auto temp_special_nextval = lex.special_nextval();
+		auto temp_special_nextsym = lex.special_nextsym();
+		
+		
+		lex_keep_lineno();
+		std::fseek( infile, orig_pos, SEEK_SET );
+		
+		if ( lex.nextt() == ':' )
+		{
+			lex_regular();
+			
+			if ( sym->val() != lc() )
+			{
+				set_changed(true);
+				sym->set_val(lc());
+			}
+			
+			found_label = true;
+		}
+		else
+		{
+			lex.set_nextc(temp_nextc);
+			
+			lex.set_nextt(temp_nextt);
+			lex.set_nextval(temp_nextval);
+			lex.set_nextsym(temp_nextsym);
+			
+			lex.set_special_nextt(temp_special_nextt);
+			lex.set_special_nextval(temp_special_nextval);
+			lex.set_special_nextsym(temp_special_nextsym);
+		}
+	}
 	
 	const instruction* some_instr = determine_instr();
 	
 	if ( !found_label && ( some_instr == nullptr ) )
 	{
-		
 		we.expected("instruction or identifier");
 	}
 	
-	if ( pass() == 0 )
+	//if ( some_instr != nullptr )
+	//{
+	//	//if ( pass() == 0 )
+	//	{
+	//		printout( "pass #", pass(), ":  ", cast_typ(some_instr->iargs()), 
+	//			"\n" );
+	//	}
+	//}
+	
+	printout( "Find End of Line:  ", lex.lineno(), "\n");
+	//while (!at_end_of_line())
+	
+	//while (!lex_match_regular('\n'))
+	//while ( ( lex.nextt() != '\n' ) && ( lex.nextc() != EOF ) )
+	//while (!at_end_of_line())
+	while ( ( lex.nextc() != '\n' ) && ( lex.nextc() != EOF ) )
 	{
-		printout( cast_typ(some_instr->iargs()), "\n" );
+		lex_regular();
+		printout( lex.nextc(), "\t\t", lex.nextt(), "\t\t", 
+			lex.nextval() );
+		
+		if ( lex.nextsym() != nullptr )
+		{
+			printout( "\t\t", lex.nextsym()->name() );
+		}
+		
+		
+		//printout( "\t\t", lex.special_nextt(), "\t\t", 
+		//	lex.special_nextval() );
+		//
+		//if ( lex.special_nextsym() != nullptr )
+		//{
+		//	printout( "\t\t", lex.special_nextsym()->name() );
+		//}
+		
+		printout("\n");
 	}
+	////while (at_end_of_line())
+	//{
+	//	lex_regular();
+	//}
 	
 	
 	// Go to the end of the line
 	//while (!lex_match_regular('\n'))
 	//{
 	//}
-	while (!lex_match_end_of_line(true))
-	{
-	}
+	//while (!lex_match_end_of_line(true))
+	//{
+	//}
+	
+	//while (!lex_match_end_of_line(false))
+	//{
+	//}
+	
+	
+	lex_regular();
+	lex.match( '\n', false );
 }
 
 
