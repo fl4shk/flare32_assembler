@@ -106,43 +106,43 @@ private:		// functions
 	inline bool test_iarg_reg()
 	{
 		bool did_fail;
-		iarg_reg( true, &did_fail, true );
+		iarg_reg( true, &did_fail );
 		return !did_fail;
 	}
 	inline bool test_iarg_reg_flags()
 	{
 		bool did_fail;
-		iarg_reg_flags( true, &did_fail, true );
+		iarg_reg_flags( true, &did_fail );
 		return !did_fail;
 	}
 	inline bool test_iarg_reg_ira()
 	{
 		bool did_fail;
-		iarg_reg_ira( true, &did_fail, true );
+		iarg_reg_ira( true, &did_fail );
 		return !did_fail;
 	}
 	inline bool test_iarg_reg_pc()
 	{
 		bool did_fail;
-		iarg_reg_pc( true, &did_fail, true );
+		iarg_reg_pc( true, &did_fail );
 		return !did_fail;
 	}
 	bool test_iarg_braoffs()
 	{
 		bool did_fail;
-		iarg_braoffs( true, &did_fail, true );
+		iarg_braoffs( true, &did_fail );
 		return !did_fail;
 	}
 	bool test_iarg_immed16()
 	{
 		bool did_fail;
-		iarg_immed16( true, &did_fail, true );
+		iarg_immed16( true, &did_fail );
 		return !did_fail;
 	}
 	bool test_iarg_immed12()
 	{
 		bool did_fail;
-		iarg_immed16( true, &did_fail, true );
+		iarg_immed16( true, &did_fail );
 		return !did_fail;
 	}
 	
@@ -167,51 +167,45 @@ private:		// functions
 	bool handle_instr_ra_rb_abs( bool just_test );
 	
 	
-	s32 unary( bool use_special, bool keep_lineno, bool* did_fail, 
-		bool allow_fail );
-	s32 expr( bool use_special, bool keep_lineno, bool* did_fail, 
-		bool allow_fail, bool did_init=true );
+	s32 unary( bool use_special, bool just_test, bool* did_fail );
+	s32 expr( bool use_special, bool just_test, bool* did_fail, 
+		bool did_init=true );
 	
 	s32 mask_immed( s32 to_mask, size_t mask );
 	
 	s32 iarg_specific_reg( tok_defn typ, const string_view& fail_msg, 
-		bool keep_lineno=false, bool* did_fail=nullptr, 
-		bool allow_fail=false );
-	inline s32 iarg_reg( bool keep_lineno=false, bool* did_fail=nullptr, 
-		bool allow_fail=false )
+		bool just_test=false, bool* did_fail=nullptr );
+	inline s32 iarg_reg( bool just_test=false, bool* did_fail=nullptr )
 	{
-		return iarg_specific_reg( tok_defn::reg, "register", keep_lineno,
-			did_fail, allow_fail );
+		return iarg_specific_reg( tok_defn::reg, "register", just_test,
+			did_fail );
 	}
-	inline s32 iarg_reg_flags( bool keep_lineno=false, 
-		bool* did_fail=nullptr, bool allow_fail=false )
+	inline s32 iarg_reg_flags( bool just_test=false, 
+		bool* did_fail=nullptr )
 	{
-		return iarg_specific_reg( tok_defn::reg_flags, "flags",
-			keep_lineno, did_fail, allow_fail );
+		return iarg_specific_reg( tok_defn::reg_flags, "flags", just_test, 
+			did_fail );
 	}
-	inline s32 iarg_reg_ira( bool keep_lineno=false, bool* did_fail=nullptr,
-		bool allow_fail=false)
+	inline s32 iarg_reg_ira( bool just_test=false, 
+		bool* did_fail=nullptr )
 	{
-		return iarg_specific_reg( tok_defn::reg_ira, "ira",
-			keep_lineno, did_fail, allow_fail );
+		return iarg_specific_reg( tok_defn::reg_ira, "ira", just_test, 
+			did_fail );
 	}
-	inline s32 iarg_reg_pc( bool keep_lineno=false, bool* did_fail=nullptr,
-		bool allow_fail=false)
+	inline s32 iarg_reg_pc( bool just_test=false, 
+		bool* did_fail=nullptr )
 	{
-		return iarg_specific_reg( tok_defn::reg_pc, "pc",
-			keep_lineno, did_fail, allow_fail );
+		return iarg_specific_reg( tok_defn::reg_pc, "pc", just_test, 
+			did_fail );
 	}
 	
-	s32 iarg_braoffs( bool keep_lineno=false, bool* did_fail=nullptr, 
-		bool allow_fail=false );
-	s32 iarg_immed16( bool keep_lineno=false, bool* did_fail=nullptr, 
-		bool allow_fail=false );
-	s32 iarg_immed12( bool keep_lineno=false, bool* did_fail=nullptr, 
-		bool allow_fail=false );
-	inline s32 iarg_absolute( bool use_special, bool keep_lineno=false,
-		bool* did_fail=nullptr, bool allow_fail=false )
+	s32 iarg_braoffs( bool just_test=false, bool* did_fail=nullptr );
+	s32 iarg_immed16( bool just_test=false, bool* did_fail=nullptr );
+	s32 iarg_immed12( bool just_test=false, bool* did_fail=nullptr );
+	inline s32 iarg_absolute( bool use_special, bool just_test=false,
+		bool* did_fail=nullptr )
 	{
-		return expr( use_special, keep_lineno, did_fail, allow_fail );
+		return expr( use_special, just_test, did_fail );
 	}
 	s32 line();
 	

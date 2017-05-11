@@ -305,8 +305,7 @@ bool assembler::handle_instr_ra_rb_abs( bool just_test )
 }
 
 
-s32 assembler::unary( bool use_special, bool keep_lineno, bool* did_fail,
-	bool allow_fail )
+s32 assembler::unary( bool use_special, bool just_test, bool* did_fail )
 {
 	s32 v;
 	
@@ -329,21 +328,21 @@ s32 assembler::unary( bool use_special, bool keep_lineno, bool* did_fail,
 		case static_cast<tok>(tok_defn::ident):
 		case static_cast<tok>(tok_defn::number):
 			v = (lex.*some_nextval)();
-			lex(keep_lineno);
+			lex(just_test);
 			break;
 		
 		case '-':
-			lex(keep_lineno);
-			return -unary( use_special, keep_lineno, did_fail, allow_fail );
+			lex(just_test);
+			return -unary( use_special, just_test, did_fail );
 		
 		case '(':
-			lex(keep_lineno);
-			v = expr( use_special, keep_lineno, did_fail, allow_fail );
+			lex(just_test);
+			v = expr( use_special, just_test, did_fail );
 			
-			//if (!lex.match( ')', keep_lineno ))
-			//if ( !lex_match_keep_lineno(')') && !allow_fail )
+			//if (!lex.match( ')', just_test ))
+			//if ( !lex_match_just_test(')') && !just_test )
 			
-			if ( !allow_fail && !lex.match( ')', keep_lineno ) )
+			if ( !just_test && !lex.match( ')', just_test ) )
 			{
 				we.warn1("Missing ')' assumed");
 			}
@@ -354,7 +353,7 @@ s32 assembler::unary( bool use_special, bool keep_lineno, bool* did_fail,
 			{
 				*did_fail = true;
 			}
-			if (!allow_fail)
+			if (!just_test)
 			{
 				we.error("Ill-formed expression");
 			}
@@ -364,15 +363,15 @@ s32 assembler::unary( bool use_special, bool keep_lineno, bool* did_fail,
 	return v;
 }
 
-s32 assembler::expr( bool use_special, bool keep_lineno, bool* did_fail,
-	bool allow_fail, bool did_init )
+s32 assembler::expr( bool use_special, bool just_test, bool* did_fail,
+	bool did_init )
 {
 	if ( !did_init && ( did_fail != nullptr ) )
 	{
 		*did_fail = false;
 	}
 	
-	s32 v = unary( use_special, keep_lineno, did_fail, allow_fail );
+	s32 v = unary( use_special, just_test, did_fail );
 	
 	decltype(&lexer::nextt) some_nextt;
 	
@@ -391,14 +390,12 @@ s32 assembler::expr( bool use_special, bool keep_lineno, bool* did_fail,
 		switch ((lex.*some_nextt)())
 		{
 			case '+':
-				lex(keep_lineno);
-				v += unary( use_special, keep_lineno, did_fail, 
-					allow_fail );
+				lex(just_test);
+				v += unary( use_special, just_test, did_fail );
 				break;
 			case '-':
-				lex(keep_lineno);
-				v -= unary( use_special, keep_lineno, did_fail,
-					allow_fail );
+				lex(just_test);
+				v -= unary( use_special, just_test, did_fail );
 				break;
 		}
 	}
@@ -425,11 +422,10 @@ s32 assembler::mask_immed( s32 to_mask, size_t mask )
 
 
 s32 assembler::iarg_specific_reg( tok_defn typ, 
-	const string_view& fail_msg, bool keep_lineno, 
-	bool* did_fail, bool allow_fail )
+	const string_view& fail_msg, bool just_test, bool* did_fail )
 {
-	//expr( true, keep_lineno );
-	lex(keep_lineno);
+	//expr( true, just_test );
+	lex(just_test);
 	
 	if ( did_fail != nullptr )
 	{
@@ -442,7 +438,7 @@ s32 assembler::iarg_specific_reg( tok_defn typ,
 		return lex.special_nextsym()->val();
 	}
 	
-	if (!allow_fail)
+	if (!just_test)
 	{
 		we.expected(fail_msg);
 	}
@@ -454,16 +450,14 @@ s32 assembler::iarg_specific_reg( tok_defn typ,
 }
 
 
-s32 assembler::iarg_braoffs( bool keep_lineno, bool* did_fail, 
-	bool allow_fail )
+s32 assembler::iarg_braoffs( bool just_test, bool* did_fail )
 {
-	const s32 temp_0 = expr( false, keep_lineno, did_fail, allow_fail,
-		false );
+	const s32 temp_0 = expr( false, just_test, did_fail, false );
 	const s32 temp_1 = mask_immed( temp_0, ( ( 1 << 16 ) - 1 ) );
 	
 	if ( temp_1 != temp_0 )
 	{
-		if (!allow_fail)
+		if (!just_test)
 		{
 			we.error("Branch offset out of range.");
 		}
@@ -471,16 +465,14 @@ s32 assembler::iarg_braoffs( bool keep_lineno, bool* did_fail,
 	
 	return temp_1;
 }
-s32 assembler::iarg_immed16( bool keep_lineno, bool* did_fail, 
-	bool allow_fail )
+s32 assembler::iarg_immed16( bool just_test, bool* did_fail )
 {
-	const s32 temp_0 = expr( false, keep_lineno, did_fail, allow_fail,
-		false );
+	const s32 temp_0 = expr( false, just_test, did_fail, false );
 	const s32 temp_1 = mask_immed( temp_0, ( ( 1 << 16 ) - 1 ) );
 	
 	if ( temp_1 != temp_0 )
 	{
-		if (!allow_fail)
+		if (!just_test)
 		{
 			we.warn( "Immediate value (16-bit) out of range, has been ",
 				"masked." );
@@ -489,16 +481,14 @@ s32 assembler::iarg_immed16( bool keep_lineno, bool* did_fail,
 	
 	return temp_1;
 }
-s32 assembler::iarg_immed12( bool keep_lineno, bool* did_fail, 
-	bool allow_fail )
+s32 assembler::iarg_immed12( bool just_test, bool* did_fail )
 {
-	const s32 temp_0 = expr( false, keep_lineno, did_fail, allow_fail,
-		false );
+	const s32 temp_0 = expr( false, just_test, did_fail, false );
 	const s32 temp_1 = mask_immed( temp_0, ( ( 1 << 12 ) - 1 ) );
 	
 	if ( temp_1 != temp_0 )
 	{
-		if (!allow_fail)
+		if (!just_test)
 		{
 			we.warn( "Immediate value (12-bit) out of range, has been ",
 				"masked." );
