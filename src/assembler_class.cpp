@@ -169,8 +169,8 @@ const instruction* assembler::determine_instr()
 	if ( ( instr_sym == nullptr )
 		|| ( instr_sym->typ() != static_cast<tok>(tok_defn::instr) ) )
 	{
-		we.expected("instruction");
-		//return ret;
+		//we.expected("instruction");
+		return ret;
 	}
 	
 	const std::vector<instruction>& instr_vec = instr_tbl.at(instr_sym);
