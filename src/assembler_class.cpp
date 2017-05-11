@@ -238,7 +238,20 @@ bool assembler::test_instr_noargs( const instruction& iter,
 bool assembler::test_instr_ra( const instruction& iter,
 	std::vector<real_iarg>& iarg_vec )
 {
+	bool did_fail;
+	reg( true, &did_fail, true );
 	
+	if (did_fail)
+	{
+		return false;
+	}
+	
+	iarg_vec.push_back(real_iarg( lex, true ));
+	
+	if (lex_match_keep_lineno('\n'))
+	{
+		return true;
+	}
 	return false;
 }
 bool assembler::test_instr_ra_rb( const instruction& iter,
@@ -444,10 +457,15 @@ s32 assembler::mask_immed( s32 to_mask, size_t mask )
 	return static_cast<s32>(temp_1);
 }
 
-s32 assembler::reg( bool keep_lineno )
+s32 assembler::reg( bool keep_lineno, bool* did_fail, bool allow_fail )
 {
 	//expr( true, keep_lineno );
 	lex(keep_lineno);
+	
+	if ( did_fail != nullptr )
+	{
+		*did_fail = false;
+	}
 	
 	if ( ( lex.special_nextsym() != nullptr )
 		&& ( lex.special_nextsym()->typ() 
@@ -456,42 +474,87 @@ s32 assembler::reg( bool keep_lineno )
 		return lex.special_nextsym()->val();
 	}
 	
-	we.expected("register");
+	if (!allow_fail)
+	{
+		we.expected("register");
+	}
+	if ( did_fail != nullptr )
+	{
+		*did_fail = true;
+	}
 	return -1;
 }
 
-s32 assembler::braoffs( bool keep_lineno )
+s32 assembler::braoffs( bool keep_lineno, bool* did_fail, bool allow_fail )
 {
 	const s32 temp_0 = expr( false, keep_lineno );
 	const s32 temp_1 = mask_immed( temp_0, ( ( 1 << 16 ) - 1 ) );
 	
+	if ( did_fail != nullptr )
+	{
+		*did_fail = false;
+	}
+	
 	if ( temp_1 != temp_0 )
 	{
-		we.error("Branch offset out of range.");
+		if ( did_fail != nullptr )
+		{
+			*did_fail = true;
+		}
+		if (!allow_fail)
+		{
+			we.error("Branch offset out of range.");
+		}
 	}
 	
 	return temp_1;
 }
-s32 assembler::immed16( bool keep_lineno )
+s32 assembler::immed16( bool keep_lineno, bool* did_fail, bool allow_fail )
 {
 	const s32 temp_0 = expr( false, keep_lineno );
 	const s32 temp_1 = mask_immed( temp_0, ( ( 1 << 16 ) - 1 ) );
 	
+	if ( did_fail != nullptr )
+	{
+		*did_fail = false;
+	}
+	
 	if ( temp_1 != temp_0 )
 	{
-		we.warn("Immediate value (16-bit) out of range, has been masked.");
+		if ( did_fail != nullptr )
+		{
+			*did_fail = true;
+		}
+		if (!allow_fail)
+		{
+			we.warn( "Immediate value (16-bit) out of range, has been ",
+				"masked." );
+		}
 	}
 	
 	return temp_1;
 }
-s32 assembler::immed12( bool keep_lineno )
+s32 assembler::immed12( bool keep_lineno, bool* did_fail, bool allow_fail )
 {
 	const s32 temp_0 = expr( false, keep_lineno );
 	const s32 temp_1 = mask_immed( temp_0, ( ( 1 << 12 ) - 1 ) );
 	
+	if ( did_fail != nullptr )
+	{
+		*did_fail = false;
+	}
+	
 	if ( temp_1 != temp_0 )
 	{
-		we.warn("Immediate value (12-bit) out of range, has been masked.");
+		if ( did_fail != nullptr )
+		{
+			*did_fail = true;
+		}
+		if (!allow_fail)
+		{
+			we.warn( "Immediate value (12-bit) out of range, has been ",
+				"masked." );
+		}
 	}
 	
 	return temp_1;

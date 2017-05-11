@@ -20,9 +20,38 @@ private:		// types
 		symbol* nextsym;
 		
 	public:		// functions
+		inline real_iarg()
+		{
+		}
+		inline real_iarg( const real_iarg& to_copy ) = default;
+		inline real_iarg( const lexer& lex, bool use_special )
+		{
+			init( lex, use_special );
+		}
+		
+		
+		inline real_iarg& operator = ( const real_iarg& to_copy ) 
+			= default;
+		
 		inline bool comp_nextt( tok_defn td ) const
 		{
 			return ( nextt == static_cast<tok>(td) );
+		}
+		
+		inline void init( const lexer& lex, bool use_special )
+		{
+			if (!use_special)
+			{
+				nextt = lex.nextt();
+				nextval = lex.nextval();
+				nextsym = lex.nextsym();
+			}
+			else // if (use_special)
+			{
+				nextt = lex.special_nextt();
+				nextval = lex.special_nextval();
+				nextsym = lex.special_nextsym();
+			}
 		}
 	};
 	
@@ -122,11 +151,15 @@ private:		// functions
 	
 	s32 mask_immed( s32 to_mask, size_t mask );
 	
-	s32 reg( bool keep_lineno=false );
+	s32 reg( bool keep_lineno=false, bool* did_fail=nullptr, 
+		bool allow_fail=false );
 	
-	s32 braoffs( bool keep_lineno=false );
-	s32 immed16( bool keep_lineno=false );
-	s32 immed12( bool keep_lineno=false );
+	s32 braoffs( bool keep_lineno=false, bool* did_fail=nullptr, 
+		bool allow_fail=false );
+	s32 immed16( bool keep_lineno=false, bool* did_fail=nullptr, 
+		bool allow_fail=false );
+	s32 immed12( bool keep_lineno=false, bool* did_fail=nullptr, 
+		bool allow_fail=false );
 	inline s32 absolute( bool use_special, bool keep_lineno=false )
 	{
 		return expr( use_special, keep_lineno );
