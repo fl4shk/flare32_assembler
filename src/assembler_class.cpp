@@ -85,7 +85,44 @@ assembler::~assembler()
 
 int assembler::run()
 {
+	set_pass(0);
 	
+	do
+	{
+		set_changed(false);
+		
+		set_pass( pass() + 1 );
+		if ( pass() > 100 )
+		{
+			we.error("Cannot resolve references");
+		}
+		
+		
+		set_lc(0);
+		lex.set_lineno(0);;
+		std::rewind(infile);
+		lex.set_nextc(' ');
+		lex_regular();
+		
+		while ( lex.nextt() != EOF )
+		{
+			line();
+		}
+	} while (changed());
+	
+	set_pass(0);
+	set_changed(false);
+	set_lc(0);
+	lex.set_lineno(0);
+	std::rewind(infile);
+	lex.set_nextc(' ');
+	lex_regular();
+	while ( lex.nextt() != EOF )
+	{
+		line();
+	}
+	
+	// Success!
 	return 0;
 }
 
@@ -114,16 +151,16 @@ void assembler::gen( s32 v )
 }
 
 // Parser stuff
-const instruction* assembler::determine_instr
-	( std::vector<real_iarg>& iarg_vec )
+const instruction* assembler::determine_instr()
 {
+	std::vector<real_iarg> iarg_vec;
 	const instruction* ret = nullptr;
 	
 	const long orig_pos = std::ftell(infile);
 	
-	//// Keep lineno so that the function that called this one doesn't have
-	//// to know about what happened to the lexer.
-	//lex_keep_lineno();
+	// Keep lineno so that the function that called this one doesn't have
+	// to know about what happened to the lexer.
+	lex_keep_lineno();
 	
 	const long reset_pos = std::ftell(infile);
 	
@@ -784,10 +821,49 @@ s32 assembler::iarg_immed12( bool just_test, bool* did_fail )
 }
 
 
-s32 assembler::line()
+void assembler::line()
 {
+	// Process labels
+	bool found_label = false;
 	
+	//printout( static_cast<char>(lex.nextt()), "\n" );
 	
+	if ( isspace(lex.nextt()) )
+	{
+		lex_match_regular('\n');
+		return;
+	}
+	
+	//printout( "nextsym blank:  ", ( lex.nextsym() == nullptr ), "\n" );
+	if ( lex.nextt() == cast_typ(tok_defn::ident) )
+	{
+		found_label = true;
+		symbol* sym = lex.nextsym();
+		
+		lex_regular();
+		
+		if ( sym->val() != lc() )
+		{
+			set_changed(true);
+			sym->set_val(lc());
+		}
+		lex_assume_regular(':');
+	}
+	
+	const instruction * const some_instr = determine_instr();
+	
+	if ( !found_label && ( some_instr == nullptr ) )
+	{
+		we.expected("instruction or identifier");
+	}
+	
+	//lex_regular();
+	//printout( found_label, "\n" );
+	
+	//lex_match_regular('\n');
+	//lex_assume_regular('\n');
+	
+	lex_match_regular('\n');
 }
 
 

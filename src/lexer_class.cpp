@@ -58,6 +58,7 @@ void lexer::lex_no_ws( bool keep_lineno )
 		
 		//return set_nextt('\n');
 		set_nextt('\n');
+		return;
 	}
 	
 	// An ident?
@@ -138,6 +139,7 @@ void lexer::lex_no_ws( bool keep_lineno )
 		}
 		
 		//return nextt();
+		return;
 	}
 	
 	// A number? (allows leading zeros)
@@ -154,6 +156,7 @@ void lexer::lex_no_ws( bool keep_lineno )
 		
 		//return set_nextt(static_cast<tok>(tok_defn::number));
 		set_nextt(static_cast<tok>(tok_defn::number));
+		return;
 	}
 	
 	

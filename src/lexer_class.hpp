@@ -50,8 +50,6 @@ private:		// functions
 	gen_setter_by_val(pass);
 	gen_setter_by_val(user_sym_tbl);
 	gen_setter_by_val(special_sym_tbl);
-	gen_setter_by_val(lineno);
-	gen_setter_by_val(nextc);
 	gen_setter_by_val(nextt);
 	gen_setter_by_val(nextval);
 	gen_setter_by_val(nextsym);
@@ -83,6 +81,11 @@ public:		// functions
 		eat_ws(keep_lineno);
 		lex_no_ws(keep_lineno);
 	}
+	
+	
+	gen_setter_by_val(nextc);
+	gen_setter_by_val(lineno);
+	
 	
 	gen_getter_by_val(infile);
 	gen_getter_by_val(we);

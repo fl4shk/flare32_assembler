@@ -8,71 +8,69 @@
 namespace navichip32
 {
 
+class real_iarg
+{
+public:		// variables
+	tok nextt;
+	s32 nextval;
+	symbol* nextsym;
+	
+public:		// functions
+	inline real_iarg()
+	{
+	}
+	inline real_iarg( const real_iarg& to_copy ) = default;
+	inline real_iarg( const lexer& lex, bool use_special )
+	{
+		init( lex, use_special );
+	}
+	inline real_iarg( tok s_nextt, s32 s_nextval )
+	{
+		init( s_nextt, s_nextval );
+	}
+	
+	
+	inline real_iarg& operator = ( const real_iarg& to_copy ) 
+		= default;
+	
+	inline bool comp_nextt( tok_defn typ ) const
+	{
+		return ( nextt == static_cast<tok>(typ) );
+	}
+	
+	inline void init( const lexer& lex, bool use_special )
+	{
+		if (!use_special)
+		{
+			nextt = lex.nextt();
+			nextval = lex.nextval();
+			nextsym = lex.nextsym();
+		}
+		else // if (use_special)
+		{
+			nextt = lex.special_nextt();
+			nextval = lex.special_nextval();
+			nextsym = lex.special_nextsym();
+		}
+	}
+	
+	inline void init( tok s_nextt, s32 s_nextval )
+	{
+		nextt = s_nextt;
+		nextval = s_nextval;
+		nextsym = nullptr;
+	}
+};
 
 class assembler
 {
-private:		// types
-	class real_iarg
-	{
-	public:		// variables
-		tok nextt;
-		s32 nextval;
-		symbol* nextsym;
-		
-	public:		// functions
-		inline real_iarg()
-		{
-		}
-		inline real_iarg( const real_iarg& to_copy ) = default;
-		inline real_iarg( const lexer& lex, bool use_special )
-		{
-			init( lex, use_special );
-		}
-		inline real_iarg( tok s_nextt, s32 s_nextval )
-		{
-			init( s_nextt, s_nextval );
-		}
-		
-		
-		inline real_iarg& operator = ( const real_iarg& to_copy ) 
-			= default;
-		
-		inline bool comp_nextt( tok_defn td ) const
-		{
-			return ( nextt == static_cast<tok>(td) );
-		}
-		
-		inline void init( const lexer& lex, bool use_special )
-		{
-			if (!use_special)
-			{
-				nextt = lex.nextt();
-				nextval = lex.nextval();
-				nextsym = lex.nextsym();
-			}
-			else // if (use_special)
-			{
-				nextt = lex.special_nextt();
-				nextval = lex.special_nextval();
-				nextsym = lex.special_nextsym();
-			}
-		}
-		
-		inline void init( tok s_nextt, s32 s_nextval )
-		{
-			nextt = s_nextt;
-			nextval = s_nextval;
-			nextsym = nullptr;
-		}
-	};
-	
 private:		// variables
 	std::vector<string_view> internal_args_vec;
 	size_t internal_pass = 0;
 	
 	// Code generator stuff
-	unsigned int internal_lc = 0;
-	unsigned int internal_last_lc = -1;
+	s32 internal_lc = 0;
+	s32 internal_last_lc = -1;
 	bool internal_changed = false;
 	
 	
@@ -106,12 +104,12 @@ private:		// functions
 	
 	
 	// Parser stuff
-	inline bool at_end_of_line() const
-	{
-		return ( !( ( lex.nextc() != '\n' ) && ( lex.nextc() != EOF )
-			&& ( lex.nextt() != '\n' ) ) );
-	}
-	const instruction* determine_instr( std::vector<real_iarg>& iarg_vec );
+	//inline bool at_end_of_line() const
+	//{
+	//	return ( !( ( lex.nextc() != '\n' ) && ( lex.nextc() != EOF )
+	//		&& ( lex.nextt() != '\n' ) ) );
+	//}
+	const instruction* determine_instr();
 	bool handle_iargs( const instruction& iter, bool just_test,
 		std::vector<real_iarg>& iarg_vec );
 	
@@ -220,16 +218,33 @@ private:		// functions
 	{
 		return expr( false, just_test, did_fail );
 	}
-	s32 line();
 	
+	inline tok cast_typ( tok_defn typ ) const
+	{
+		return static_cast<tok>(typ);
+	}
+	void line();
+	
+	inline void lex_regular()
+	{
+		lex(false);
+	}
 	inline void lex_keep_lineno()
 	{
 		lex(true);
 	}
-	//inline bool lex_match_keep_lineno( tok typ )
+	inline bool lex_match_regular( tok typ )
+	{
+		return lex.match( typ, false );
+	}
+	//inline bool lex_match_just_test( tok typ )
 	//{
 	//	return lex.match( typ, true );
 	//}
+	inline void lex_assume_regular( tok typ )
+	{
+		lex.assume( typ, false );
+	}
 	//inline void lex_assume_keep_lineno( tok typ )
 	//{
 	//	lex.assume( typ, true );

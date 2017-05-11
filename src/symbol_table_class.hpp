@@ -23,7 +23,6 @@ private:		// variables
 private:		// functions
 	gen_setter_by_con_ref(name);
 	gen_setter_by_val(typ);
-	gen_setter_by_val(val);
 	gen_setter_by_val(is_special);
 	gen_setter_by_val(has_dot_f);
 	
@@ -45,6 +44,8 @@ public:		// functions
 	}
 	
 	inline symbol& operator = ( const symbol& other ) = default;
+	
+	gen_setter_by_val(val);
 	
 	gen_getter_by_con_ref(name);
 	gen_getter_by_val(typ);
