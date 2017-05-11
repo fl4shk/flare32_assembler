@@ -100,6 +100,7 @@ int assembler::run()
 		}
 	} while (changed());
 	
+	printout("\n");
 	set_pass(0);
 	set_changed(false);
 	set_lc(0);
@@ -861,125 +862,104 @@ void assembler::line()
 	// Process labels
 	bool found_label = false;
 	
-	//if ( isspace(lex.nextt()) )
-	//{
-	//	//lex_match_regular('\n');
-	//	//lex_regular();
-	//	return;
-	//}
+	if ( isspace(lex.nextt()) )
+	{
+		//lex_match_regular('\n');
+		lex_regular();
+		return;
+	}
 	
 	const long orig_pos = std::ftell(infile);
 	
-	if ( lex.nextt() == cast_typ(tok_defn::ident) )
-	{
-		symbol* sym = lex.nextsym();
-		
-		
-		auto temp_nextc = lex.nextc();
-		
-		auto temp_nextt = lex.nextt();
-		auto temp_nextval = lex.nextval();
-		auto temp_nextsym = lex.nextsym();
-		
-		auto temp_special_nextt = lex.special_nextt();
-		auto temp_special_nextval = lex.special_nextval();
-		auto temp_special_nextsym = lex.special_nextsym();
-		
-		
-		lex_keep_lineno();
-		std::fseek( infile, orig_pos, SEEK_SET );
-		
-		if ( lex.nextt() == ':' )
-		{
-			lex_regular();
-			
-			if ( sym->val() != lc() )
-			{
-				set_changed(true);
-				sym->set_val(lc());
-			}
-			
-			found_label = true;
-		}
-		else
-		{
-			lex.set_nextc(temp_nextc);
-			
-			lex.set_nextt(temp_nextt);
-			lex.set_nextval(temp_nextval);
-			lex.set_nextsym(temp_nextsym);
-			
-			lex.set_special_nextt(temp_special_nextt);
-			lex.set_special_nextval(temp_special_nextval);
-			lex.set_special_nextsym(temp_special_nextsym);
-		}
-	}
+	//if ( lex.nextt() == cast_typ(tok_defn::ident) )
+	//{
+	//	symbol* sym = lex.nextsym();
+	//	
+	//	
+	//	auto temp_nextc = lex.nextc();
+	//	
+	//	auto temp_nextt = lex.nextt();
+	//	auto temp_nextval = lex.nextval();
+	//	auto temp_nextsym = lex.nextsym();
+	//	
+	//	auto temp_special_nextt = lex.special_nextt();
+	//	auto temp_special_nextval = lex.special_nextval();
+	//	auto temp_special_nextsym = lex.special_nextsym();
+	//	
+	//	
+	//	lex_keep_lineno();
+	//	std::fseek( infile, orig_pos, SEEK_SET );
+	//	
+	//	if ( lex.nextt() == ':' )
+	//	{
+	//		lex_regular();
+	//		
+	//		if ( sym->val() != lc() )
+	//		{
+	//			set_changed(true);
+	//			sym->set_val(lc());
+	//		}
+	//		
+	//		found_label = true;
+	//	}
+	//	else
+	//	{
+	//		lex.set_nextc(temp_nextc);
+	//		
+	//		lex.set_nextt(temp_nextt);
+	//		lex.set_nextval(temp_nextval);
+	//		lex.set_nextsym(temp_nextsym);
+	//		
+	//		lex.set_special_nextt(temp_special_nextt);
+	//		lex.set_special_nextval(temp_special_nextval);
+	//		lex.set_special_nextsym(temp_special_nextsym);
+	//	}
+	//}
 	
 	const instruction* some_instr = determine_instr();
 	
 	if ( !found_label && ( some_instr == nullptr ) )
 	{
-		we.expected("instruction or identifier");
+		//if ( !lex.match( '\n', false ) )
+		{
+			we.expected("instruction or identifier");
+		}
 	}
 	
-	//if ( some_instr != nullptr )
-	//{
-	//	//if ( pass() == 0 )
-	//	{
-	//		printout( "pass #", pass(), ":  ", cast_typ(some_instr->iargs()), 
-	//			"\n" );
-	//	}
-	//}
+	if ( some_instr != nullptr )
+	{
+		//if ( pass() == 0 )
+		{
+			printout( "pass #", pass(), ":  ", cast_typ(some_instr->iargs()), 
+				"\n" );
+		}
+	}
 	
 	printout( "Find End of Line:  ", lex.lineno(), "\n");
-	//while (!at_end_of_line())
-	
-	//while (!lex_match_regular('\n'))
-	//while ( ( lex.nextt() != '\n' ) && ( lex.nextc() != EOF ) )
-	//while (!at_end_of_line())
-	while ( ( lex.nextc() != '\n' ) && ( lex.nextc() != EOF ) )
-	{
-		lex_regular();
-		printout( lex.nextc(), "\t\t", lex.nextt(), "\t\t", 
-			lex.nextval() );
-		
-		if ( lex.nextsym() != nullptr )
-		{
-			printout( "\t\t", lex.nextsym()->name() );
-		}
-		
-		
-		//printout( "\t\t", lex.special_nextt(), "\t\t", 
-		//	lex.special_nextval() );
-		//
-		//if ( lex.special_nextsym() != nullptr )
-		//{
-		//	printout( "\t\t", lex.special_nextsym()->name() );
-		//}
-		
-		printout("\n");
-	}
-	////while (at_end_of_line())
+	////while (!at_end_of_line())
+	//
+	////while (!lex_match_regular('\n'))
+	////while ( ( lex.nextt() != '\n' ) && ( lex.nextc() != EOF ) )
+	////while (!at_end_of_line())
+	//while ( ( lex.nextc() != '\n' ) && ( lex.nextc() != EOF ) )
 	//{
 	//	lex_regular();
+	//	printout( lex.nextc(), "\t\t", lex.nextt(), "\t\t", 
+	//		lex.nextval() );
+	//	
+	//	if ( lex.nextsym() != nullptr )
+	//	{
+	//		printout( "\t\t", lex.nextsym()->name() );
+	//	}
+	//	
+	//	printout("\n");
 	//}
+	//lex_regular();
 	
-	
-	// Go to the end of the line
-	//while (!lex_match_regular('\n'))
-	//{
-	//}
-	//while (!lex_match_end_of_line(true))
-	//{
-	//}
-	
-	//while (!lex_match_end_of_line(false))
-	//{
-	//}
-	
-	
-	lex_regular();
-	lex.match( '\n', false );
+	while ( !lex.match( '\n', false ) )
+	{
+		lex_regular();
+	}
 }
 
 
