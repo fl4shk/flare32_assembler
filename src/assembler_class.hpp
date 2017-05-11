@@ -100,37 +100,47 @@ private:		// functions
 		return ( !( ( lex.nextc() != '\n' ) && ( lex.nextc() != EOF )
 			&& ( lex.nextt() != '\n' ) ) );
 	}
-	const instruction* determine_instr( std::vector<real_iarg>& iarg_vec );
-	//bool instr_compat_with_iargs( const instruction& some_instr, 
-	//	const std::vector<real_iarg>& iarg_vec );
-	bool test_iargs( const instruction& iter, 
-		std::vector<real_iarg>& iarg_vec );
+	const instruction* determine_instr();
+	bool test_iargs( const instruction& iter );
 	
-	bool test_iarg_reg( std::vector<real_iarg>& iarg_vec );
+	inline bool test_iarg_reg()
+	{
+		bool did_fail;
+		reg( true, &did_fail, true );
+		return !did_fail;
+	}
+	bool test_iarg_immed16()
+	{
+		bool did_fail;
+		immed16( true, &did_fail, true );
+		return !did_fail;
+	}
 	
-	bool test_instr_noargs( std::vector<real_iarg>& iarg_vec );
-	bool test_instr_ra( std::vector<real_iarg>& iarg_vec );
-	bool test_instr_ra_rb( std::vector<real_iarg>& iarg_vec );
-	bool test_instr_ra_imm16u( std::vector<real_iarg>& iarg_vec );
-	bool test_instr_imm16u( std::vector<real_iarg>& iarg_vec );
-	bool test_instr_imm16s( std::vector<real_iarg>& iarg_vec );
-	bool test_instr_branchoffset( std::vector<real_iarg>& iarg_vec );
-	bool test_instr_flags( std::vector<real_iarg>& iarg_vec );
-	bool test_instr_ra_flags( std::vector<real_iarg>& iarg_vec );
-	bool test_instr_flags_ra( std::vector<real_iarg>& iarg_vec );
-	bool test_instr_ira( std::vector<real_iarg>& iarg_vec );
-	bool test_instr_ira_ra( std::vector<real_iarg>& iarg_vec );
-	bool test_instr_ra_ira( std::vector<real_iarg>& iarg_vec );
-	bool test_instr_ra_pc( std::vector<real_iarg>& iarg_vec );
-	bool test_instr_ra_rb_imm16u( std::vector<real_iarg>& iarg_vec );
-	bool test_instr_ra_rb_imm16s( std::vector<real_iarg>& iarg_vec );
-	bool test_instr_ra_rb_rc_imm12s( std::vector<real_iarg>& iarg_vec );
-	bool test_instr_ra_rb_rc( std::vector<real_iarg>& iarg_vec );
-	bool test_instr_ra_rb_abs( std::vector<real_iarg>& iarg_vec );
+	bool test_instr_noargs();
+	bool test_instr_ra();
+	bool test_instr_ra_rb();
+	bool test_instr_ra_imm16u();
+	bool test_instr_imm16u();
+	bool test_instr_imm16s();
+	bool test_instr_branchoffset();
+	bool test_instr_flags();
+	bool test_instr_ra_flags();
+	bool test_instr_flags_ra();
+	bool test_instr_ira();
+	bool test_instr_ira_ra();
+	bool test_instr_ra_ira();
+	bool test_instr_ra_pc();
+	bool test_instr_ra_rb_imm16u();
+	bool test_instr_ra_rb_imm16s();
+	bool test_instr_ra_rb_rc_imm12s();
+	bool test_instr_ra_rb_rc();
+	bool test_instr_ra_rb_abs();
 	
 	
-	s32 unary( bool use_special, bool keep_lineno=false );
-	s32 expr( bool use_special, bool keep_lineno=false );
+	s32 unary( bool use_special, bool keep_lineno, bool* did_fail, 
+		bool allow_fail );
+	s32 expr( bool use_special, bool keep_lineno, bool* did_fail, 
+		bool allow_fail, bool did_init=true );
 	
 	s32 mask_immed( s32 to_mask, size_t mask );
 	
@@ -143,9 +153,10 @@ private:		// functions
 		bool allow_fail=false );
 	s32 immed12( bool keep_lineno=false, bool* did_fail=nullptr, 
 		bool allow_fail=false );
-	inline s32 absolute( bool use_special, bool keep_lineno=false )
+	inline s32 absolute( bool use_special, bool keep_lineno=false,
+		bool* did_fail=nullptr, bool allow_fail=false )
 	{
-		return expr( use_special, keep_lineno );
+		return expr( use_special, keep_lineno, did_fail, allow_fail );
 	}
 	s32 line();
 	
@@ -153,11 +164,15 @@ private:		// functions
 	{
 		lex(true);
 	}
-	
 	inline bool lex_match_keep_lineno( tok typ )
 	{
 		return lex.match( typ, true );
 	}
+	inline void lex_assume_keep_lineno( tok typ )
+	{
+		lex.assume( typ, true );
+	}
+	
 	
 	
 public:		// functions

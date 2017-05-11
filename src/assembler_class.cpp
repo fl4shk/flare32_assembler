@@ -114,8 +114,7 @@ void assembler::gen( s32 v )
 }
 
 // Parser stuff
-const instruction* assembler::determine_instr
-	( std::vector<assembler::real_iarg>& iarg_vec )
+const instruction* assembler::determine_instr()
 {
 	const long orig_pos = std::ftell(infile);
 	
@@ -155,11 +154,10 @@ const instruction* assembler::determine_instr
 	for ( size_t i=0; i<instr_vec.size(); ++i )
 	{
 		const instruction& iter = instr_vec.at(i);
-		iarg_vec.clear();
 		
 		lex_keep_lineno();
 		
-		if ( test_iargs( iter, iarg_vec ) )
+		if ( test_iargs(iter) )
 		{
 			return &iter;
 		}
@@ -172,49 +170,48 @@ const instruction* assembler::determine_instr
 	
 	return nullptr;
 }
-bool assembler::test_iargs( const instruction& iter,
-	std::vector<assembler::real_iarg>& iarg_vec )
+bool assembler::test_iargs( const instruction& iter )
 {
 	switch ( iter.iargs() )
 	{
 		case instr_args::noargs:
-			return test_instr_noargs(iarg_vec);
+			return test_instr_noargs();
 		case instr_args::ra:
-			return test_instr_ra(iarg_vec);
+			return test_instr_ra();
 		case instr_args::ra_rb:
-			return test_instr_ra_rb(iarg_vec);
+			return test_instr_ra_rb();
 		case instr_args::ra_imm16u:
-			return test_instr_ra_imm16u(iarg_vec);
+			return test_instr_ra_imm16u();
 		case instr_args::imm16u:
-			return test_instr_imm16u(iarg_vec);
+			return test_instr_imm16u();
 		case instr_args::imm16s:
-			return test_instr_imm16s(iarg_vec);
+			return test_instr_imm16s();
 		case instr_args::branchoffset:
-			return test_instr_branchoffset(iarg_vec);
+			return test_instr_branchoffset();
 		case instr_args::flags:
-			return test_instr_flags(iarg_vec);
+			return test_instr_flags();
 		case instr_args::ra_flags:
-			return test_instr_ra_flags(iarg_vec);
+			return test_instr_ra_flags();
 		case instr_args::flags_ra:
-			return test_instr_flags_ra(iarg_vec);
+			return test_instr_flags_ra();
 		case instr_args::ira:
-			return test_instr_ira(iarg_vec);
+			return test_instr_ira();
 		case instr_args::ira_ra:
-			return test_instr_ira_ra(iarg_vec);
+			return test_instr_ira_ra();
 		case instr_args::ra_ira:
-			return test_instr_ra_ira(iarg_vec);
+			return test_instr_ra_ira();
 		case instr_args::ra_pc:
-			return test_instr_ra_pc(iarg_vec);
+			return test_instr_ra_pc();
 		case instr_args::ra_rb_imm16u:
-			return test_instr_ra_rb_imm16u(iarg_vec);
+			return test_instr_ra_rb_imm16u();
 		case instr_args::ra_rb_imm16s:
-			return test_instr_ra_rb_imm16s(iarg_vec);
+			return test_instr_ra_rb_imm16s();
 		case instr_args::ra_rb_rc_imm12s:
-			return test_instr_ra_rb_rc_imm12s(iarg_vec);
+			return test_instr_ra_rb_rc_imm12s();
 		case instr_args::ra_rb_rc:
-			return test_instr_ra_rb_rc(iarg_vec);
+			return test_instr_ra_rb_rc();
 		case instr_args::ra_rb_abs:
-			return test_instr_ra_rb_abs(iarg_vec);
+			return test_instr_ra_rb_abs();
 		
 		default:
 			we.unknown("instr_args!");
@@ -225,136 +222,130 @@ bool assembler::test_iargs( const instruction& iter,
 	return false;
 }
 
-bool assembler::test_iarg_reg( std::vector<real_iarg>& iarg_vec )
-{
-	bool did_fail;
-	reg( true, &did_fail, true );
-	
-	if (did_fail)
-	{
-		return false;
-	}
-	
-	iarg_vec.push_back(real_iarg( lex, true ));
-	
-	return true;
-}
-
-bool assembler::test_instr_noargs( std::vector<real_iarg>& iarg_vec )
+bool assembler::test_instr_noargs()
 {
 	return lex_match_keep_lineno('\n');
 }
-bool assembler::test_instr_ra( std::vector<real_iarg>& iarg_vec )
+bool assembler::test_instr_ra()
 {
 	// rA
-	if (!test_iarg_reg(iarg_vec))
+	if (!test_iarg_reg())
 	{
 		return false;
 	}
 	
 	return lex_match_keep_lineno('\n');
 }
-bool assembler::test_instr_ra_rb( std::vector<real_iarg>& iarg_vec )
+bool assembler::test_instr_ra_rb()
 {
-	
 	// rA
-	if (!test_iarg_reg(iarg_vec))
+	if (!test_iarg_reg())
 	{
 		return false;
 	}
+	lex_assume_keep_lineno(',');
 	
 	// rB
-	if (!test_iarg_reg(iarg_vec))
+	if (!test_iarg_reg())
 	{
 		return false;
 	}
 	
 	return lex_match_keep_lineno('\n');
 }
-bool assembler::test_instr_ra_imm16u( std::vector<real_iarg>& iarg_vec )
+bool assembler::test_instr_ra_imm16u()
 {
+	// rA
+	if (!test_iarg_reg())
+	{
+		return false;
+	}
 	
-	return false;
+	lex_assume_keep_lineno(',');
+	
+	// imm16u
+	
+	return lex_match_keep_lineno('\n');
 }
-bool assembler::test_instr_imm16u( std::vector<real_iarg>& iarg_vec )
+bool assembler::test_instr_imm16u()
 {
 	
-	return false;
+	return lex_match_keep_lineno('\n');
 }
-bool assembler::test_instr_imm16s( std::vector<real_iarg>& iarg_vec )
+bool assembler::test_instr_imm16s()
 {
 	
-	return false;
+	return lex_match_keep_lineno('\n');
 }
-bool assembler::test_instr_branchoffset( std::vector<real_iarg>& iarg_vec )
+bool assembler::test_instr_branchoffset()
 {
 	
-	return false;
+	return lex_match_keep_lineno('\n');
 }
-bool assembler::test_instr_flags( std::vector<real_iarg>& iarg_vec )
+bool assembler::test_instr_flags()
 {
 	
-	return false;
+	return lex_match_keep_lineno('\n');
 }
-bool assembler::test_instr_ra_flags( std::vector<real_iarg>& iarg_vec )
+bool assembler::test_instr_ra_flags()
 {
 	
-	return false;
+	return lex_match_keep_lineno('\n');
 }
-bool assembler::test_instr_flags_ra( std::vector<real_iarg>& iarg_vec )
+bool assembler::test_instr_flags_ra()
 {
 	
-	return false;
+	return lex_match_keep_lineno('\n');
 }
-bool assembler::test_instr_ira( std::vector<real_iarg>& iarg_vec )
+bool assembler::test_instr_ira()
 {
 	
-	return false;
+	return lex_match_keep_lineno('\n');
 }
-bool assembler::test_instr_ira_ra( std::vector<real_iarg>& iarg_vec )
+bool assembler::test_instr_ira_ra()
 {
 	
-	return false;
+	return lex_match_keep_lineno('\n');
 }
-bool assembler::test_instr_ra_ira( std::vector<real_iarg>& iarg_vec )
+bool assembler::test_instr_ra_ira()
 {
 	
-	return false;
+	return lex_match_keep_lineno('\n');
 }
-bool assembler::test_instr_ra_pc( std::vector<real_iarg>& iarg_vec )
+bool assembler::test_instr_ra_pc()
 {
 	
-	return false;
+	return lex_match_keep_lineno('\n');
 }
-bool assembler::test_instr_ra_rb_imm16u( std::vector<real_iarg>& iarg_vec )
+bool assembler::test_instr_ra_rb_imm16u()
 {
 	
-	return false;
+	return lex_match_keep_lineno('\n');
 }
-bool assembler::test_instr_ra_rb_imm16s( std::vector<real_iarg>& iarg_vec )
+bool assembler::test_instr_ra_rb_imm16s()
 {
 	
-	return false;
+	return lex_match_keep_lineno('\n');
 }
-bool assembler::test_instr_ra_rb_rc_imm12s
-	( std::vector<real_iarg>& iarg_vec )
+bool assembler::test_instr_ra_rb_rc_imm12s()
 {
 	
-	return false;
+	return lex_match_keep_lineno('\n');
 }
-bool assembler::test_instr_ra_rb_rc( std::vector<real_iarg>& iarg_vec )
+bool assembler::test_instr_ra_rb_rc()
 {
 	
-	return false;
+	return lex_match_keep_lineno('\n');
 }
-bool assembler::test_instr_ra_rb_abs( std::vector<real_iarg>& iarg_vec )
+bool assembler::test_instr_ra_rb_abs()
 {
 	
-	return false;
+	return lex_match_keep_lineno('\n');
 }
 
 
-s32 assembler::unary( bool use_special, bool keep_lineno )
+s32 assembler::unary( bool use_special, bool keep_lineno, bool* did_fail,
+	bool allow_fail )
 {
 	s32 v;
 	
@@ -382,29 +373,43 @@ s32 assembler::unary( bool use_special, bool keep_lineno )
 		
 		case '-':
 			lex(keep_lineno);
-			return -unary( use_special, keep_lineno );
+			return -unary( use_special, keep_lineno, did_fail, allow_fail );
 		
 		case '(':
 			lex(keep_lineno);
-			v = expr( use_special, keep_lineno );
+			v = expr( use_special, keep_lineno, did_fail, allow_fail );
 			
-			if (!lex.match( ')', keep_lineno ))
+			//if (!lex.match( ')', keep_lineno ))
+			if ( !lex_match_keep_lineno(')') && !allow_fail )
 			{
 				we.warn1("Missing ')' assumed");
 			}
 			break;
 		
 		default:
-			we.error("Ill-formed expression");
+			if ( did_fail != nullptr )
+			{
+				*did_fail = true;
+			}
+			if (!allow_fail)
+			{
+				we.error("Ill-formed expression");
+			}
 			break;
 	}
 	
 	return v;
 }
 
-s32 assembler::expr( bool use_special, bool keep_lineno )
+s32 assembler::expr( bool use_special, bool keep_lineno, bool* did_fail,
+	bool allow_fail, bool did_init )
 {
-	s32 v = unary( use_special, keep_lineno );
+	if ( !did_init && ( did_fail != nullptr ) )
+	{
+		*did_fail = false;
+	}
+	
+	s32 v = unary( use_special, keep_lineno, did_fail, allow_fail );
 	
 	decltype(&lexer::nextt) some_nextt;
 	
@@ -424,11 +429,13 @@ s32 assembler::expr( bool use_special, bool keep_lineno )
 		{
 			case '+':
 				lex(keep_lineno);
-				v += unary( use_special, keep_lineno );
+				v += unary( use_special, keep_lineno, did_fail, 
+					allow_fail );
 				break;
 			case '-':
 				lex(keep_lineno);
-				v -= unary( use_special, keep_lineno );
+				v -= unary( use_special, keep_lineno, did_fail,
+					allow_fail );
 				break;
 		}
 	}
@@ -483,20 +490,12 @@ s32 assembler::reg( bool keep_lineno, bool* did_fail, bool allow_fail )
 
 s32 assembler::braoffs( bool keep_lineno, bool* did_fail, bool allow_fail )
 {
-	const s32 temp_0 = expr( false, keep_lineno );
+	const s32 temp_0 = expr( false, keep_lineno, did_fail, allow_fail,
+		false );
 	const s32 temp_1 = mask_immed( temp_0, ( ( 1 << 16 ) - 1 ) );
-	
-	if ( did_fail != nullptr )
-	{
-		*did_fail = false;
-	}
 	
 	if ( temp_1 != temp_0 )
 	{
-		if ( did_fail != nullptr )
-		{
-			*did_fail = true;
-		}
 		if (!allow_fail)
 		{
 			we.error("Branch offset out of range.");
@@ -507,20 +506,12 @@ s32 assembler::braoffs( bool keep_lineno, bool* did_fail, bool allow_fail )
 }
 s32 assembler::immed16( bool keep_lineno, bool* did_fail, bool allow_fail )
 {
-	const s32 temp_0 = expr( false, keep_lineno );
+	const s32 temp_0 = expr( false, keep_lineno, did_fail, allow_fail,
+		false );
 	const s32 temp_1 = mask_immed( temp_0, ( ( 1 << 16 ) - 1 ) );
-	
-	if ( did_fail != nullptr )
-	{
-		*did_fail = false;
-	}
 	
 	if ( temp_1 != temp_0 )
 	{
-		if ( did_fail != nullptr )
-		{
-			*did_fail = true;
-		}
 		if (!allow_fail)
 		{
 			we.warn( "Immediate value (16-bit) out of range, has been ",
@@ -532,20 +523,12 @@ s32 assembler::immed16( bool keep_lineno, bool* did_fail, bool allow_fail )
 }
 s32 assembler::immed12( bool keep_lineno, bool* did_fail, bool allow_fail )
 {
-	const s32 temp_0 = expr( false, keep_lineno );
+	const s32 temp_0 = expr( false, keep_lineno, did_fail, allow_fail,
+		false );
 	const s32 temp_1 = mask_immed( temp_0, ( ( 1 << 12 ) - 1 ) );
-	
-	if ( did_fail != nullptr )
-	{
-		*did_fail = false;
-	}
 	
 	if ( temp_1 != temp_0 )
 	{
-		if ( did_fail != nullptr )
-		{
-			*did_fail = true;
-		}
 		if (!allow_fail)
 		{
 			we.warn( "Immediate value (12-bit) out of range, has been ",
