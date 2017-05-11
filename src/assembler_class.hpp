@@ -123,19 +123,23 @@ private:		// functions
 		}
 	}
 	
-	bool test_iarg_reg( bool just_test, std::vector<real_iarg>& iarg_vec );
-	bool test_iarg_reg_flags( bool just_test, 
+	bool handle_iarg_reg( bool just_test, 
 		std::vector<real_iarg>& iarg_vec );
-	bool test_iarg_reg_ira( bool just_test, 
+	bool handle_iarg_reg_flags( bool just_test, 
 		std::vector<real_iarg>& iarg_vec );
-	bool test_iarg_reg_pc( bool just_test, 
+	bool handle_iarg_reg_ira( bool just_test, 
 		std::vector<real_iarg>& iarg_vec );
-	bool test_iarg_braoffs( bool just_test, 
+	bool handle_iarg_reg_pc( bool just_test, 
 		std::vector<real_iarg>& iarg_vec );
-	bool test_iarg_immed16( bool just_test, 
+	bool handle_iarg_braoffs( bool just_test, 
 		std::vector<real_iarg>& iarg_vec );
-	bool test_iarg_immed12( bool just_test, 
+	bool handle_iarg_immed16( bool just_test, 
 		std::vector<real_iarg>& iarg_vec );
+	bool handle_iarg_immed12( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	bool handle_iarg_abs( bool just_test,
+		std::vector<real_iarg>& iarg_vec );
+	
 	
 	bool handle_instr_noargs( bool just_test, 
 		std::vector<real_iarg>& iarg_vec );
@@ -212,10 +216,9 @@ private:		// functions
 	s32 iarg_braoffs( bool just_test=false, bool* did_fail=nullptr );
 	s32 iarg_immed16( bool just_test=false, bool* did_fail=nullptr );
 	s32 iarg_immed12( bool just_test=false, bool* did_fail=nullptr );
-	inline s32 iarg_absolute( bool use_special, bool just_test=false,
-		bool* did_fail=nullptr )
+	inline s32 iarg_abs( bool just_test=false, bool* did_fail=nullptr )
 	{
-		return expr( use_special, just_test, did_fail );
+		return expr( false, just_test, did_fail );
 	}
 	s32 line();
 	
