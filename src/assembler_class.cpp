@@ -239,19 +239,13 @@ bool assembler::test_instr_ra()
 bool assembler::test_instr_ra_rb()
 {
 	// rA
-	if (!test_iarg_reg())
-	{
-		return false;
-	}
-	
-	// Comma
-	if (!lex_match_keep_lineno(','))
-	{
-		return false;
-	}
-	
-	// rB
-	if (!test_iarg_reg())
+	if ( !test_iarg_reg()
+		
+		// Comma
+		|| !lex_match_keep_lineno(',')
+		
+		// rB
+		|| !test_iarg_reg() )
 	{
 		return false;
 	}
@@ -261,19 +255,13 @@ bool assembler::test_instr_ra_rb()
 bool assembler::test_instr_ra_imm16u()
 {
 	// rA
-	if (!test_iarg_reg())
-	{
-		return false;
-	}
-	
-	// Comma
-	if (!lex_match_keep_lineno(','))
-	{
-		return false;
-	}
-	
-	// imm16u
-	if (!test_iarg_immed16())
+	if ( !test_iarg_reg()
+		
+		// Comma
+		|| !lex_match_keep_lineno(',')
+		
+		// imm16u
+		|| !test_iarg_immed16() )
 	{
 		return false;
 	}
@@ -312,36 +300,103 @@ bool assembler::test_instr_branchoffset()
 }
 bool assembler::test_instr_flags()
 {
+	// flags special-purpose register
+	if (!test_iarg_reg_flags())
+	{
+		return false;
+	}
 	
 	return lex_match_keep_lineno('\n');
 }
 bool assembler::test_instr_ra_flags()
 {
+	// rA
+	if ( !test_iarg_reg()
+		
+		// Comma
+		|| !lex_match_keep_lineno(',')
+		
+		// flags special-purpose register
+		|| !test_iarg_reg_flags() )
+	{
+		return false;
+	}
 	
 	return lex_match_keep_lineno('\n');
 }
 bool assembler::test_instr_flags_ra()
 {
+	// flags special-purpose register
+	if ( !test_iarg_reg_flags()
+		
+		// Comma
+		|| !lex_match_keep_lineno(',')
+		
+		// rA
+		|| !test_iarg_reg() )
+	{
+		return false;
+	}
 	
 	return lex_match_keep_lineno('\n');
 }
 bool assembler::test_instr_ira()
 {
+	// ira special-purpose register
+	if (!test_iarg_reg_ira())
+	{
+		return false;
+	}
 	
 	return lex_match_keep_lineno('\n');
 }
 bool assembler::test_instr_ira_ra()
 {
+	// ira special-purpose register
+	if ( !test_iarg_reg_ira()
+		
+		// Comma
+		|| !lex_match_keep_lineno(',')
+		
+		// rA
+		|| !test_iarg_reg() )
+	{
+		return false;
+	}
 	
 	return lex_match_keep_lineno('\n');
 }
 bool assembler::test_instr_ra_ira()
 {
+	// rA
+	if ( !test_iarg_reg()
+		
+		// Comma
+		|| !lex_match_keep_lineno(',')
+		
+		// ira special-purpose register
+		|| !test_iarg_reg_ira() )
+	{
+		return false;
+	}
+	
 	
 	return lex_match_keep_lineno('\n');
 }
 bool assembler::test_instr_ra_pc()
 {
+	// rA
+	if ( !test_iarg_reg()
+		
+		// Comma
+		|| !lex_match_keep_lineno(',')
+		
+		// pc special-purpose register
+		|| !test_iarg_reg_pc() )
+	{
+		return false;
+	}
+	
 	
 	return lex_match_keep_lineno('\n');
 }
