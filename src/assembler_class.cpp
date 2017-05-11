@@ -816,7 +816,11 @@ s32 assembler::iarg_specific_reg( tok_defn typ,
 
 s32 assembler::iarg_braoffs( bool just_test, bool* did_fail )
 {
-	const s32 temp_0 = expr( false, just_test, did_fail, false );
+	// I'm not sure this is correct!
+	const s32 temp_0 = expr( false, just_test, did_fail, false )
+		- ( lc() + 4 );
+	
+	
 	const s32 temp_1 = mask_immed( temp_0, ( ( 1 << 16 ) - 1 ) );
 	
 	if ( temp_1 != temp_0 )
@@ -922,10 +926,10 @@ void assembler::line()
 		}
 	}
 	
-	if (found_label)
-	{
-		printout( "Found this label:  ", lex.nextsym()->name(), "\n" );
-	}
+	//if (found_label)
+	//{
+	//	printout( "Found this label:  ", lex.nextsym()->name(), "\n" );
+	//}
 	
 	const instruction* some_instr = determine_instr();
 	
@@ -934,36 +938,21 @@ void assembler::line()
 		we.expected("instruction or identifier");
 	}
 	
-	if ( some_instr != nullptr )
-	{
-		//if ( pass() != 0 )
-		{
-			printout( "pass #", pass(), ":  ", cast_typ(some_instr->iargs()), 
-				"\n" );
-		}
-	}
-	
-	printout( "Find End of Line:  ", lex.lineno(), "\n");
-	////while (!at_end_of_line())
-	//
-	////while (!lex_match_regular('\n'))
-	////while ( ( lex.nextt() != '\n' ) && ( lex.nextc() != EOF ) )
-	////while (!at_end_of_line())
-	//while ( ( lex.nextc() != '\n' ) && ( lex.nextc() != EOF ) )
+	//if ( some_instr != nullptr )
 	//{
-	//	lex_regular();
-	//	printout( lex.nextc(), "\t\t", lex.nextt(), "\t\t", 
-	//		lex.nextval() );
-	//	
-	//	if ( lex.nextsym() != nullptr )
+	//	//if ( pass() != 0 )
 	//	{
-	//		printout( "\t\t", lex.nextsym()->name() );
+	//		printout( "pass #", pass(), ":  ", 
+	//			cast_typ(some_instr->iargs()), "\n" );
 	//	}
-	//	
-	//	printout("\n");
 	//}
-	//lex_regular();
 	
+	
+	
+	
+	
+	
+	//printout( "Find End of Line:  ", lex.lineno(), "\n");
 	while ( !lex.match( '\n', false ) )
 	{
 		lex_regular();
