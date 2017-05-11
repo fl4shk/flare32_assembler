@@ -106,13 +106,43 @@ private:		// functions
 	inline bool test_iarg_reg()
 	{
 		bool did_fail;
-		reg( true, &did_fail, true );
+		iarg_reg( true, &did_fail, true );
+		return !did_fail;
+	}
+	inline bool test_iarg_reg_flags()
+	{
+		bool did_fail;
+		iarg_reg_flags( true, &did_fail, true );
+		return !did_fail;
+	}
+	inline bool test_iarg_reg_ira()
+	{
+		bool did_fail;
+		iarg_reg_ira( true, &did_fail, true );
+		return !did_fail;
+	}
+	inline bool test_iarg_reg_pc()
+	{
+		bool did_fail;
+		iarg_reg_pc( true, &did_fail, true );
+		return !did_fail;
+	}
+	bool test_iarg_braoffs()
+	{
+		bool did_fail;
+		iarg_braoffs( true, &did_fail, true );
 		return !did_fail;
 	}
 	bool test_iarg_immed16()
 	{
 		bool did_fail;
-		immed16( true, &did_fail, true );
+		iarg_immed16( true, &did_fail, true );
+		return !did_fail;
+	}
+	bool test_iarg_immed12()
+	{
+		bool did_fail;
+		iarg_immed16( true, &did_fail, true );
 		return !did_fail;
 	}
 	
@@ -144,16 +174,41 @@ private:		// functions
 	
 	s32 mask_immed( s32 to_mask, size_t mask );
 	
-	s32 reg( bool keep_lineno=false, bool* did_fail=nullptr, 
+	s32 iarg_specific_reg( tok_defn typ, const string_view& fail_msg, 
+		bool keep_lineno=false, bool* did_fail=nullptr, 
 		bool allow_fail=false );
+	inline s32 iarg_reg( bool keep_lineno=false, bool* did_fail=nullptr, 
+		bool allow_fail=false )
+	{
+		return iarg_specific_reg( tok_defn::reg, "register", keep_lineno,
+			did_fail, allow_fail );
+	}
+	inline s32 iarg_reg_flags( bool keep_lineno=false, 
+		bool* did_fail=nullptr, bool allow_fail=false )
+	{
+		return iarg_specific_reg( tok_defn::reg_flags, "flags",
+			keep_lineno, did_fail, allow_fail );
+	}
+	inline s32 iarg_reg_ira( bool keep_lineno=false, bool* did_fail=nullptr,
+		bool allow_fail=false)
+	{
+		return iarg_specific_reg( tok_defn::reg_ira, "ira",
+			keep_lineno, did_fail, allow_fail );
+	}
+	inline s32 iarg_reg_pc( bool keep_lineno=false, bool* did_fail=nullptr,
+		bool allow_fail=false)
+	{
+		return iarg_specific_reg( tok_defn::reg_pc, "pc",
+			keep_lineno, did_fail, allow_fail );
+	}
 	
-	s32 braoffs( bool keep_lineno=false, bool* did_fail=nullptr, 
+	s32 iarg_braoffs( bool keep_lineno=false, bool* did_fail=nullptr, 
 		bool allow_fail=false );
-	s32 immed16( bool keep_lineno=false, bool* did_fail=nullptr, 
+	s32 iarg_immed16( bool keep_lineno=false, bool* did_fail=nullptr, 
 		bool allow_fail=false );
-	s32 immed12( bool keep_lineno=false, bool* did_fail=nullptr, 
+	s32 iarg_immed12( bool keep_lineno=false, bool* did_fail=nullptr, 
 		bool allow_fail=false );
-	inline s32 absolute( bool use_special, bool keep_lineno=false,
+	inline s32 iarg_absolute( bool use_special, bool keep_lineno=false,
 		bool* did_fail=nullptr, bool allow_fail=false )
 	{
 		return expr( use_special, keep_lineno, did_fail, allow_fail );
@@ -168,10 +223,10 @@ private:		// functions
 	{
 		return lex.match( typ, true );
 	}
-	inline void lex_assume_keep_lineno( tok typ )
-	{
-		lex.assume( typ, true );
-	}
+	//inline void lex_assume_keep_lineno( tok typ )
+	//{
+	//	lex.assume( typ, true );
+	//}
 	
 	
 	

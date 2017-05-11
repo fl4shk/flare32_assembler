@@ -243,7 +243,12 @@ bool assembler::test_instr_ra_rb()
 	{
 		return false;
 	}
-	lex_assume_keep_lineno(',');
+	
+	// Comma
+	if (!lex_match_keep_lineno(','))
+	{
+		return false;
+	}
 	
 	// rB
 	if (!test_iarg_reg())
@@ -261,24 +266,47 @@ bool assembler::test_instr_ra_imm16u()
 		return false;
 	}
 	
-	lex_assume_keep_lineno(',');
+	// Comma
+	if (!lex_match_keep_lineno(','))
+	{
+		return false;
+	}
 	
 	// imm16u
+	if (!test_iarg_immed16())
+	{
+		return false;
+	}
 	
 	return lex_match_keep_lineno('\n');
 }
 bool assembler::test_instr_imm16u()
 {
+	// imm16u
+	if (!test_iarg_immed16())
+	{
+		return false;
+	}
 	
 	return lex_match_keep_lineno('\n');
 }
 bool assembler::test_instr_imm16s()
 {
+	// imm16s
+	if (!test_iarg_immed16())
+	{
+		return false;
+	}
 	
 	return lex_match_keep_lineno('\n');
 }
 bool assembler::test_instr_branchoffset()
 {
+	// branch offset (16-bit, signed)
+	if (!test_iarg_braoffs())
+	{
+		return false;
+	}
 	
 	return lex_match_keep_lineno('\n');
 }
@@ -460,7 +488,10 @@ s32 assembler::mask_immed( s32 to_mask, size_t mask )
 	return static_cast<s32>(temp_1);
 }
 
-s32 assembler::reg( bool keep_lineno, bool* did_fail, bool allow_fail )
+
+s32 assembler::iarg_specific_reg( tok_defn typ, 
+	const string_view& fail_msg, bool keep_lineno, 
+	bool* did_fail, bool allow_fail )
 {
 	//expr( true, keep_lineno );
 	lex(keep_lineno);
@@ -471,15 +502,14 @@ s32 assembler::reg( bool keep_lineno, bool* did_fail, bool allow_fail )
 	}
 	
 	if ( ( lex.special_nextsym() != nullptr )
-		&& ( lex.special_nextsym()->typ() 
-		== static_cast<tok>(tok_defn::reg) ) )
+		&& ( lex.special_nextsym()->typ() == static_cast<tok>(typ) ) )
 	{
 		return lex.special_nextsym()->val();
 	}
 	
 	if (!allow_fail)
 	{
-		we.expected("register");
+		we.expected(fail_msg);
 	}
 	if ( did_fail != nullptr )
 	{
@@ -488,7 +518,9 @@ s32 assembler::reg( bool keep_lineno, bool* did_fail, bool allow_fail )
 	return -1;
 }
 
-s32 assembler::braoffs( bool keep_lineno, bool* did_fail, bool allow_fail )
+
+s32 assembler::iarg_braoffs( bool keep_lineno, bool* did_fail, 
+	bool allow_fail )
 {
 	const s32 temp_0 = expr( false, keep_lineno, did_fail, allow_fail,
 		false );
@@ -504,7 +536,8 @@ s32 assembler::braoffs( bool keep_lineno, bool* did_fail, bool allow_fail )
 	
 	return temp_1;
 }
-s32 assembler::immed16( bool keep_lineno, bool* did_fail, bool allow_fail )
+s32 assembler::iarg_immed16( bool keep_lineno, bool* did_fail, 
+	bool allow_fail )
 {
 	const s32 temp_0 = expr( false, keep_lineno, did_fail, allow_fail,
 		false );
@@ -521,7 +554,8 @@ s32 assembler::immed16( bool keep_lineno, bool* did_fail, bool allow_fail )
 	
 	return temp_1;
 }
-s32 assembler::immed12( bool keep_lineno, bool* did_fail, bool allow_fail )
+s32 assembler::iarg_immed12( bool keep_lineno, bool* did_fail, 
+	bool allow_fail )
 {
 	const s32 temp_0 = expr( false, keep_lineno, did_fail, allow_fail,
 		false );
