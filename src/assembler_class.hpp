@@ -11,6 +11,8 @@ namespace navichip32
 class real_iarg
 {
 public:		// variables
+	std::string name;
+	
 	tok nextt;
 	s32 nextval;
 	symbol* nextsym;
@@ -99,8 +101,13 @@ private:		// functions
 	void insert_grp_3_instructions();
 	
 	// Code generator stuff
-	void genb( s32 v );
-	void gen( s32 v );
+	void gen8( s32 v );
+	
+	void gen16( s32 v );
+	void gen32( s32 v );
+	
+	void gen_any_instruction( const size_t grp, const bool has_dot_f, 
+		const size_t opcode, const std::vector<real_iarg>& iarg_vec );
 	
 	
 	// Parser stuff
@@ -122,21 +129,21 @@ private:		// functions
 	}
 	
 	bool handle_iarg_reg( bool just_test, 
-		std::vector<real_iarg>& iarg_vec );
+		std::vector<real_iarg>& iarg_vec, std::string&& name );
 	bool handle_iarg_reg_flags( bool just_test, 
-		std::vector<real_iarg>& iarg_vec );
+		std::vector<real_iarg>& iarg_vec, std::string&& name );
 	bool handle_iarg_reg_ira( bool just_test, 
-		std::vector<real_iarg>& iarg_vec );
+		std::vector<real_iarg>& iarg_vec, std::string&& name );
 	bool handle_iarg_reg_pc( bool just_test, 
-		std::vector<real_iarg>& iarg_vec );
+		std::vector<real_iarg>& iarg_vec, std::string&& name );
 	bool handle_iarg_braoffs( bool just_test, 
-		std::vector<real_iarg>& iarg_vec );
+		std::vector<real_iarg>& iarg_vec, std::string&& name );
 	bool handle_iarg_immed16( bool just_test, 
-		std::vector<real_iarg>& iarg_vec );
+		std::vector<real_iarg>& iarg_vec, std::string&& name );
 	bool handle_iarg_immed12( bool just_test, 
-		std::vector<real_iarg>& iarg_vec );
+		std::vector<real_iarg>& iarg_vec, std::string&& name );
 	bool handle_iarg_abs( bool just_test,
-		std::vector<real_iarg>& iarg_vec );
+		std::vector<real_iarg>& iarg_vec, std::string&& name );
 	
 	
 	bool handle_instr_noargs( bool just_test, 

@@ -16,50 +16,30 @@ assembler::assembler( int argc, char** argv, std::FILE* s_infile )
 	}
 	
 	// General purpose registers
-	special_sym_tbl.enter( "r0", static_cast<tok>(tok_defn::reg), 0, 
-		true );
-	special_sym_tbl.enter( "r1", static_cast<tok>(tok_defn::reg), 1,
-		true );
-	special_sym_tbl.enter( "r2", static_cast<tok>(tok_defn::reg), 2,
-		true );
-	special_sym_tbl.enter( "r3", static_cast<tok>(tok_defn::reg), 3,
-		true );
-	special_sym_tbl.enter( "r4", static_cast<tok>(tok_defn::reg), 4,
-		true );
-	special_sym_tbl.enter( "r5", static_cast<tok>(tok_defn::reg), 5,
-		true );
-	special_sym_tbl.enter( "r6", static_cast<tok>(tok_defn::reg), 6,
-		true );
-	special_sym_tbl.enter( "r7", static_cast<tok>(tok_defn::reg), 7,
-		true );
-	special_sym_tbl.enter( "r8", static_cast<tok>(tok_defn::reg), 8,
-		true );
-	special_sym_tbl.enter( "r9", static_cast<tok>(tok_defn::reg), 9,
-		true );
-	special_sym_tbl.enter( "r10", static_cast<tok>(tok_defn::reg), 10,
-		true );
-	special_sym_tbl.enter( "r11", static_cast<tok>(tok_defn::reg), 11,
-		true );
-	special_sym_tbl.enter( "r12", static_cast<tok>(tok_defn::reg), 12,
-		true );
-	special_sym_tbl.enter( "r13", static_cast<tok>(tok_defn::reg), 13,
-		true );
-	special_sym_tbl.enter( "r14", static_cast<tok>(tok_defn::reg), 14,
-		true );
-	special_sym_tbl.enter( "r15", static_cast<tok>(tok_defn::reg), 15,
-		true );
-	special_sym_tbl.enter( "lr", static_cast<tok>(tok_defn::reg), 14,
-		true );
-	special_sym_tbl.enter( "sp", static_cast<tok>(tok_defn::reg), 15,
-		true );
+	special_sym_tbl.enter( "r0", cast_typ(tok_defn::reg), 0, true );
+	special_sym_tbl.enter( "r1", cast_typ(tok_defn::reg), 1, true );
+	special_sym_tbl.enter( "r2", cast_typ(tok_defn::reg), 2, true );
+	special_sym_tbl.enter( "r3", cast_typ(tok_defn::reg), 3, true );
+	special_sym_tbl.enter( "r4", cast_typ(tok_defn::reg), 4, true );
+	special_sym_tbl.enter( "r5", cast_typ(tok_defn::reg), 5, true );
+	special_sym_tbl.enter( "r6", cast_typ(tok_defn::reg), 6, true );
+	special_sym_tbl.enter( "r7", cast_typ(tok_defn::reg), 7, true );
+	special_sym_tbl.enter( "r8", cast_typ(tok_defn::reg), 8, true );
+	special_sym_tbl.enter( "r9", cast_typ(tok_defn::reg), 9, true );
+	special_sym_tbl.enter( "r10", cast_typ(tok_defn::reg), 10, true );
+	special_sym_tbl.enter( "r11", cast_typ(tok_defn::reg), 11, true );
+	special_sym_tbl.enter( "r12", cast_typ(tok_defn::reg), 12, true );
+	special_sym_tbl.enter( "r13", cast_typ(tok_defn::reg), 13, true );
+	special_sym_tbl.enter( "r14", cast_typ(tok_defn::reg), 14, true );
+	special_sym_tbl.enter( "r15", cast_typ(tok_defn::reg), 15, true );
+	special_sym_tbl.enter( "lr", cast_typ(tok_defn::reg), 14, true );
+	special_sym_tbl.enter( "sp", cast_typ(tok_defn::reg), 15, true );
 	
 	// Special purpose registers
-	special_sym_tbl.enter( "flags", 
-		static_cast<tok>(tok_defn::reg_flags), 0, true );
-	special_sym_tbl.enter( "ira", 
-		static_cast<tok>(tok_defn::reg_ira), 0, true );
-	special_sym_tbl.enter( "pc", 
-		static_cast<tok>(tok_defn::reg_pc), 0, true );
+	special_sym_tbl.enter( "flags", cast_typ(tok_defn::reg_flags), 0, 
+		true );
+	special_sym_tbl.enter( "ira", cast_typ(tok_defn::reg_ira), 0, true );
+	special_sym_tbl.enter( "pc", cast_typ(tok_defn::reg_pc), 0, true );
 	
 	
 	insert_grp_0_instructions();
@@ -100,7 +80,7 @@ int assembler::run()
 		}
 	} while (changed());
 	
-	printout("\n");
+	//printout("\n");
 	set_pass(0);
 	set_changed(false);
 	set_lc(0);
@@ -119,7 +99,7 @@ int assembler::run()
 
 
 // Code generator stuff
-void assembler::genb( s32 v )
+void assembler::gen8( s32 v )
 {
 	if ( pass() == 0 )
 	{
@@ -127,19 +107,121 @@ void assembler::genb( s32 v )
 		{
 			printf( "@%08x\n", lc() );
 		}
-		printf( "%02x\n", ( v & 0xff ) );
+		printf( "%02x\n", ( static_cast<u32>(v) & 0xff ) );
 	}
 	
 	set_last_lc(lc());
 	set_lc( lc() + 1 );
 }
-void assembler::gen( s32 v )
+void assembler::gen16( s32 v )
 {
-	genb( v >> 24 );
-	genb( v >> 16 );
-	genb( v >> 8 );
-	genb(v);
+	gen8( static_cast<u32>(v) >> 8 );
+	gen8(static_cast<u32>(v));
 }
+void assembler::gen32( s32 v )
+{
+	gen8( static_cast<u32>(v) >> 24 );
+	gen8( static_cast<u32>(v) >> 16 );
+	gen8( static_cast<u32>(v) >> 8 );
+	gen8(static_cast<u32>(v));
+}
+
+void assembler::gen_any_instruction( const size_t grp, 
+	const bool has_dot_f, const size_t opcode, 
+	const std::vector<real_iarg>& iarg_vec )
+{
+	u32 ra = 0, rb = 0, rc = 0, imm = 0;
+	
+	for ( size_t i=0; i<iarg_vec.size(); ++i )
+	{
+		const std::string& name = iarg_vec.at(i).name;
+		const s32 nextval = iarg_vec.at(i).nextval;
+		
+		if ( name == "ra" )
+		{
+			ra = nextval;
+		}
+		else if ( name == "rb" )
+		{
+			rb = nextval;
+		}
+		else if ( name == "rc" )
+		{
+			rc = nextval;
+		}
+		else if ( name == "imm" )
+		{
+			imm = nextval;
+		}
+	}
+	
+	
+	u32 temp;
+	
+	// Encoding stuff used by EVERY instruction
+	clear_and_set_bits_with_range( temp, grp, 15, 14 );
+	clear_and_set_bits_with_range( temp, ( has_dot_f ? 1 : 0 ), 13, 13 );
+	clear_and_set_bits_with_range( temp, opcode, 12, 8 );
+	clear_and_set_bits_with_range( temp, ra, 7, 4 );
+	clear_and_set_bits_with_range( temp, rb, 3, 0 );
+	
+	gen16(temp);
+	
+	switch (grp)
+	{
+		// Group 0 Instructions
+		// 00fo oooo aaaa bbbb
+		// 
+		//  f:  1 if can affect flags (and instruction type supports it), 0
+		//  if flags unchanged.
+		// 
+		//  o:  opcode
+		//  a:  rA (destination register usually)
+		//  b:  rB
+		case 0:
+			break;
+		
+		// Group 1 Instructions
+		// 01fo oooo aaaa bbbb  iiii iiii iiii iiii
+		// 
+		//  f:  1 if can affect flags (and instruction type supports it), 0
+		//  if flags unchanged.
+		// 
+		//  o:  opcode
+		//  a:  rA
+		//  b:  rB
+		//  i:  16-bit immediate value
+		case 1:
+			gen16(imm);
+			break;
+		
+		// Group 2 Instructions
+		// 10fo oooo aaaa bbbb  cccc iiii iiii iiii
+		// 
+		//  f:  1 if can affect flags (and instruction type supports it), 0
+		//  if flags unchanged.
+		//  
+		//  o:  opcode
+		//  a:  rA
+		//  b:  rB
+		//  c:  rc
+		//  i:  12-bit immediate value
+		case 2:
+			//clear_and_set_bits_with_range( temp, rc, 
+			
+			break;
+		
+		case 3:
+			
+			break;
+		
+		default:
+			we.error("assembler::gen_any_instruction():  Eek 2!\n");
+			break;
+	}
+	
+}
+
 
 // Parser stuff
 const instruction* assembler::determine_instr()
@@ -167,31 +249,15 @@ const instruction* assembler::determine_instr()
 	const std::vector<instruction>& instr_vec = instr_tbl.at(instr_sym);
 	
 	
-	//// Go to the end of the line
-	//while (!at_end_of_line())
-	//{
-	//	lex(true);
-	//	
-	//	if (!at_end_of_line())
-	//	{
-	//		////real_iarg to_push = { lex.nextt(), lex.nextval(),
-	//		////	lex.nextsym(), lex.special_nextt(), lex.special_nextval(),
-	//		////	lex.special_nextsym() };
-	//		////iarg_vec.push_back(to_push);
-	//		//real_iarg to_push = { lex.nextt(), lex.nextval(),
-	//		//	lex.nextsym() };
-	//	}
-	//}
+	const auto temp_nextc = lex.nextc();
 	
-	auto temp_nextc = lex.nextc();
+	const auto temp_nextt = lex.nextt();
+	const auto temp_nextval = lex.nextval();
+	const auto temp_nextsym = lex.nextsym();
 	
-	auto temp_nextt = lex.nextt();
-	auto temp_nextval = lex.nextval();
-	auto temp_nextsym = lex.nextsym();
-	
-	auto temp_special_nextt = lex.special_nextt();
-	auto temp_special_nextval = lex.special_nextval();
-	auto temp_special_nextsym = lex.special_nextsym();
+	const auto temp_special_nextt = lex.special_nextt();
+	const auto temp_special_nextval = lex.special_nextval();
+	const auto temp_special_nextsym = lex.special_nextsym();
 	
 	
 	for ( size_t i=0; i<instr_vec.size(); ++i )
@@ -280,7 +346,7 @@ bool assembler::handle_iargs( const instruction& iter, bool just_test,
 }
 
 bool assembler::handle_iarg_reg( bool just_test, 
-	std::vector<real_iarg>& iarg_vec )
+	std::vector<real_iarg>& iarg_vec, std::string&& name )
 {
 	bool did_fail;
 	iarg_reg( just_test, &did_fail );
@@ -288,12 +354,13 @@ bool assembler::handle_iarg_reg( bool just_test,
 	if ( !just_test && !did_fail )
 	{
 		iarg_vec.push_back(real_iarg( lex, true ));
+		iarg_vec.back().name = std::move(name);
 	}
 	
 	return !did_fail;
 }
 bool assembler::handle_iarg_reg_flags( bool just_test, 
-	std::vector<real_iarg>& iarg_vec )
+	std::vector<real_iarg>& iarg_vec, std::string&& name )
 {
 	bool did_fail;
 	iarg_reg_flags( just_test, &did_fail );
@@ -301,12 +368,13 @@ bool assembler::handle_iarg_reg_flags( bool just_test,
 	if ( !just_test && !did_fail )
 	{
 		iarg_vec.push_back(real_iarg( lex, true ));
+		iarg_vec.back().name = std::move(name);
 	}
 	
 	return !did_fail;
 }
 bool assembler::handle_iarg_reg_ira( bool just_test, 
-	std::vector<real_iarg>& iarg_vec )
+	std::vector<real_iarg>& iarg_vec, std::string&& name )
 {
 	bool did_fail;
 	iarg_reg_ira( just_test, &did_fail );
@@ -314,12 +382,13 @@ bool assembler::handle_iarg_reg_ira( bool just_test,
 	if ( !just_test && !did_fail )
 	{
 		iarg_vec.push_back(real_iarg( lex, true ));
+		iarg_vec.back().name = std::move(name);
 	}
 	
 	return !did_fail;
 }
 bool assembler::handle_iarg_reg_pc( bool just_test, 
-	std::vector<real_iarg>& iarg_vec )
+	std::vector<real_iarg>& iarg_vec, std::string&& name )
 {
 	bool did_fail;
 	iarg_reg_pc( just_test, &did_fail );
@@ -327,12 +396,13 @@ bool assembler::handle_iarg_reg_pc( bool just_test,
 	if ( !just_test && !did_fail )
 	{
 		iarg_vec.push_back(real_iarg( lex, true ));
+		iarg_vec.back().name = std::move(name);
 	}
 	
 	return !did_fail;
 }
 bool assembler::handle_iarg_braoffs( bool just_test, 
-	std::vector<real_iarg>& iarg_vec )
+	std::vector<real_iarg>& iarg_vec, std::string&& name )
 {
 	bool did_fail;
 	const s32 imm = iarg_braoffs( just_test, &did_fail );
@@ -341,12 +411,13 @@ bool assembler::handle_iarg_braoffs( bool just_test,
 	{
 		iarg_vec.push_back(real_iarg( static_cast<tok>(tok_defn::number),
 			imm ));
+		iarg_vec.back().name = std::move(name);
 	}
 	
 	return !did_fail;
 }
 bool assembler::handle_iarg_immed16( bool just_test, 
-	std::vector<real_iarg>& iarg_vec )
+	std::vector<real_iarg>& iarg_vec, std::string&& name )
 {
 	bool did_fail;
 	const s32 imm = iarg_immed16( just_test, &did_fail );
@@ -355,12 +426,13 @@ bool assembler::handle_iarg_immed16( bool just_test,
 	{
 		iarg_vec.push_back(real_iarg( static_cast<tok>(tok_defn::number),
 			imm ));
+		iarg_vec.back().name = std::move(name);
 	}
 	
 	return !did_fail;
 }
 bool assembler::handle_iarg_immed12( bool just_test, 
-	std::vector<real_iarg>& iarg_vec )
+	std::vector<real_iarg>& iarg_vec, std::string&& name )
 {
 	bool did_fail;
 	const s32 imm = iarg_immed12( just_test, &did_fail );
@@ -369,12 +441,13 @@ bool assembler::handle_iarg_immed12( bool just_test,
 	{
 		iarg_vec.push_back(real_iarg( static_cast<tok>(tok_defn::number),
 			imm ));
+		iarg_vec.back().name = std::move(name);
 	}
 	
 	return !did_fail;
 }
 bool assembler::handle_iarg_abs( bool just_test,
-	std::vector<real_iarg>& iarg_vec )
+	std::vector<real_iarg>& iarg_vec, std::string&& name )
 {
 	bool did_fail;
 	const s32 imm = iarg_abs( just_test, &did_fail );
@@ -383,6 +456,7 @@ bool assembler::handle_iarg_abs( bool just_test,
 	{
 		iarg_vec.push_back(real_iarg( static_cast<tok>(tok_defn::number),
 			imm ));
+		iarg_vec.back().name = std::move(name);
 	}
 	
 	return !did_fail;
@@ -399,7 +473,7 @@ bool assembler::handle_instr_noargs( bool just_test,
 #error "Can't re-define X"
 #endif
 
-#define X(suffix) if (!handle_iarg_##suffix( just_test, iarg_vec )) \
+#define X( suffix, str ) if (!handle_iarg_##suffix(just_test,iarg_vec,str)) \
 	{ \
 		return false; \
 	}
@@ -419,7 +493,7 @@ bool assembler::handle_instr_ra( bool just_test,
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	X(reg);
+	X( reg, "ra" );
 	
 	ASSUME_COMMA
 	
@@ -430,12 +504,12 @@ bool assembler::handle_instr_ra_rb( bool just_test,
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	X(reg);
+	X( reg, "ra" );
 	
 	ASSUME_COMMA
 	
 	// rB
-	X(reg);
+	X( reg, "rb" );
 	
 	//lex(just_test);
 	return lex_match_end_of_line(just_test);
@@ -444,12 +518,12 @@ bool assembler::handle_instr_ra_imm16u( bool just_test,
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	X(reg);
+	X( reg, "ra" );
 	
 	ASSUME_COMMA
 	
 	// imm16u
-	X(immed16);
+	X( immed16, "imm" );
 	
 	//lex(just_test);
 	return lex_match_end_of_line(just_test);
@@ -458,7 +532,7 @@ bool assembler::handle_instr_imm16u( bool just_test,
 	std::vector<real_iarg>& iarg_vec )
 {
 	// imm16u
-	X(immed16);
+	X( immed16, "imm" );
 	
 	//lex(just_test);
 	return lex_match_end_of_line(just_test);
@@ -467,7 +541,7 @@ bool assembler::handle_instr_imm16s( bool just_test,
 	std::vector<real_iarg>& iarg_vec )
 {
 	// imm16s
-	X(immed16);
+	X( immed16, "imm" );
 	
 	//lex(just_test);
 	return lex_match_end_of_line(just_test);
@@ -476,7 +550,7 @@ bool assembler::handle_instr_branchoffset( bool just_test,
 	std::vector<real_iarg>& iarg_vec )
 {
 	// braoffs
-	X(braoffs)
+	X( braoffs, "imm" )
 	
 	//lex(just_test);
 	return lex_match_end_of_line(just_test);
@@ -485,7 +559,7 @@ bool assembler::handle_instr_flags( bool just_test,
 	std::vector<real_iarg>& iarg_vec )
 {
 	// flags, a special-purpose register
-	X(reg_flags)
+	X( reg_flags, "" )
 	
 	//lex(just_test);
 	return lex_match_end_of_line(just_test);
@@ -494,12 +568,12 @@ bool assembler::handle_instr_ra_flags( bool just_test,
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	X(reg);
+	X( reg, "ra" );
 	
 	ASSUME_COMMA
 	
 	// flags, a special-purpose register
-	X(reg_flags);
+	X( reg_flags, "" );
 	
 	//lex(just_test);
 	return lex_match_end_of_line(just_test);
@@ -508,10 +582,10 @@ bool assembler::handle_instr_flags_ra( bool just_test,
 	std::vector<real_iarg>& iarg_vec )
 {
 	// flags, a special-purpose register
-	X(reg_flags);
+	X( reg_flags, "" );
 	
 	// rA
-	X(reg);
+	X( reg, "ra" );
 	
 	//lex(just_test);
 	return lex_match_end_of_line(just_test);
@@ -520,7 +594,7 @@ bool assembler::handle_instr_ira( bool just_test,
 	std::vector<real_iarg>& iarg_vec )
 {
 	// ira, a special-purpose register
-	X(reg_ira);
+	X( reg_ira, "" );
 	
 	//lex(just_test);
 	return lex_match_end_of_line(just_test);
@@ -529,12 +603,12 @@ bool assembler::handle_instr_ira_ra( bool just_test,
 	std::vector<real_iarg>& iarg_vec )
 {
 	// ira, a special-purpose register
-	X(reg_ira);
+	X( reg_ira, "" );
 	
 	ASSUME_COMMA
 	
 	// rA
-	X(reg);
+	X( reg, "ra" );
 	
 	//lex(just_test);
 	return lex_match_end_of_line(just_test);
@@ -543,12 +617,12 @@ bool assembler::handle_instr_ra_ira( bool just_test,
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	X(reg);
+	X( reg, "ra" );
 	
 	ASSUME_COMMA
 	
 	// ira, a special-purpose register
-	X(reg_ira);
+	X( reg_ira, "" );
 	
 	//lex(just_test);
 	return lex_match_end_of_line(just_test);
@@ -557,12 +631,12 @@ bool assembler::handle_instr_ra_pc( bool just_test,
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	X(reg);
+	X( reg, "ra" );
 	
 	ASSUME_COMMA
 	
 	// pc, a special-purpose register
-	X(reg_pc);
+	X( reg_pc, "" );
 	
 	//lex(just_test);
 	return lex_match_end_of_line(just_test);
@@ -571,17 +645,17 @@ bool assembler::handle_instr_ra_rb_imm16u( bool just_test,
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	X(reg);
+	X( reg, "ra" );
 	
 	ASSUME_COMMA
 	
 	// rB
-	X(reg)
+	X( reg, "rb" )
 	
 	ASSUME_COMMA
 	
 	// imm16u
-	X(immed16);
+	X( immed16, "imm" );
 	
 	//lex(just_test);
 	return lex_match_end_of_line(just_test);
@@ -590,17 +664,17 @@ bool assembler::handle_instr_ra_rb_imm16s( bool just_test,
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	X(reg);
+	X( reg, "ra" );
 	
 	ASSUME_COMMA
 	
 	// rB
-	X(reg);
+	X( reg, "rb" );
 	
 	ASSUME_COMMA
 	
 	// imm16s
-	X(immed16);
+	X( immed16, "imm" );
 	
 	//lex(just_test);
 	return lex_match_end_of_line(just_test);
@@ -609,22 +683,22 @@ bool assembler::handle_instr_ra_rb_rc_imm12s( bool just_test,
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	X(reg);
+	X( reg, "ra" );
 	
 	ASSUME_COMMA
 	
 	// rB
-	X(reg);
+	X( reg, "rb" );
 	
 	ASSUME_COMMA
 	
 	// rC
-	X(reg);
+	X( reg, "rc" );
 	
 	ASSUME_COMMA
 	
 	// imm12s
-	X(immed12);
+	X( immed12, "imm" );
 	
 	//lex(just_test);
 	return lex_match_end_of_line(just_test);
@@ -633,17 +707,17 @@ bool assembler::handle_instr_ra_rb_rc( bool just_test,
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	X(reg);
+	X( reg, "ra" );
 	
 	ASSUME_COMMA
 	
 	// rB
-	X(reg);
+	X( reg, "rb" );
 	
 	ASSUME_COMMA
 	
 	// rC
-	X(reg);
+	X( reg, "rc" );
 	
 	//lex(just_test);
 	return lex_match_end_of_line(just_test);
@@ -652,17 +726,17 @@ bool assembler::handle_instr_ra_rb_abs( bool just_test,
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	X(reg);
+	X( reg, "ra" );
 	
 	ASSUME_COMMA
 	
 	// rB
-	X(reg);
+	X( reg, "rb" );
 	
 	ASSUME_COMMA
 	
 	// 32-bit absolute
-	X(abs);
+	X( abs, "imm" );
 	
 	//lex(just_test);
 	return lex_match_end_of_line(just_test);
@@ -765,10 +839,10 @@ s32 assembler::expr( bool use_special, bool just_test, bool* did_fail,
 		}
 	}
 	
-	if (!old_did_init)
-	{
-		printout( "Final expr() result:  ", v, "\n" );
-	}
+	//if (!old_did_init)
+	//{
+	//	printout( "Final expr() result:  ", v, "\n" );
+	//}
 	
 	return v;
 }
@@ -879,26 +953,29 @@ void assembler::line()
 		return;
 	}
 	
-	const long orig_pos = std::ftell(infile);
 	
 	if ( lex.nextt() == cast_typ(tok_defn::ident) )
 	{
+		
 		symbol* sym = lex.nextsym();
 		
 		
-		auto temp_nextc = lex.nextc();
+		const auto temp_nextc = lex.nextc();
 		
-		auto temp_nextt = lex.nextt();
-		auto temp_nextval = lex.nextval();
-		auto temp_nextsym = lex.nextsym();
+		const auto temp_nextt = lex.nextt();
+		const auto temp_nextval = lex.nextval();
+		const auto temp_nextsym = lex.nextsym();
 		
-		auto temp_special_nextt = lex.special_nextt();
-		auto temp_special_nextval = lex.special_nextval();
-		auto temp_special_nextsym = lex.special_nextsym();
+		const auto temp_special_nextt = lex.special_nextt();
+		const auto temp_special_nextval = lex.special_nextval();
+		const auto temp_special_nextsym = lex.special_nextsym();
 		
 		
-		lex_keep_lineno();
-		std::fseek( infile, orig_pos, SEEK_SET );
+		{
+			const long orig_pos = std::ftell(infile);
+			lex_keep_lineno();
+			std::fseek( infile, orig_pos, SEEK_SET );
+		}
 		
 		if ( lex.nextt() == ':' )
 		{
@@ -938,17 +1015,29 @@ void assembler::line()
 		we.expected("instruction or identifier");
 	}
 	
-	//if ( some_instr != nullptr )
-	//{
-	//	//if ( pass() != 0 )
-	//	{
-	//		printout( "pass #", pass(), ":  ", 
-	//			cast_typ(some_instr->iargs()), "\n" );
-	//	}
-	//}
 	
-	
-	
+	if ( some_instr != nullptr )
+	{
+		////if ( pass() != 0 )
+		//{
+		//	printout( "pass #", pass(), ":  ", 
+		//		cast_typ(some_instr->iargs()), "\n" );
+		//}
+		
+		
+		std::vector<real_iarg> iarg_vec;
+		if (!handle_iargs( *some_instr, false, iarg_vec ))
+		{
+			we.error("assembler::line():  Eek!\n");
+		}
+		
+		
+		gen_any_instruction( some_instr->grp(), 
+			some_instr->sym()->has_dot_f(), some_instr->opcode(),
+			iarg_vec );
+		
+		
+	}
 	
 	
 	
