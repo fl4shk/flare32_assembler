@@ -249,6 +249,12 @@ bool assembler::test_iarg_reg_flags( bool just_test,
 {
 	bool did_fail;
 	iarg_reg_flags( just_test, &did_fail );
+	
+	if ( !just_test && !did_fail )
+	{
+		iarg_vec.push_back(real_iarg( lex, true ));
+	}
+	
 	return !did_fail;
 }
 bool assembler::test_iarg_reg_ira( bool just_test, 
@@ -256,6 +262,12 @@ bool assembler::test_iarg_reg_ira( bool just_test,
 {
 	bool did_fail;
 	iarg_reg_ira( just_test, &did_fail );
+	
+	if ( !just_test && !did_fail )
+	{
+		iarg_vec.push_back(real_iarg( lex, true ));
+	}
+	
 	return !did_fail;
 }
 bool assembler::test_iarg_reg_pc( bool just_test, 
@@ -263,27 +275,54 @@ bool assembler::test_iarg_reg_pc( bool just_test,
 {
 	bool did_fail;
 	iarg_reg_pc( just_test, &did_fail );
+	
+	if ( !just_test && !did_fail )
+	{
+		iarg_vec.push_back(real_iarg( lex, true ));
+	}
+	
 	return !did_fail;
 }
 bool assembler::test_iarg_braoffs( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	bool did_fail;
-	iarg_braoffs( just_test, &did_fail );
+	const s32 imm = iarg_braoffs( just_test, &did_fail );
+	
+	if ( !just_test && !did_fail )
+	{
+		iarg_vec.push_back(real_iarg( static_cast<tok>(tok_defn::number),
+			imm ));
+	}
+	
 	return !did_fail;
 }
 bool assembler::test_iarg_immed16( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	bool did_fail;
-	iarg_immed16( just_test, &did_fail );
+	const s32 imm = iarg_immed16( just_test, &did_fail );
+	
+	if ( !just_test && !did_fail )
+	{
+		iarg_vec.push_back(real_iarg( static_cast<tok>(tok_defn::number),
+			imm ));
+	}
+	
 	return !did_fail;
 }
 bool assembler::test_iarg_immed12( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	bool did_fail;
-	iarg_immed16( just_test, &did_fail );
+	const s32 imm = iarg_immed16( just_test, &did_fail );
+	
+	if ( !just_test && !did_fail )
+	{
+		iarg_vec.push_back(real_iarg( static_cast<tok>(tok_defn::number),
+			imm ));
+	}
+	
 	return !did_fail;
 }
 
