@@ -114,13 +114,16 @@ void assembler::gen( s32 v )
 }
 
 // Parser stuff
-const instruction* assembler::determine_instr()
+const instruction* assembler::determine_instr
+	( std::vector<real_iarg>& iarg_vec )
 {
+	const instruction * ret = nullptr;
+	
 	const long orig_pos = std::ftell(infile);
 	
-	// Keep lineno so that the function that called this one doesn't have
-	// to know about what happened to the lexer.
-	lex_keep_lineno();
+	//// Keep lineno so that the function that called this one doesn't have
+	//// to know about what happened to the lexer.
+	//lex_keep_lineno();
 	
 	const long reset_pos = std::ftell(infile);
 	
@@ -129,7 +132,8 @@ const instruction* assembler::determine_instr()
 	if ( ( lex.special_nextsym() == nullptr )
 		|| ( instr_sym->typ() != static_cast<tok>(tok_defn::instr) ) )
 	{
-		we.expected("instruction");
+		//we.expected("instruction");
+		return ret;
 	}
 	
 	const std::vector<instruction>& instr_vec = instr_tbl.at(instr_sym);
@@ -155,11 +159,15 @@ const instruction* assembler::determine_instr()
 	{
 		const instruction& iter = instr_vec.at(i);
 		
-		lex_keep_lineno();
+		//lex_keep_lineno();
 		
-		if ( test_iargs(iter) )
+		iarg_vec.clear();
+		
+		if ( handle_iargs( iter, true, iarg_vec ) )
 		{
-			return &iter;
+			//return &iter;
+			ret = &iter;
+			break;
 		}
 		
 		std::fseek( infile, reset_pos, SEEK_SET );
@@ -168,50 +176,51 @@ const instruction* assembler::determine_instr()
 	std::fseek( infile, orig_pos, SEEK_SET );
 	
 	
-	return nullptr;
+	return ret;
 }
-bool assembler::test_iargs( const instruction& iter )
+bool assembler::handle_iargs( const instruction& iter, bool just_test,
+	std::vector<real_iarg>& iarg_vec )
 {
 	switch ( iter.iargs() )
 	{
 		case instr_args::noargs:
-			return handle_instr_noargs(true);
+			return handle_instr_noargs( just_test, iarg_vec );
 		case instr_args::ra:
-			return handle_instr_ra(true);
+			return handle_instr_ra( just_test, iarg_vec );
 		case instr_args::ra_rb:
-			return handle_instr_ra_rb(true);
+			return handle_instr_ra_rb( just_test, iarg_vec );
 		case instr_args::ra_imm16u:
-			return handle_instr_ra_imm16u(true);
+			return handle_instr_ra_imm16u( just_test, iarg_vec );
 		case instr_args::imm16u:
-			return handle_instr_imm16u(true);
+			return handle_instr_imm16u( just_test, iarg_vec );
 		case instr_args::imm16s:
-			return handle_instr_imm16s(true);
+			return handle_instr_imm16s( just_test, iarg_vec );
 		case instr_args::branchoffset:
-			return handle_instr_branchoffset(true);
+			return handle_instr_branchoffset( just_test, iarg_vec );
 		case instr_args::flags:
-			return handle_instr_flags(true);
+			return handle_instr_flags( just_test, iarg_vec );
 		case instr_args::ra_flags:
-			return handle_instr_ra_flags(true);
+			return handle_instr_ra_flags( just_test, iarg_vec );
 		case instr_args::flags_ra:
-			return handle_instr_flags_ra(true);
+			return handle_instr_flags_ra( just_test, iarg_vec );
 		case instr_args::ira:
-			return handle_instr_ira(true);
+			return handle_instr_ira( just_test, iarg_vec );
 		case instr_args::ira_ra:
-			return handle_instr_ira_ra(true);
+			return handle_instr_ira_ra( just_test, iarg_vec );
 		case instr_args::ra_ira:
-			return handle_instr_ra_ira(true);
+			return handle_instr_ra_ira( just_test, iarg_vec );
 		case instr_args::ra_pc:
-			return handle_instr_ra_pc(true);
+			return handle_instr_ra_pc( just_test, iarg_vec );
 		case instr_args::ra_rb_imm16u:
-			return handle_instr_ra_rb_imm16u(true);
+			return handle_instr_ra_rb_imm16u( just_test, iarg_vec );
 		case instr_args::ra_rb_imm16s:
-			return handle_instr_ra_rb_imm16s(true);
+			return handle_instr_ra_rb_imm16s( just_test, iarg_vec );
 		case instr_args::ra_rb_rc_imm12s:
-			return handle_instr_ra_rb_rc_imm12s(true);
+			return handle_instr_ra_rb_rc_imm12s( just_test, iarg_vec );
 		case instr_args::ra_rb_rc:
-			return handle_instr_ra_rb_rc(true);
+			return handle_instr_ra_rb_rc( just_test, iarg_vec );
 		case instr_args::ra_rb_abs:
-			return handle_instr_ra_rb_abs(true);
+			return handle_instr_ra_rb_abs( just_test, iarg_vec );
 		
 		default:
 			we.unknown("instr_args!");
@@ -222,83 +231,166 @@ bool assembler::test_iargs( const instruction& iter )
 	return false;
 }
 
-bool assembler::handle_instr_noargs( bool just_test )
+bool assembler::test_iarg_reg( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
+{
+	bool did_fail;
+	iarg_reg( just_test, &did_fail );
+	
+	if ( !just_test && !did_fail )
+	{
+		iarg_vec.push_back(real_iarg( lex, true ));
+	}
+	
+	return !did_fail;
+}
+bool assembler::test_iarg_reg_flags( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
+{
+	bool did_fail;
+	iarg_reg_flags( just_test, &did_fail );
+	return !did_fail;
+}
+bool assembler::test_iarg_reg_ira( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
+{
+	bool did_fail;
+	iarg_reg_ira( just_test, &did_fail );
+	return !did_fail;
+}
+bool assembler::test_iarg_reg_pc( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
+{
+	bool did_fail;
+	iarg_reg_pc( just_test, &did_fail );
+	return !did_fail;
+}
+bool assembler::test_iarg_braoffs( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
+{
+	bool did_fail;
+	iarg_braoffs( just_test, &did_fail );
+	return !did_fail;
+}
+bool assembler::test_iarg_immed16( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
+{
+	bool did_fail;
+	iarg_immed16( just_test, &did_fail );
+	return !did_fail;
+}
+bool assembler::test_iarg_immed12( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
+{
+	bool did_fail;
+	iarg_immed16( just_test, &did_fail );
+	return !did_fail;
+}
+
+
+bool assembler::handle_instr_noargs( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
 {
 	return lex.match( '\n', just_test );
 }
-bool assembler::handle_instr_ra( bool just_test )
+bool assembler::handle_instr_ra( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
+{
+	bool did_fail;
+	
+	//if (did_fail)
+	//{
+	//	return false;
+	//}
+	
+	return lex.match( '\n', just_test );
+}
+bool assembler::handle_instr_ra_rb( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
 {
 	return lex.match( '\n', just_test );
 }
-bool assembler::handle_instr_ra_rb( bool just_test )
+bool assembler::handle_instr_ra_imm16u( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
 {
 	return lex.match( '\n', just_test );
 }
-bool assembler::handle_instr_ra_imm16u( bool just_test )
+bool assembler::handle_instr_imm16u( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
 {
 	return lex.match( '\n', just_test );
 }
-bool assembler::handle_instr_imm16u( bool just_test )
+bool assembler::handle_instr_imm16s( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
 {
 	return lex.match( '\n', just_test );
 }
-bool assembler::handle_instr_imm16s( bool just_test )
+bool assembler::handle_instr_branchoffset( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
 {
 	return lex.match( '\n', just_test );
 }
-bool assembler::handle_instr_branchoffset( bool just_test )
+bool assembler::handle_instr_flags( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
 {
 	return lex.match( '\n', just_test );
 }
-bool assembler::handle_instr_flags( bool just_test )
+bool assembler::handle_instr_ra_flags( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
 {
 	return lex.match( '\n', just_test );
 }
-bool assembler::handle_instr_ra_flags( bool just_test )
+bool assembler::handle_instr_flags_ra( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
 {
 	return lex.match( '\n', just_test );
 }
-bool assembler::handle_instr_flags_ra( bool just_test )
+bool assembler::handle_instr_ira( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
 {
 	return lex.match( '\n', just_test );
 }
-bool assembler::handle_instr_ira( bool just_test )
+bool assembler::handle_instr_ira_ra( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
 {
 	return lex.match( '\n', just_test );
 }
-bool assembler::handle_instr_ira_ra( bool just_test )
+bool assembler::handle_instr_ra_ira( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
 {
 	return lex.match( '\n', just_test );
 }
-bool assembler::handle_instr_ra_ira( bool just_test )
+bool assembler::handle_instr_ra_pc( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
 {
 	return lex.match( '\n', just_test );
 }
-bool assembler::handle_instr_ra_pc( bool just_test )
-{
-	return lex.match( '\n', just_test );
-}
-bool assembler::handle_instr_ra_rb_imm16u( bool just_test )
+bool assembler::handle_instr_ra_rb_imm16u( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
 {
 	
 	return lex.match( '\n', just_test );
 }
-bool assembler::handle_instr_ra_rb_imm16s( bool just_test )
+bool assembler::handle_instr_ra_rb_imm16s( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
 {
 	
 	return lex.match( '\n', just_test );
 }
-bool assembler::handle_instr_ra_rb_rc_imm12s( bool just_test )
+bool assembler::handle_instr_ra_rb_rc_imm12s( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
 {
 	
 	return lex.match( '\n', just_test );
 }
-bool assembler::handle_instr_ra_rb_rc( bool just_test )
+bool assembler::handle_instr_ra_rb_rc( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
 {
 	
 	return lex.match( '\n', just_test );
 }
-bool assembler::handle_instr_ra_rb_abs( bool just_test )
+bool assembler::handle_instr_ra_rb_abs( bool just_test, 
+	std::vector<real_iarg>& iarg_vec )
 {
 	
 	return lex.match( '\n', just_test );
@@ -349,10 +441,7 @@ s32 assembler::unary( bool use_special, bool just_test, bool* did_fail )
 			break;
 		
 		default:
-			if ( did_fail != nullptr )
-			{
-				*did_fail = true;
-			}
+			set_did_fail( did_fail, true );
 			if (!just_test)
 			{
 				we.error("Ill-formed expression");
@@ -366,9 +455,9 @@ s32 assembler::unary( bool use_special, bool just_test, bool* did_fail )
 s32 assembler::expr( bool use_special, bool just_test, bool* did_fail,
 	bool did_init )
 {
-	if ( !did_init && ( did_fail != nullptr ) )
+	if (!did_init)
 	{
-		*did_fail = false;
+		set_did_fail( did_fail, false );
 	}
 	
 	s32 v = unary( use_special, just_test, did_fail );
@@ -427,10 +516,7 @@ s32 assembler::iarg_specific_reg( tok_defn typ,
 	//expr( true, just_test );
 	lex(just_test);
 	
-	if ( did_fail != nullptr )
-	{
-		*did_fail = false;
-	}
+	set_did_fail( did_fail, false );
 	
 	if ( ( lex.special_nextsym() != nullptr )
 		&& ( lex.special_nextsym()->typ() == static_cast<tok>(typ) ) )
@@ -442,10 +528,7 @@ s32 assembler::iarg_specific_reg( tok_defn typ,
 	{
 		we.expected(fail_msg);
 	}
-	if ( did_fail != nullptr )
-	{
-		*did_fail = true;
-	}
+	set_did_fail( did_fail, true );
 	return -1;
 }
 

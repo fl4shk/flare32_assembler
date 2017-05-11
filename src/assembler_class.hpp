@@ -28,6 +28,10 @@ private:		// types
 		{
 			init( lex, use_special );
 		}
+		inline real_iarg( tok s_nextt, s32 s_nextval )
+		{
+			init( s_nextt, s_nextval );
+		}
 		
 		
 		inline real_iarg& operator = ( const real_iarg& to_copy ) 
@@ -52,6 +56,13 @@ private:		// types
 				nextval = lex.special_nextval();
 				nextsym = lex.special_nextsym();
 			}
+		}
+		
+		inline void init( tok s_nextt, s32 s_nextval )
+		{
+			nextt = s_nextt;
+			nextval = s_nextval;
+			nextsym = nullptr;
 		}
 	};
 	
@@ -100,71 +111,70 @@ private:		// functions
 		return ( !( ( lex.nextc() != '\n' ) && ( lex.nextc() != EOF )
 			&& ( lex.nextt() != '\n' ) ) );
 	}
-	const instruction* determine_instr();
-	bool test_iargs( const instruction& iter );
+	const instruction* determine_instr( std::vector<real_iarg>& iarg_vec );
+	bool handle_iargs( const instruction& iter, bool just_test,
+		std::vector<real_iarg>& iarg_vec );
 	
-	inline bool test_iarg_reg()
+	inline void set_did_fail( bool* did_fail, bool val )
 	{
-		bool did_fail;
-		iarg_reg( true, &did_fail );
-		return !did_fail;
-	}
-	inline bool test_iarg_reg_flags()
-	{
-		bool did_fail;
-		iarg_reg_flags( true, &did_fail );
-		return !did_fail;
-	}
-	inline bool test_iarg_reg_ira()
-	{
-		bool did_fail;
-		iarg_reg_ira( true, &did_fail );
-		return !did_fail;
-	}
-	inline bool test_iarg_reg_pc()
-	{
-		bool did_fail;
-		iarg_reg_pc( true, &did_fail );
-		return !did_fail;
-	}
-	bool test_iarg_braoffs()
-	{
-		bool did_fail;
-		iarg_braoffs( true, &did_fail );
-		return !did_fail;
-	}
-	bool test_iarg_immed16()
-	{
-		bool did_fail;
-		iarg_immed16( true, &did_fail );
-		return !did_fail;
-	}
-	bool test_iarg_immed12()
-	{
-		bool did_fail;
-		iarg_immed16( true, &did_fail );
-		return !did_fail;
+		if ( did_fail != nullptr )
+		{
+			*did_fail = val;
+		}
 	}
 	
-	bool handle_instr_noargs( bool just_test );
-	bool handle_instr_ra( bool just_test );
-	bool handle_instr_ra_rb( bool just_test );
-	bool handle_instr_ra_imm16u( bool just_test );
-	bool handle_instr_imm16u( bool just_test );
-	bool handle_instr_imm16s( bool just_test );
-	bool handle_instr_branchoffset( bool just_test );
-	bool handle_instr_flags( bool just_test );
-	bool handle_instr_ra_flags( bool just_test );
-	bool handle_instr_flags_ra( bool just_test );
-	bool handle_instr_ira( bool just_test );
-	bool handle_instr_ira_ra( bool just_test );
-	bool handle_instr_ra_ira( bool just_test );
-	bool handle_instr_ra_pc( bool just_test );
-	bool handle_instr_ra_rb_imm16u( bool just_test );
-	bool handle_instr_ra_rb_imm16s( bool just_test );
-	bool handle_instr_ra_rb_rc_imm12s( bool just_test );
-	bool handle_instr_ra_rb_rc( bool just_test );
-	bool handle_instr_ra_rb_abs( bool just_test );
+	bool test_iarg_reg( bool just_test, std::vector<real_iarg>& iarg_vec );
+	bool test_iarg_reg_flags( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	bool test_iarg_reg_ira( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	bool test_iarg_reg_pc( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	bool test_iarg_braoffs( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	bool test_iarg_immed16( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	bool test_iarg_immed12( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	
+	bool handle_instr_noargs( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	bool handle_instr_ra( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	bool handle_instr_ra_rb( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	bool handle_instr_ra_imm16u( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	bool handle_instr_imm16u( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	bool handle_instr_imm16s( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	bool handle_instr_branchoffset( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	bool handle_instr_flags( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	bool handle_instr_ra_flags( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	bool handle_instr_flags_ra( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	bool handle_instr_ira( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	bool handle_instr_ira_ra( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	bool handle_instr_ra_ira( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	bool handle_instr_ra_pc( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	bool handle_instr_ra_rb_imm16u( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	bool handle_instr_ra_rb_imm16s( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	bool handle_instr_ra_rb_rc_imm12s( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	bool handle_instr_ra_rb_rc( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	bool handle_instr_ra_rb_abs( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
 	
 	
 	s32 unary( bool use_special, bool just_test, bool* did_fail );
