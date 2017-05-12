@@ -72,7 +72,8 @@ int assembler::run()
 		lex.set_lineno(0);;
 		std::rewind(infile);
 		lex.set_nextc(' ');
-		lex_regular();
+		lex.set_nextt(' ');
+		//lex_regular();
 		
 		while ( lex.nextt() != EOF )
 		{
@@ -87,7 +88,8 @@ int assembler::run()
 	lex.set_lineno(0);
 	std::rewind(infile);
 	lex.set_nextc(' ');
-	lex_regular();
+	lex.set_nextt(' ');
+	//lex_regular();
 	while ( lex.nextt() != EOF )
 	{
 		line();
@@ -285,6 +287,18 @@ const instruction* assembler::determine_instr()
 	const auto temp_special_nextval = lex.special_nextval();
 	const auto temp_special_nextsym = lex.special_nextsym();
 	
+	auto restore_lex = [&]() -> void
+	{
+		lex.set_nextc(temp_nextc);
+		
+		lex.set_nextt(temp_nextt);
+		lex.set_nextval(temp_nextval);
+		lex.set_nextsym(temp_nextsym);
+		
+		lex.set_special_nextt(temp_special_nextt);
+		lex.set_special_nextval(temp_special_nextval);
+		lex.set_special_nextsym(temp_special_nextsym);
+	};
 	
 	for ( size_t i=0; i<instr_vec.size(); ++i )
 	{
@@ -303,16 +317,9 @@ const instruction* assembler::determine_instr()
 		
 		std::fseek( infile, reset_pos, SEEK_SET );
 		
+		restore_lex();
 	}
-	lex.set_nextc(temp_nextc);
-	
-	lex.set_nextt(temp_nextt);
-	lex.set_nextval(temp_nextval);
-	lex.set_nextsym(temp_nextsym);
-	
-	lex.set_special_nextt(temp_special_nextt);
-	lex.set_special_nextval(temp_special_nextval);
-	lex.set_special_nextsym(temp_special_nextsym);
+	restore_lex();
 	
 	std::fseek( infile, orig_pos, SEEK_SET );
 	
@@ -523,7 +530,6 @@ bool assembler::handle_instr_ra( bool just_test,
 	
 	ASSUME_COMMA
 	
-	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_rb( bool just_test, 
@@ -963,7 +969,6 @@ void assembler::line()
 	
 	if ( lex.nextt() == cast_typ(tok_defn::ident) )
 	{
-		
 		symbol* sym = lex.nextsym();
 		
 		
