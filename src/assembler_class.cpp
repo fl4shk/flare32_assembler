@@ -1025,6 +1025,8 @@ void assembler::line()
 		
 		
 		std::vector<real_iarg> iarg_vec;
+		
+		lex_regular();
 		if (!handle_iargs( *some_instr, false, iarg_vec ))
 		{
 			we.error("assembler::line():  Eek!\n");
