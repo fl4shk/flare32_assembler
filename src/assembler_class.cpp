@@ -274,7 +274,7 @@ const instruction* assembler::determine_instr()
 		return ret;
 	}
 	
-	const std::vector<instruction>& instruction_vec = instr_tbl.at(instr_sym);
+	const std::vector<instruction>& instr_vec = instr_tbl.at(instr_sym);
 	
 	
 	const auto temp_nextc = lex.nextc();
@@ -300,9 +300,9 @@ const instruction* assembler::determine_instr()
 		lex.set_special_nextsym(temp_special_nextsym);
 	};
 	
-	for ( size_t i=0; i<instruction_vec.size(); ++i )
+	for ( size_t i=0; i<instr_vec.size(); ++i )
 	{
-		const instruction& iter = instruction_vec.at(i);
+		const instruction& iter = instr_vec.at(i);
 		
 		lex_keep_lineno();
 		
