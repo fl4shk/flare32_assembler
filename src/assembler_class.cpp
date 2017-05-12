@@ -245,7 +245,7 @@ void assembler::gen_any_instruction( const size_t grp,
 	
 	if ( pass() == 0 )
 	{
-		printout("\n");
+		//printout("\n");
 	}
 }
 
@@ -1293,23 +1293,16 @@ void assembler::line()
 		const auto temp_special_nextsym = lex.special_nextsym();
 		
 		
-		//printout( "good:  ", lex.nextc(), " ", lex.nextt(), " ",
-		//	( lex.nextsym() ? lex.nextsym()->name() : "" ), "\n" );
-		
 		{
 			const long orig_pos = std::ftell(infile);
 			lex_keep_lineno();
 			std::fseek( infile, orig_pos, SEEK_SET );
 		}
-		//printout( "asdf:  ", lex.nextc(), " ", lex.nextt(), " ",
-		//	( lex.nextsym() ? lex.nextsym()->name() : "" ), "\n" );
 		
 		
 		if ( lex.nextt() == ':' )
 		{
-			//printout("AAAAA\n");
 			lex_regular();
-			//printout( lex.nextt(), "\n" );
 			lex_regular();
 			
 			if ( sym->val() != lc() )
@@ -1334,10 +1327,6 @@ void assembler::line()
 		}
 		
 	}
-	
-	//printout( "gggg:  ", found_label, " ", lex.nextc(), " ", 
-	//	lex.nextt(), " ", ( lex.nextsym() ? lex.nextsym()->name() : "" ), 
-	//	"\n" );
 	
 	const instruction* some_instr = determine_instr();
 	
