@@ -1264,10 +1264,17 @@ void assembler::line()
 	
 	if ( isspace(lex.nextt()) )
 	{
-		//lex_match_regular('\n');
 		lex_regular();
 		return;
 	}
+	
+	//auto find_non_ws = [ this ]( bool just_test ) -> void
+	//{
+	//	while ( isspace(lex.nextt()) )
+	//	{
+	//		lex(just_test);
+	//	}
+	//};
 	
 	
 	if ( lex.nextt() == cast_typ(tok_defn::ident) )
@@ -1286,14 +1293,23 @@ void assembler::line()
 		const auto temp_special_nextsym = lex.special_nextsym();
 		
 		
+		//printout( "good:  ", lex.nextc(), " ", lex.nextt(), " ",
+		//	( lex.nextsym() ? lex.nextsym()->name() : "" ), "\n" );
+		
 		{
 			const long orig_pos = std::ftell(infile);
 			lex_keep_lineno();
 			std::fseek( infile, orig_pos, SEEK_SET );
 		}
+		//printout( "asdf:  ", lex.nextc(), " ", lex.nextt(), " ",
+		//	( lex.nextsym() ? lex.nextsym()->name() : "" ), "\n" );
+		
 		
 		if ( lex.nextt() == ':' )
 		{
+			//printout("AAAAA\n");
+			lex_regular();
+			//printout( lex.nextt(), "\n" );
 			lex_regular();
 			
 			if ( sym->val() != lc() )
@@ -1316,13 +1332,23 @@ void assembler::line()
 			lex.set_special_nextval(temp_special_nextval);
 			lex.set_special_nextsym(temp_special_nextsym);
 		}
+		
 	}
+	
+	//printout( "gggg:  ", found_label, " ", lex.nextc(), " ", 
+	//	lex.nextt(), " ", ( lex.nextsym() ? lex.nextsym()->name() : "" ), 
+	//	"\n" );
 	
 	const instruction* some_instr = determine_instr();
 	
 	if ( !found_label && ( some_instr == nullptr ) )
 	{
 		we.expected("instruction or identifier");
+	}
+	
+	if (found_label)
+	{
+		
 	}
 	
 	
@@ -1344,20 +1370,6 @@ void assembler::line()
 		gen_any_instruction( some_instr->grp(), 
 			some_instr->sym()->has_dot_f(), some_instr->opcode(),
 			iarg_vec );
-		
-		//if ( some_instr->real_instr() == nullptr )
-		//{
-		//	gen_any_instruction( some_instr->grp(), 
-		//		some_instr->sym()->has_dot_f(), some_instr->opcode(),
-		//		iarg_vec );
-		//}
-		//else // if ( some_instr->real_instr() != nullptr )
-		//{
-		//	we.error( "assembler::line():  pseudo instructions not ",
-		//		"fully implemented yet!\n" );
-		//}
-		
-		
 	}
 	
 	//while ( !lex.match( '\n', false ) )
