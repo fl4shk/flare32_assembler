@@ -56,7 +56,6 @@ assembler::~assembler()
 int assembler::run()
 {
 	set_pass(0);
-	
 	do
 	{
 		set_changed(false);
@@ -78,6 +77,9 @@ int assembler::run()
 		{
 			line();
 		}
+		
+		//printout( "Did anything change:  ", pass(), " ", changed(), 
+		//	"\n" );
 	} while (changed());
 	
 	//printout("\n");
@@ -110,8 +112,8 @@ void assembler::gen8( s32 v )
 		printf( "%02x\n", ( static_cast<u32>(v) & 0xff ) );
 	}
 	
-	set_last_lc(lc());
 	set_lc( lc() + 1 );
+	set_last_lc(lc());
 }
 void assembler::gen16( s32 v )
 {
@@ -890,9 +892,12 @@ s32 assembler::iarg_specific_reg( tok_defn typ,
 s32 assembler::iarg_braoffs( bool just_test, bool* did_fail )
 {
 	// I'm not sure this is correct!
+	//const s32 temp_0 = expr( false, just_test, did_fail, false )
+	//	- ( lc() + 4 );
 	const s32 temp_0 = expr( false, just_test, did_fail, false )
-		- ( lc() + 4 );
+		- lc();
 	
+	//printout( "assembler::iarg_braoffs():  ", temp_0, " ", lc(), "\n" );
 	
 	const s32 temp_1 = mask_immed( temp_0, ( ( 1 << 16 ) - 1 ) );
 	
@@ -980,6 +985,9 @@ void assembler::line()
 		{
 			lex_regular();
 			
+			//printout( pass(), " ", lex.lineno(), " ", sym->name(),
+			//	" maybe different val():  ", sym->val(), " ", lc(), 
+			//	"\n" );
 			if ( sym->val() != lc() )
 			{
 				set_changed(true);
