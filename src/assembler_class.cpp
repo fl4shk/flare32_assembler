@@ -1,4 +1,5 @@
 #include "assembler_class.hpp"
+#include <bitset>
 
 namespace navichip32
 {
@@ -78,11 +79,8 @@ int assembler::run()
 			line();
 		}
 		
-		//printout( "Did anything change:  ", pass(), " ", changed(), 
-		//	"\n" );
 	} while (changed());
 	
-	//printout("\n");
 	set_pass(0);
 	set_changed(false);
 	set_lc(0);
@@ -110,10 +108,15 @@ void assembler::gen8( s32 v )
 			printf( "@%08x\n", lc() );
 		}
 		printf( "%02x\n", ( static_cast<u32>(v) & 0xff ) );
+		
+		//const auto to_print_byte = ( static_cast<u32>(v) & 0xff );
+		//
+		//std::bitset<8> to_print(to_print_byte);
+		//
+		//printout( to_print, "\n" );
 	}
 	
-	set_lc( lc() + 1 );
-	set_last_lc(lc());
+	set_last_lc(set_lc( lc() + 1 ));
 }
 void assembler::gen16( s32 v )
 {
@@ -840,11 +843,6 @@ s32 assembler::expr( bool use_special, bool just_test, bool* did_fail,
 		}
 	}
 	
-	//if (!old_did_init)
-	//{
-	//	printout( "Final expr() result:  ", v, "\n" );
-	//}
-	
 	return v;
 }
 
@@ -896,8 +894,6 @@ s32 assembler::iarg_braoffs( bool just_test, bool* did_fail )
 	//	- ( lc() + 4 );
 	const s32 temp_0 = expr( false, just_test, did_fail, false )
 		- lc();
-	
-	//printout( "assembler::iarg_braoffs():  ", temp_0, " ", lc(), "\n" );
 	
 	const s32 temp_1 = mask_immed( temp_0, ( ( 1 << 16 ) - 1 ) );
 	
@@ -985,9 +981,6 @@ void assembler::line()
 		{
 			lex_regular();
 			
-			//printout( pass(), " ", lex.lineno(), " ", sym->name(),
-			//	" maybe different val():  ", sym->val(), " ", lc(), 
-			//	"\n" );
 			if ( sym->val() != lc() )
 			{
 				set_changed(true);
@@ -1010,11 +1003,6 @@ void assembler::line()
 		}
 	}
 	
-	//if (found_label)
-	//{
-	//	printout( "Found this label:  ", lex.nextsym()->name(), "\n" );
-	//}
-	
 	const instruction* some_instr = determine_instr();
 	
 	if ( !found_label && ( some_instr == nullptr ) )
@@ -1025,13 +1013,6 @@ void assembler::line()
 	
 	if ( some_instr != nullptr )
 	{
-		////if ( pass() != 0 )
-		//{
-		//	printout( "pass #", pass(), ":  ", 
-		//		cast_typ(some_instr->iargs()), "\n" );
-		//}
-		
-		
 		std::vector<real_iarg> iarg_vec;
 		
 		lex_regular();
@@ -1048,13 +1029,10 @@ void assembler::line()
 		
 	}
 	
-	
-	
-	//printout( "Find End of Line:  ", lex.lineno(), "\n");
-	while ( !lex.match( '\n', false ) )
-	{
-		lex_regular();
-	}
+	//while ( !lex.match( '\n', false ) )
+	//{
+	//	lex_regular();
+	//}
 }
 
 
