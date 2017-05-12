@@ -241,6 +241,11 @@ void assembler::gen_any_instruction( const size_t grp,
 			break;
 	}
 	
+	
+	//if ( pass() == 0 )
+	//{
+	//	printout("\n");
+	//}
 }
 
 
