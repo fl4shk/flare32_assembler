@@ -20,15 +20,15 @@ void assembler::insert_grp_0_instructions()
 			cast_typ(tok_defn::instr), 0, true );
 		instr_tbl.enter( some_sym, opcode, grp, iargs, some_real_instr );
 	};
-	auto insert_instr = [ this, &insert_instr_keep_opcode, &opcode ]
-		(  symbol*& some_sym, std::string&& some_orig_name, 
-		const instr_args& iargs, const instruction* some_real_instr )
-		-> void
-	{
-		insert_instr_keep_opcode( some_sym, std::move(some_orig_name),
-			iargs, some_real_instr );
-		++opcode;
-	};
+	//auto insert_instr = [ this, &insert_instr_keep_opcode, &opcode ]
+	//	(  symbol*& some_sym, std::string&& some_orig_name, 
+	//	const instr_args& iargs, const instruction* some_real_instr )
+	//	-> void
+	//{
+	//	insert_instr_keep_opcode( some_sym, std::move(some_orig_name),
+	//		iargs, some_real_instr );
+	//	++opcode;
+	//};
 	// This inserts an instruction and also one with ".f" appended to its
 	// name.
 	auto insert_instr_and_with_dot_f = [&]( const std::string& orig_name, 
@@ -832,24 +832,36 @@ void assembler::insert_grp_2_instructions()
 	//// Load 32-bit value from address rB into rA.
 	//// Encoded like this:  ldr rA, rB, r0, 0 
 	//ldr rA, rB
+	find_real_instr_and_with_dot_f( "ldr", instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "ldr",
+		instr_args::pseudo_ra_rb_r0hidden_imm0hidden );
 	
 	// Pseudo instruction:
 	//// Load zero-extended 16-bit value from address rB into rA.
 	//// This zero-extends the value.
 	//// Encoded like this:  ldh rA, rB, r0, 0 
 	//ldh rA, rB
+	find_real_instr_and_with_dot_f( "ldh", instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "ldh",
+		instr_args::pseudo_ra_rb_r0hidden_imm0hidden );
 	
 	// Pseudo instruction:
 	//// Load sign-extended 16-bit value from address rB into rA.
 	//// This sign-extends the value.
 	//// Encoded like this:  ldsh rA, rB, r0, 0 
 	//ldsh rA, rB
+	find_real_instr_and_with_dot_f( "ldsh", instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "ldsh",
+		instr_args::pseudo_ra_rb_r0hidden_imm0hidden );
 	
 	// Pseudo instruction:
 	//// Load zero-extended 8-bit value from address rB into rA.
 	//// This zero-extends the value.
 	//// Encoded like this:  ldb rA, rB, r0, 0 
 	//ldb rA, rB
+	find_real_instr_and_with_dot_f( "ldb", instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "ldb",
+		instr_args::pseudo_ra_rb_r0hidden_imm0hidden );
 	
 	
 	
@@ -858,44 +870,70 @@ void assembler::insert_grp_2_instructions()
 	//// This sign-extends the value.
 	//// Encoded like this:  ldsb rA, rB, r0, 0 
 	//ldsb rA, rB
+	find_real_instr_and_with_dot_f( "ldsb", instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "ldsb",
+		instr_args::pseudo_ra_rb_r0hidden_imm0hidden );
 	
 	// Pseudo instruction:
 	//// Store 32-bit value in rA to address rB.
 	//// Encoded like this:  str rA, rB, r0, 0 
 	//str rA, rB
+	find_real_instr_and_with_dot_f( "str", instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "str",
+		instr_args::pseudo_ra_rb_r0hidden_imm0hidden );
 	
 	// Pseudo instruction:
 	//// Store low 16 bits of rA to address rB.
 	//// Encoded like this:  sth rA, rB, r0, 0 
 	//sth rA, rB
+	find_real_instr_and_with_dot_f( "sth", instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "sth",
+		instr_args::pseudo_ra_rb_r0hidden_imm0hidden );
 	
 	// Pseudo instruction:
 	//// Store low 8 bits of rA to address rB.
 	//// Encoded like this:  stb rA, rB, r0, 0 
 	//stb rA, rB
+	find_real_instr_and_with_dot_f( "stb", instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "stb",
+		instr_args::pseudo_ra_rb_r0hidden_imm0hidden );
+	
+	
 	
 	// Pseudo instruction:
 	//// Load 32-bit value from address (rB + rC) into rA.
 	//// Encoded like this:  ldr rA, rB, rC, 0 
 	//ldr rA, rB, rC
+	find_real_instr_and_with_dot_f( "ldr", instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "ldr",
+		instr_args::pseudo_ra_rb_rc_imm0hidden );
 	
 	// Pseudo instruction:
 	//// Load zero-extended 16-bit value from address (rB + rC) into rA.
 	//// This zero-extends the value.
 	//// Encoded like this:  ldh rA, rB, rC, 0 
 	//ldh rA, rB, rC
+	find_real_instr_and_with_dot_f( "ldh", instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "ldh",
+		instr_args::pseudo_ra_rb_rc_imm0hidden );
 	
 	// Pseudo instruction:
 	//// Load sign-extended 16-bit value from address (rB + rC) into rA.
 	//// This sign-extends the value.
 	//// Encoded like this:  ldsh rA, rB, rC, 0 
 	//ldsh rA, rB, rC
+	find_real_instr_and_with_dot_f( "ldsh", instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "ldsh",
+		instr_args::pseudo_ra_rb_rc_imm0hidden );
 	
 	// Pseudo instruction:
 	//// Load zero-extended 8-bit value from address (rB + rC) into rA.
 	//// This zero-extends the value.
 	//// Encoded like this:  ldb rA, rB, rC, 0 
 	//ldb rA, rB, rC
+	find_real_instr_and_with_dot_f( "ldb", instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "ldb",
+		instr_args::pseudo_ra_rb_rc_imm0hidden );
 	
 	
 	
@@ -904,44 +942,70 @@ void assembler::insert_grp_2_instructions()
 	//// This sign-extends the value.
 	//// Encoded like this:  ldsb rA, rB, rC, 0 
 	//ldsb rA, rB, rC
+	find_real_instr_and_with_dot_f( "ldsb", instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "ldsb",
+		instr_args::pseudo_ra_rb_rc_imm0hidden );
 	
 	// Pseudo instruction:
 	//// Store 32-bit value in rA to address (rB + rC).
 	//// Encoded like this:  str rA, rB, rC, 0 
 	//str rA, rB, rC
+	find_real_instr_and_with_dot_f( "str", instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "str",
+		instr_args::pseudo_ra_rb_rc_imm0hidden );
 	
 	// Pseudo instruction:
 	//// Store low 16 bits of rA to address (rB + rC).
 	//// Encoded like this:  sth rA, rB, rC, 0 
 	//sth rA, rB, rC
+	find_real_instr_and_with_dot_f( "sth", instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "sth",
+		instr_args::pseudo_ra_rb_rc_imm0hidden );
 	
 	// Pseudo instruction:
 	//// Store low 8 bits of rA to address (rB + rC).
 	//// Encoded like this:  stb rA, rB, rC, 0 
 	//stb rA, rB, rC
+	find_real_instr_and_with_dot_f( "stb", instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "stb",
+		instr_args::pseudo_ra_rb_rc_imm0hidden );
+	
+	
 	
 	// Pseudo instruction:
 	//// Load 32-bit value from address (rB + (sign-extended imm)) into rA.
 	//// Encoded like this:  ldr rA, rB, r0, imm 
 	//ldr rA, rB, imm
+	find_real_instr_and_with_dot_f( "ldr", instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "ldr",
+		instr_args::pseudo_ra_rb_r0hidden_imm16u );
 	
 	// Pseudo instruction:
 	//// Load zero-extended 16-bit value from address (rB + (sign-extended imm)) into rA.
 	//// This zero-extends the value.
 	//// Encoded like this:  ldh rA, rB, r0, imm 
 	//ldh rA, rB, imm
+	find_real_instr_and_with_dot_f( "ldh", instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "ldh",
+		instr_args::pseudo_ra_rb_r0hidden_imm16u );
 	
 	// Pseudo instruction:
 	//// Load sign-extended 16-bit value from address (rB + (sign-extended imm)) into rA.
 	//// This sign-extends the value.
 	//// Encoded like this:  ldsh rA, rB, r0, imm 
 	//ldsh rA, rB, imm
+	find_real_instr_and_with_dot_f( "ldsh", instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "ldsh",
+		instr_args::pseudo_ra_rb_r0hidden_imm16u );
 	
 	// Pseudo instruction:
 	//// Load zero-extended 8-bit value from address (rB + (sign-extended imm)) into rA.
 	//// This zero-extends the value.
 	//// Encoded like this:  ldb rA, rB, r0, imm 
 	//ldb rA, rB, imm
+	find_real_instr_and_with_dot_f( "ldb", instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "ldb",
+		instr_args::pseudo_ra_rb_r0hidden_imm16u );
 	
 	
 	
@@ -950,21 +1014,33 @@ void assembler::insert_grp_2_instructions()
 	//// This sign-extends the value.
 	//// Encoded like this:  ldsb rA, rB, r0, imm 
 	//ldsb rA, rB, imm
+	find_real_instr_and_with_dot_f( "ldsb", instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "ldsb",
+		instr_args::pseudo_ra_rb_r0hidden_imm16u );
 	
 	// Pseudo instruction:
 	//// Store 32-bit value in rA to address (rB + (sign-extended imm)).
 	//// Encoded like this:  str rA, rB, r0, imm 
 	//str rA, rB, imm
+	find_real_instr_and_with_dot_f( "str", instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "str",
+		instr_args::pseudo_ra_rb_r0hidden_imm16u );
 	
 	// Pseudo instruction:
 	//// Store low 16 bits of rA to address (rB + (sign-extended imm)).
 	//// Encoded like this:  sth rA, rB, r0, imm 
 	//sth rA, rB, imm
+	find_real_instr_and_with_dot_f( "sth", instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "sth",
+		instr_args::pseudo_ra_rb_r0hidden_imm16u );
 	
 	// Pseudo instruction:
 	//// Store low 8 bits of rA to address (rB + (sign-extended imm)).
 	//// Encoded like this:  stb rA, rB, r0, imm 
 	//stb rA, rB, imm
+	find_real_instr_and_with_dot_f( "stb", instr_args::ra_rb_rc_imm12s );
+	insert_instr_and_with_dot_f( "stb",
+		instr_args::pseudo_ra_rb_r0hidden_imm16u );
 	
 	
 	
@@ -973,24 +1049,36 @@ void assembler::insert_grp_2_instructions()
 	//// This instruction can affect N, V, Z, and C flags.
 	//// Encoded like this:  sub.f r0, rB, rC
 	//cmp rB, rC
+	find_real_instr( real_instr_dot_f, "sub.f", instr_args::ra_rb_rc );
+	insert_instr( sym_dot_f, std::string("cmp"), 
+		instr_args::pseudo_r0hidden_rb_rc, real_instr_dot_f );
 	
 	// Pseudo instruction:
 	//// temp = rB - (-rC)
 	//// This instruction can affect N, V, Z, and C flags.
 	//// Encoded like this:  add.f r0, rB, rC
 	//cmn rB, rC
+	find_real_instr( real_instr_dot_f, "add.f", instr_args::ra_rb_rc );
+	insert_instr( sym_dot_f, std::string("cmn"), 
+		instr_args::pseudo_r0hidden_rb_rc, real_instr_dot_f );
 	
 	// Pseudo instruction:
 	//// temp = rC - rB
 	//// This instruction can affect N, V, Z, and C flags.
 	//// Encoded like this:  rsb.f r0, rB, rC
 	//cmr rB, rC
+	find_real_instr( real_instr_dot_f, "rsb.f", instr_args::ra_rb_rc );
+	insert_instr( sym_dot_f, std::string("cmr"), 
+		instr_args::pseudo_r0hidden_rb_rc, real_instr_dot_f );
 	
 	// Pseudo instruction:
 	//// temp = rB & rC
 	//// Encoded like this:  and.f r0, rB, rC
 	//// This instruction can affect the N and Z flags.
 	//tst rB, rC
+	find_real_instr_and_with_dot_f( "and", instr_args::ra_rb_rc );
+	insert_instr_and_with_dot_f( "tst", 
+		instr_args::pseudo_r0hidden_rb_rc );
 	
 	
 	
@@ -999,21 +1087,30 @@ void assembler::insert_grp_2_instructions()
 	//// rA = rC
 	//// Encoded like this:  cpyp rA, rA, rC
 	//cpy rA, rC
+	find_real_instr_and_with_dot_f( "cpyp", instr_args::ra_rb_rc );
+	insert_instr_and_with_dot_f( "cpy", 
+		instr_args::pseudo_ra_rahidden_rc );
 	
 	// Pseudo instruction:
 	//// Set pc to destination address in rB.
 	//// Encoded like this:  jumpx r0, rB
 	//jump rB
+	find_real_instr_and_with_dot_f( "jumpx", instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "jump", instr_args::pseudo_r0hidden_rb );
 	
 	// Pseudo instruction:
 	//// Set pc to destination address in rB.
 	//// Encoded like this:  jumpx r0, rB
 	//cpy pc, rB
+	find_real_instr_and_with_dot_f( "jumpx", instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "cpy", instr_args::pseudo_pc_rb );
 	
 	// Pseudo instruction:
 	//// Push register rA onto the stack
 	//// Encoded like this:  strma rA, sp
 	//push rA
+	find_real_instr_and_with_dot_f( "strma", instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "push", instr_args::pseudo_ra_sphidden );
 	
 	
 	
@@ -1021,6 +1118,8 @@ void assembler::insert_grp_2_instructions()
 	//// Pop 32-bit value off the stack into register rA
 	//// Encoded like this:  ldrpb rA, sp
 	//pop rA
+	find_real_instr_and_with_dot_f( "ldrpb", instr_args::ra_rb );
+	insert_instr_and_with_dot_f( "pop", instr_args::pseudo_ra_sphidden );
 }
 void assembler::insert_grp_3_instructions()
 {
@@ -1038,15 +1137,15 @@ void assembler::insert_grp_3_instructions()
 			cast_typ(tok_defn::instr), 0, true );
 		instr_tbl.enter( some_sym, opcode, grp, iargs, some_real_instr );
 	};
-	auto insert_instr = [ this, &insert_instr_keep_opcode, &opcode ]
-		(  symbol*& some_sym, std::string&& some_orig_name, 
-		const instr_args& iargs, const instruction* some_real_instr )
-		-> void
-	{
-		insert_instr_keep_opcode( some_sym, std::move(some_orig_name),
-			iargs, some_real_instr );
-		++opcode;
-	};
+	//auto insert_instr = [ this, &insert_instr_keep_opcode, &opcode ]
+	//	(  symbol*& some_sym, std::string&& some_orig_name, 
+	//	const instr_args& iargs, const instruction* some_real_instr )
+	//	-> void
+	//{
+	//	insert_instr_keep_opcode( some_sym, std::move(some_orig_name),
+	//		iargs, some_real_instr );
+	//	++opcode;
+	//};
 	// This inserts an instruction and also one with ".f" appended to its
 	// name.
 	auto insert_instr_and_with_dot_f = [&]( const std::string& orig_name, 
@@ -1207,23 +1306,36 @@ void assembler::insert_grp_3_instructions()
 	//// Set pc to destination address in (rA + absolute_addr).
 	//// Encoded like this:  jumpa rA, r0, absolute_addr
 	//jumpa rA, absolute_addr
+	find_real_instr_and_with_dot_f( "jumpa", instr_args::ra_rb_abs );
+	insert_instr_and_with_dot_f( "jumpa",
+		instr_args::pseudo_ra_r0hidden_abs );
 	
 	// Pseudo instruction:
 	//// Set pc to destination address in (absolute_addr).
 	//// Encoded like this:  jumpa r0, r0, absolute_addr
 	//jumpa absolute_addr
+	find_real_instr_and_with_dot_f( "jumpa", instr_args::ra_rb_abs );
+	insert_instr_and_with_dot_f( "jumpa",
+		instr_args::pseudo_r0hidden_r0hidden_abs );
 	
 	// Pseudo instruction:
-	//// Subroutine call using (rA + absolute_addr) as destination address. 
-	//// The return address is stored in the link register (lr).
-	//// Encoded like this:  calla rA, r0, absolute_addr
+	//// Subroutine call using (rA + absolute_addr) as 
+	//// destination address.  The return address is stored in the link
+	//// register (lr).
+	// Encoded like this:  calla rA, r0, absolute_addr
 	//calla rA, absolute_addr
+	find_real_instr_and_with_dot_f( "calla", instr_args::ra_rb_abs );
+	insert_instr_and_with_dot_f( "calla",
+		instr_args::pseudo_ra_r0hidden_abs );
 	
 	// Pseudo instruction:
 	//// Subroutine call using (absolute_addr) as destination address. 
 	//// The return address is stored in the link register (lr).
 	//// Encoded like this:  calla r0, r0, absolute_addr
 	//calla absolute_addr
+	find_real_instr_and_with_dot_f( "calla", instr_args::ra_rb_abs );
+	insert_instr_and_with_dot_f( "calla",
+		instr_args::pseudo_r0hidden_r0hidden_abs );
 	
 	
 	
@@ -1231,6 +1343,9 @@ void assembler::insert_grp_3_instructions()
 	//// rA = 32-bit immediate
 	//// Encoded like this:  cpypi rA, rA, imm
 	//cpyi rA, imm
+	find_real_instr_and_with_dot_f( "cpypi", instr_args::ra_rb_abs );
+	insert_instr_and_with_dot_f( "cpyi",
+		instr_args::pseudo_ra_rahidden_abs );
 }
 
 

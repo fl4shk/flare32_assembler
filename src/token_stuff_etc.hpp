@@ -73,6 +73,10 @@ enum class instr_args : tok
 	
 	
 	pseudo_ra_rahidden_rc,
+	
+	// cpy pc, rB
+	pseudo_pc_rb,
+	
 	pseudo_ra_sphidden,
 	
 	
