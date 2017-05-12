@@ -1,5 +1,4 @@
 #include "assembler_class.hpp"
-#include <bitset>
 
 namespace navichip32
 {
@@ -988,30 +987,74 @@ bool assembler::parse_instr_pseudo_ra_rahidden_rc( bool just_test,
 bool assembler::parse_instr_pseudo_pc_rb( bool just_test,
 	std::vector<real_iarg>& iarg_vec )
 {
+	// pc, a special-purpose register
+	IARG_X( reg_pc, "" );
+	
+	IARG_ASSUME_COMMA
+	
+	// rB
+	IARG_X( reg, "rb" );
 	
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::parse_instr_pseudo_ra_sphidden( bool just_test,
 	std::vector<real_iarg>& iarg_vec )
 {
+	// rA
+	IARG_X( reg, "ra" );
+	
+	
+	// sphidden
+	{
+		symbol* temp;
+		if (!special_sym_tbl.find( temp, "sp" ))
+		{
+			we.error( "assembler::parse_instr_pseudo_ra_sphidden():  ",
+				"Eek!\n" );
+		}
+		IARG_HIDDEN( temp->typ(), temp->val(), "sp" );
+	}
 	
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::parse_instr_pseudo_ra_r0hidden_abs( bool just_test,
 	std::vector<real_iarg>& iarg_vec )
 {
+	// rA
+	IARG_X( reg, "ra" );
+	
+	IARG_ASSUME_COMMA
+	
+	// r0hidden
+	
+	// 32-bit absolute
+	IARG_X( abs, "imm" );
 	
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::parse_instr_pseudo_r0hidden_r0hidden_abs( bool just_test,
 	std::vector<real_iarg>& iarg_vec )
 {
+	// r0hidden
+	// r0hidden
+	
+	// 32-bit absolute
+	IARG_X( abs, "imm" );
 	
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::parse_instr_pseudo_ra_rahidden_abs( bool just_test,
 	std::vector<real_iarg>& iarg_vec )
 {
+	// rA
+	IARG_X( reg, "ra" );
+	
+	IARG_SAME( "ra", "rb" );
+	
+	IARG_ASSUME_COMMA
+	
+	// 32-bit absolute
+	IARG_X( abs, "imm" );
 	
 	return lex_match_end_of_line(just_test);
 }

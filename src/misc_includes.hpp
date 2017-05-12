@@ -8,6 +8,7 @@
 #include <cstring>
 #include <unordered_set>
 #include <unordered_map>
+#include <bitset>
 
 #include <experimental/string_view>
 using std::experimental::string_view;
