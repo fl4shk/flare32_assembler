@@ -32,21 +32,50 @@ enum class instr_args : tok
 	ra,
 	ra_rb,
 	ra_imm16u,
+	
+	
 	imm16u,
 	imm16s,
 	branchoffset,
 	flags,
+	
+	
 	ra_flags,
 	flags_ra,
 	ira,
 	ira_ra,
+	
+	
 	ra_ira,
 	ra_pc,
 	ra_rb_imm16u,
 	ra_rb_imm16s,
+	
+	
 	ra_rb_rc_imm12s,
 	ra_rb_rc,
 	ra_rb_abs,
+	
+	
+	pseudo_r0hidden_rb,
+	pseudo_r0hidden_rb_imm16u,
+	pseudo_ra_rb_imm0hidden,
+	pseudo_ra_rb_imm16sneg1hidden,
+	
+	pseudo_ra_rb_r0hidden_imm0hidden,
+	pseudo_ra_rb_rc_imm0hidden,
+	pseudo_ra_rb_r0hidden_imm16u,
+	pseudo_r0hidden_rb_rc,
+	
+	
+	pseudo_ra_rahidden_rc,
+	pseudo_ra_sphidden,
+	
+	
+	pseudo_ra_r0hidden_abs,
+	pseudo_r0hidden_r0hidden_abs,
+	pseudo_ra_rahidden_abs,
+	
 };
 
 

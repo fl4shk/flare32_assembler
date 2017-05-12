@@ -23,8 +23,13 @@ private:		// variables
 	// Instruction arguments
 	instr_args internal_iargs = instr_args::noargs;
 	
+	// If this instruction is a pseudo instruction, then encode using
+	// internal_real_instr
+	const instruction* internal_real_instr = nullptr;
+	
 	
 private:		// functions
+	gen_setter_by_val(real_instr);
 	gen_setter_by_val(sym);
 	gen_setter_by_val(opcode);
 	gen_setter_by_val(grp);
@@ -37,12 +42,13 @@ public:		// functions
 	}
 	inline instruction( const instruction& to_copy ) = default;
 	inline instruction( symbol* s_sym, size_t s_opcode, size_t s_grp, 
-		instr_args s_iargs )
+		instr_args s_iargs, const instruction* s_real_instr )
 	{
 		set_sym(s_sym);
 		set_opcode(s_opcode);
 		set_grp(s_grp);
 		set_iargs(s_iargs);
+		set_real_instr(s_real_instr);
 	}
 	
 	virtual inline ~instruction()
@@ -57,6 +63,7 @@ public:		// functions
 	gen_getter_by_val(opcode);
 	gen_getter_by_val(grp);
 	gen_getter_by_val(iargs);
+	gen_getter_by_val(real_instr);
 	
 };
 
@@ -83,7 +90,8 @@ public:		// functions
 	inline instruction_table& operator = 
 		( const instruction_table& to_copy ) = delete;
 	
-	void enter( symbol* sym, size_t opcode, size_t grp, instr_args iargs );
+	void enter( symbol* sym, size_t opcode, size_t grp, instr_args iargs,
+		const instruction* real_instr=nullptr );
 	
 	inline const std::vector<instruction>& at( const symbol* where )
 	{

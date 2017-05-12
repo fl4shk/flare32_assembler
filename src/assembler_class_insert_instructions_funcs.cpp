@@ -9,9 +9,10 @@ void assembler::insert_grp_0_instructions()
 	static constexpr size_t grp = 0;
 	size_t opcode = 0;
 	symbol * sym, * sym_dot_f;
+	const instruction * real_instr = nullptr, * real_instr_dot_f = nullptr;
 	
 	// This inserts an instruction and also one with ".f" appended to its
-	// name
+	// name.
 	auto insert_instr_and_with_dot_f = [&]( const std::string& orig_name, 
 		const instr_args& iargs ) -> void
 	{
@@ -21,10 +22,63 @@ void assembler::insert_grp_0_instructions()
 			cast_typ(tok_defn::instr), 0, true );
 		sym_dot_f = &special_sym_tbl.enter( std::move(temp_name_1),
 			cast_typ(tok_defn::instr), 0, true );
-		instr_tbl.enter( sym, opcode, grp, iargs );
-		instr_tbl.enter( sym_dot_f, opcode, grp, iargs );
+		instr_tbl.enter( sym, opcode, grp, iargs, real_instr );
+		instr_tbl.enter( sym_dot_f, opcode, grp, iargs, real_instr_dot_f );
 		
 		++opcode;
+	};
+	// This is used for pseudo instructions.
+	auto find_real_instr_and_with_dot_f = [&]
+		( const std::string& orig_name, const instr_args& iargs ) -> void
+	{
+		const std::string orig_name_dot_f = orig_name + std::string(".f");
+		if (!special_sym_tbl.find( sym, orig_name ))
+		{
+			we.error( "assembler constructor (group ", grp, "):  Eek 1!",
+				"\n" );
+		}
+		if (!special_sym_tbl.find( sym_dot_f, orig_name_dot_f ))
+		{
+			we.error( "assembler constructor (group ", grp, "):  Eek 2!",
+				"\n" );
+		}
+		
+		const std::vector<instruction>& instr_vec = instr_tbl.at(sym);
+		const std::vector<instruction>& instr_dot_f_vec 
+			= instr_tbl.at(sym_dot_f);
+		
+		real_instr = nullptr;
+		real_instr_dot_f = nullptr;
+		
+		for ( size_t i=0; i<instr_vec.size(); ++i )
+		{
+			const instruction& iter = instr_vec.at(i);
+			if ( iter.iargs() == iargs )
+			{
+				real_instr = &iter;
+				break;
+			}
+		}
+		if ( real_instr == nullptr )
+		{
+			we.error( "assembler constructor (group ", grp, "):  Eek 3!",
+				"\n" );
+		}
+		
+		for ( size_t i=0; i<instr_vec.size(); ++i )
+		{
+			const instruction& iter = instr_dot_f_vec.at(i);
+			if ( iter.iargs() == iargs )
+			{
+				real_instr_dot_f = &iter;
+				break;
+			}
+		}
+		if ( real_instr_dot_f == nullptr )
+		{
+			we.error( "assembler constructor (group ", grp, "):  Eek 4!",
+				"\n" );
+		}
 	};
 	
 	// Instructions:
@@ -202,6 +256,7 @@ void assembler::insert_grp_1_instructions()
 	static constexpr size_t grp = 1;
 	size_t opcode = 0;
 	symbol * sym, * sym_dot_f;
+	const instruction * real_instr = nullptr, * real_instr_dot_f = nullptr;
 	
 	// This inserts an instruction and also one with ".f" appended to its
 	// name
@@ -214,10 +269,63 @@ void assembler::insert_grp_1_instructions()
 			cast_typ(tok_defn::instr), 0, true );
 		sym_dot_f = &special_sym_tbl.enter( std::move(temp_name_1),
 			cast_typ(tok_defn::instr), 0, true );
-		instr_tbl.enter( sym, opcode, grp, iargs );
-		instr_tbl.enter( sym_dot_f, opcode, grp, iargs );
+		instr_tbl.enter( sym, opcode, grp, iargs, real_instr );
+		instr_tbl.enter( sym_dot_f, opcode, grp, iargs, real_instr_dot_f );
 		
 		++opcode;
+	};
+	// This is used for pseudo instructions.
+	auto find_real_instr_and_with_dot_f = [&]
+		( const std::string& orig_name, const instr_args& iargs ) -> void
+	{
+		const std::string orig_name_dot_f = orig_name + std::string(".f");
+		if (!special_sym_tbl.find( sym, orig_name ))
+		{
+			we.error( "assembler constructor (group ", grp, "):  Eek 1!",
+				"\n" );
+		}
+		if (!special_sym_tbl.find( sym_dot_f, orig_name_dot_f ))
+		{
+			we.error( "assembler constructor (group ", grp, "):  Eek 2!",
+				"\n" );
+		}
+		
+		const std::vector<instruction>& instr_vec = instr_tbl.at(sym);
+		const std::vector<instruction>& instr_dot_f_vec 
+			= instr_tbl.at(sym_dot_f);
+		
+		real_instr = nullptr;
+		real_instr_dot_f = nullptr;
+		
+		for ( size_t i=0; i<instr_vec.size(); ++i )
+		{
+			const instruction& iter = instr_vec.at(i);
+			if ( iter.iargs() == iargs )
+			{
+				real_instr = &iter;
+				break;
+			}
+		}
+		if ( real_instr == nullptr )
+		{
+			we.error( "assembler constructor (group ", grp, "):  Eek 3!",
+				"\n" );
+		}
+		
+		for ( size_t i=0; i<instr_vec.size(); ++i )
+		{
+			const instruction& iter = instr_dot_f_vec.at(i);
+			if ( iter.iargs() == iargs )
+			{
+				real_instr_dot_f = &iter;
+				break;
+			}
+		}
+		if ( real_instr_dot_f == nullptr )
+		{
+			we.error( "assembler constructor (group ", grp, "):  Eek 4!",
+				"\n" );
+		}
 	};
 	
 	
@@ -457,6 +565,7 @@ void assembler::insert_grp_2_instructions()
 	static constexpr size_t grp = 2;
 	size_t opcode = 0;
 	symbol * sym, * sym_dot_f;
+	const instruction * real_instr = nullptr, * real_instr_dot_f = nullptr;
 	
 	// This inserts an instruction and also one with ".f" appended to its
 	// name
@@ -469,10 +578,63 @@ void assembler::insert_grp_2_instructions()
 			cast_typ(tok_defn::instr), 0, true );
 		sym_dot_f = &special_sym_tbl.enter( std::move(temp_name_1),
 			cast_typ(tok_defn::instr), 0, true );
-		instr_tbl.enter( sym, opcode, grp, iargs );
-		instr_tbl.enter( sym_dot_f, opcode, grp, iargs );
+		instr_tbl.enter( sym, opcode, grp, iargs, real_instr );
+		instr_tbl.enter( sym_dot_f, opcode, grp, iargs, real_instr_dot_f );
 		
 		++opcode;
+	};
+	// This is used for pseudo instructions.
+	auto find_real_instr_and_with_dot_f = [&]
+		( const std::string& orig_name, const instr_args& iargs ) -> void
+	{
+		const std::string orig_name_dot_f = orig_name + std::string(".f");
+		if (!special_sym_tbl.find( sym, orig_name ))
+		{
+			we.error( "assembler constructor (group ", grp, "):  Eek 1!",
+				"\n" );
+		}
+		if (!special_sym_tbl.find( sym_dot_f, orig_name_dot_f ))
+		{
+			we.error( "assembler constructor (group ", grp, "):  Eek 2!",
+				"\n" );
+		}
+		
+		const std::vector<instruction>& instr_vec = instr_tbl.at(sym);
+		const std::vector<instruction>& instr_dot_f_vec 
+			= instr_tbl.at(sym_dot_f);
+		
+		real_instr = nullptr;
+		real_instr_dot_f = nullptr;
+		
+		for ( size_t i=0; i<instr_vec.size(); ++i )
+		{
+			const instruction& iter = instr_vec.at(i);
+			if ( iter.iargs() == iargs )
+			{
+				real_instr = &iter;
+				break;
+			}
+		}
+		if ( real_instr == nullptr )
+		{
+			we.error( "assembler constructor (group ", grp, "):  Eek 3!",
+				"\n" );
+		}
+		
+		for ( size_t i=0; i<instr_vec.size(); ++i )
+		{
+			const instruction& iter = instr_dot_f_vec.at(i);
+			if ( iter.iargs() == iargs )
+			{
+				real_instr_dot_f = &iter;
+				break;
+			}
+		}
+		if ( real_instr_dot_f == nullptr )
+		{
+			we.error( "assembler constructor (group ", grp, "):  Eek 4!",
+				"\n" );
+		}
 	};
 	
 	
@@ -833,6 +995,7 @@ void assembler::insert_grp_3_instructions()
 	static constexpr size_t grp = 3;
 	size_t opcode = 0;
 	symbol * sym, * sym_dot_f;
+	const instruction * real_instr = nullptr, * real_instr_dot_f = nullptr;
 	
 	// This inserts an instruction and also one with ".f" appended to its
 	// name
@@ -845,10 +1008,63 @@ void assembler::insert_grp_3_instructions()
 			cast_typ(tok_defn::instr), 0, true );
 		sym_dot_f = &special_sym_tbl.enter( std::move(temp_name_1),
 			cast_typ(tok_defn::instr), 0, true );
-		instr_tbl.enter( sym, opcode, grp, iargs );
-		instr_tbl.enter( sym_dot_f, opcode, grp, iargs );
+		instr_tbl.enter( sym, opcode, grp, iargs, real_instr );
+		instr_tbl.enter( sym_dot_f, opcode, grp, iargs, real_instr_dot_f );
 		
 		++opcode;
+	};
+	// This is used for pseudo instructions.
+	auto find_real_instr_and_with_dot_f = [&]
+		( const std::string& orig_name, const instr_args& iargs ) -> void
+	{
+		const std::string orig_name_dot_f = orig_name + std::string(".f");
+		if (!special_sym_tbl.find( sym, orig_name ))
+		{
+			we.error( "assembler constructor (group ", grp, "):  Eek 1!",
+				"\n" );
+		}
+		if (!special_sym_tbl.find( sym_dot_f, orig_name_dot_f ))
+		{
+			we.error( "assembler constructor (group ", grp, "):  Eek 2!",
+				"\n" );
+		}
+		
+		const std::vector<instruction>& instr_vec = instr_tbl.at(sym);
+		const std::vector<instruction>& instr_dot_f_vec 
+			= instr_tbl.at(sym_dot_f);
+		
+		real_instr = nullptr;
+		real_instr_dot_f = nullptr;
+		
+		for ( size_t i=0; i<instr_vec.size(); ++i )
+		{
+			const instruction& iter = instr_vec.at(i);
+			if ( iter.iargs() == iargs )
+			{
+				real_instr = &iter;
+				break;
+			}
+		}
+		if ( real_instr == nullptr )
+		{
+			we.error( "assembler constructor (group ", grp, "):  Eek 3!",
+				"\n" );
+		}
+		
+		for ( size_t i=0; i<instr_vec.size(); ++i )
+		{
+			const instruction& iter = instr_dot_f_vec.at(i);
+			if ( iter.iargs() == iargs )
+			{
+				real_instr_dot_f = &iter;
+				break;
+			}
+		}
+		if ( real_instr_dot_f == nullptr )
+		{
+			we.error( "assembler constructor (group ", grp, "):  Eek 4!",
+				"\n" );
+		}
 	};
 	
 	
