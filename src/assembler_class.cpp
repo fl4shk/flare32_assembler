@@ -372,7 +372,7 @@ bool assembler::handle_iargs( const instruction& iter, bool just_test,
 }
 
 bool assembler::handle_iarg_reg( bool just_test, 
-	std::vector<real_iarg>& iarg_vec, std::string&& name )
+	std::vector<real_iarg>& iarg_vec, const std::string& name )
 {
 	bool did_fail;
 	iarg_reg( just_test, &did_fail );
@@ -380,13 +380,13 @@ bool assembler::handle_iarg_reg( bool just_test,
 	if ( !just_test && !did_fail )
 	{
 		iarg_vec.push_back(real_iarg( lex, true ));
-		iarg_vec.back().name = std::move(name);
+		iarg_vec.back().name = name;
 	}
 	
 	return !did_fail;
 }
 bool assembler::handle_iarg_reg_flags( bool just_test, 
-	std::vector<real_iarg>& iarg_vec, std::string&& name )
+	std::vector<real_iarg>& iarg_vec, const std::string& name )
 {
 	bool did_fail;
 	iarg_reg_flags( just_test, &did_fail );
@@ -394,13 +394,13 @@ bool assembler::handle_iarg_reg_flags( bool just_test,
 	if ( !just_test && !did_fail )
 	{
 		iarg_vec.push_back(real_iarg( lex, true ));
-		iarg_vec.back().name = std::move(name);
+		iarg_vec.back().name = name;
 	}
 	
 	return !did_fail;
 }
 bool assembler::handle_iarg_reg_ira( bool just_test, 
-	std::vector<real_iarg>& iarg_vec, std::string&& name )
+	std::vector<real_iarg>& iarg_vec, const std::string& name )
 {
 	bool did_fail;
 	iarg_reg_ira( just_test, &did_fail );
@@ -408,13 +408,13 @@ bool assembler::handle_iarg_reg_ira( bool just_test,
 	if ( !just_test && !did_fail )
 	{
 		iarg_vec.push_back(real_iarg( lex, true ));
-		iarg_vec.back().name = std::move(name);
+		iarg_vec.back().name = name;
 	}
 	
 	return !did_fail;
 }
 bool assembler::handle_iarg_reg_pc( bool just_test, 
-	std::vector<real_iarg>& iarg_vec, std::string&& name )
+	std::vector<real_iarg>& iarg_vec, const std::string& name )
 {
 	bool did_fail;
 	iarg_reg_pc( just_test, &did_fail );
@@ -422,13 +422,13 @@ bool assembler::handle_iarg_reg_pc( bool just_test,
 	if ( !just_test && !did_fail )
 	{
 		iarg_vec.push_back(real_iarg( lex, true ));
-		iarg_vec.back().name = std::move(name);
+		iarg_vec.back().name = name;
 	}
 	
 	return !did_fail;
 }
 bool assembler::handle_iarg_braoffs( bool just_test, 
-	std::vector<real_iarg>& iarg_vec, std::string&& name )
+	std::vector<real_iarg>& iarg_vec, const std::string& name )
 {
 	bool did_fail;
 	const s32 imm = iarg_braoffs( just_test, &did_fail );
@@ -437,13 +437,13 @@ bool assembler::handle_iarg_braoffs( bool just_test,
 	{
 		iarg_vec.push_back(real_iarg( static_cast<tok>(tok_defn::number),
 			imm ));
-		iarg_vec.back().name = std::move(name);
+		iarg_vec.back().name = name;
 	}
 	
 	return !did_fail;
 }
 bool assembler::handle_iarg_immed16( bool just_test, 
-	std::vector<real_iarg>& iarg_vec, std::string&& name )
+	std::vector<real_iarg>& iarg_vec, const std::string& name )
 {
 	bool did_fail;
 	const s32 imm = iarg_immed16( just_test, &did_fail );
@@ -452,13 +452,13 @@ bool assembler::handle_iarg_immed16( bool just_test,
 	{
 		iarg_vec.push_back(real_iarg( static_cast<tok>(tok_defn::number),
 			imm ));
-		iarg_vec.back().name = std::move(name);
+		iarg_vec.back().name = name;
 	}
 	
 	return !did_fail;
 }
 bool assembler::handle_iarg_immed12( bool just_test, 
-	std::vector<real_iarg>& iarg_vec, std::string&& name )
+	std::vector<real_iarg>& iarg_vec, const std::string& name )
 {
 	bool did_fail;
 	const s32 imm = iarg_immed12( just_test, &did_fail );
@@ -467,13 +467,13 @@ bool assembler::handle_iarg_immed12( bool just_test,
 	{
 		iarg_vec.push_back(real_iarg( static_cast<tok>(tok_defn::number),
 			imm ));
-		iarg_vec.back().name = std::move(name);
+		iarg_vec.back().name = name;
 	}
 	
 	return !did_fail;
 }
-bool assembler::handle_iarg_abs( bool just_test,
-	std::vector<real_iarg>& iarg_vec, std::string&& name )
+bool assembler::handle_iarg_abs( bool just_test, 
+	std::vector<real_iarg>& iarg_vec, const std::string& name )
 {
 	bool did_fail;
 	const s32 imm = iarg_abs( just_test, &did_fail );
@@ -482,7 +482,7 @@ bool assembler::handle_iarg_abs( bool just_test,
 	{
 		iarg_vec.push_back(real_iarg( static_cast<tok>(tok_defn::number),
 			imm ));
-		iarg_vec.back().name = std::move(name);
+		iarg_vec.back().name = name;
 	}
 	
 	return !did_fail;
@@ -602,6 +602,8 @@ bool assembler::handle_instr_flags_ra( bool just_test,
 {
 	// flags, a special-purpose register
 	X( reg_flags, "" );
+	
+	ASSUME_COMMA
 	
 	// rA
 	X( reg, "ra" );

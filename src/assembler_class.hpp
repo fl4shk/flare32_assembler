@@ -129,21 +129,21 @@ private:		// functions
 	}
 	
 	bool handle_iarg_reg( bool just_test, 
-		std::vector<real_iarg>& iarg_vec, std::string&& name );
+		std::vector<real_iarg>& iarg_vec, const std::string& name );
 	bool handle_iarg_reg_flags( bool just_test, 
-		std::vector<real_iarg>& iarg_vec, std::string&& name );
+		std::vector<real_iarg>& iarg_vec, const std::string& name );
 	bool handle_iarg_reg_ira( bool just_test, 
-		std::vector<real_iarg>& iarg_vec, std::string&& name );
+		std::vector<real_iarg>& iarg_vec, const std::string& name );
 	bool handle_iarg_reg_pc( bool just_test, 
-		std::vector<real_iarg>& iarg_vec, std::string&& name );
+		std::vector<real_iarg>& iarg_vec, const std::string& name );
 	bool handle_iarg_braoffs( bool just_test, 
-		std::vector<real_iarg>& iarg_vec, std::string&& name );
+		std::vector<real_iarg>& iarg_vec, const std::string& name );
 	bool handle_iarg_immed16( bool just_test, 
-		std::vector<real_iarg>& iarg_vec, std::string&& name );
+		std::vector<real_iarg>& iarg_vec, const std::string& name );
 	bool handle_iarg_immed12( bool just_test, 
-		std::vector<real_iarg>& iarg_vec, std::string&& name );
-	bool handle_iarg_abs( bool just_test,
-		std::vector<real_iarg>& iarg_vec, std::string&& name );
+		std::vector<real_iarg>& iarg_vec, const std::string& name );
+	bool handle_iarg_abs( bool just_test, 
+		std::vector<real_iarg>& iarg_vec, const std::string& name );
 	
 	
 	bool handle_instr_noargs( bool just_test, 
