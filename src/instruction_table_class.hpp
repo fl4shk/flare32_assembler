@@ -68,7 +68,7 @@ public:		// functions
 };
 
 
-class instruction_table
+class instr_table
 {
 private:		// variables
 	std::unordered_map< symbol*, std::vector<instruction> > 
@@ -79,16 +79,16 @@ private:		// functions
 	gen_getter_by_ref(table);
 	
 public:		// functions
-	inline instruction_table()
+	inline instr_table()
 	{
 	}
-	inline instruction_table( const instruction_table& to_copy ) = delete;
-	virtual inline ~instruction_table()
+	inline instr_table( const instr_table& to_copy ) = delete;
+	virtual inline ~instr_table()
 	{
 	}
 	
-	inline instruction_table& operator = 
-		( const instruction_table& to_copy ) = delete;
+	inline instr_table& operator = 
+		( const instr_table& to_copy ) = delete;
 	
 	void enter( symbol* sym, size_t opcode, size_t grp, instr_args iargs,
 		const instruction* real_instr=nullptr );

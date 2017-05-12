@@ -5,7 +5,7 @@ namespace navichip32
 
 
 
-void instruction_table::enter( symbol* sym, size_t opcode, size_t grp, 
+void instr_table::enter( symbol* sym, size_t opcode, size_t grp, 
 	instr_args iargs, const instruction* real_instr )
 {
 	instruction to_push( sym, opcode, grp, iargs, real_instr );

@@ -84,7 +84,7 @@ private:		// variables
 	warn_error we;
 	symbol_table user_sym_tbl;
 	symbol_table special_sym_tbl;
-	instruction_table instr_tbl;
+	instr_table instr_tbl;
 	
 	
 	
