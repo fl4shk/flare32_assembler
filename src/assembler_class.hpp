@@ -11,6 +11,7 @@ namespace navichip32
 class real_iarg
 {
 public:		// variables
+	// This is separate from nextsym->name()
 	std::string name;
 	
 	tok nextt;
@@ -117,7 +118,7 @@ private:		// functions
 			&& ( lex.nextt() != '\n' ) ) );
 	}
 	const instruction* determine_instr();
-	bool handle_iargs( const instruction& iter, bool just_test,
+	bool parse_iargs( const instruction& iter, bool just_test,
 		std::vector<real_iarg>& iarg_vec );
 	
 	inline void set_did_fail( bool* did_fail, bool val )
@@ -128,61 +129,92 @@ private:		// functions
 		}
 	}
 	
-	bool handle_iarg_reg( bool just_test, 
+	bool parse_iarg_reg( bool just_test, 
 		std::vector<real_iarg>& iarg_vec, const std::string& name );
-	bool handle_iarg_reg_flags( bool just_test, 
+	bool parse_iarg_reg_flags( bool just_test, 
 		std::vector<real_iarg>& iarg_vec, const std::string& name );
-	bool handle_iarg_reg_ira( bool just_test, 
+	bool parse_iarg_reg_ira( bool just_test, 
 		std::vector<real_iarg>& iarg_vec, const std::string& name );
-	bool handle_iarg_reg_pc( bool just_test, 
+	bool parse_iarg_reg_pc( bool just_test, 
 		std::vector<real_iarg>& iarg_vec, const std::string& name );
-	bool handle_iarg_braoffs( bool just_test, 
+	bool parse_iarg_braoffs( bool just_test, 
 		std::vector<real_iarg>& iarg_vec, const std::string& name );
-	bool handle_iarg_immed16( bool just_test, 
+	bool parse_iarg_immed16( bool just_test, 
 		std::vector<real_iarg>& iarg_vec, const std::string& name );
-	bool handle_iarg_immed12( bool just_test, 
+	bool parse_iarg_immed12( bool just_test, 
 		std::vector<real_iarg>& iarg_vec, const std::string& name );
-	bool handle_iarg_abs( bool just_test, 
+	bool parse_iarg_abs( bool just_test, 
 		std::vector<real_iarg>& iarg_vec, const std::string& name );
 	
 	
-	bool handle_instr_noargs( bool just_test, 
+	bool parse_instr_noargs( bool just_test, 
 		std::vector<real_iarg>& iarg_vec );
-	bool handle_instr_ra( bool just_test, 
+	bool parse_instr_ra( bool just_test, 
 		std::vector<real_iarg>& iarg_vec );
-	bool handle_instr_ra_rb( bool just_test, 
+	bool parse_instr_ra_rb( bool just_test, 
 		std::vector<real_iarg>& iarg_vec );
-	bool handle_instr_ra_imm16u( bool just_test, 
+	bool parse_instr_ra_imm16u( bool just_test, 
 		std::vector<real_iarg>& iarg_vec );
-	bool handle_instr_imm16u( bool just_test, 
+	bool parse_instr_imm16u( bool just_test, 
 		std::vector<real_iarg>& iarg_vec );
-	bool handle_instr_imm16s( bool just_test, 
+	bool parse_instr_imm16s( bool just_test, 
 		std::vector<real_iarg>& iarg_vec );
-	bool handle_instr_branchoffset( bool just_test, 
+	bool parse_instr_branchoffset( bool just_test, 
 		std::vector<real_iarg>& iarg_vec );
-	bool handle_instr_flags( bool just_test, 
+	bool parse_instr_flags( bool just_test, 
 		std::vector<real_iarg>& iarg_vec );
-	bool handle_instr_ra_flags( bool just_test, 
+	bool parse_instr_ra_flags( bool just_test, 
 		std::vector<real_iarg>& iarg_vec );
-	bool handle_instr_flags_ra( bool just_test, 
+	bool parse_instr_flags_ra( bool just_test, 
 		std::vector<real_iarg>& iarg_vec );
-	bool handle_instr_ira( bool just_test, 
+	bool parse_instr_ira( bool just_test, 
 		std::vector<real_iarg>& iarg_vec );
-	bool handle_instr_ira_ra( bool just_test, 
+	bool parse_instr_ira_ra( bool just_test, 
 		std::vector<real_iarg>& iarg_vec );
-	bool handle_instr_ra_ira( bool just_test, 
+	bool parse_instr_ra_ira( bool just_test, 
 		std::vector<real_iarg>& iarg_vec );
-	bool handle_instr_ra_pc( bool just_test, 
+	bool parse_instr_ra_pc( bool just_test, 
 		std::vector<real_iarg>& iarg_vec );
-	bool handle_instr_ra_rb_imm16u( bool just_test, 
+	bool parse_instr_ra_rb_imm16u( bool just_test, 
 		std::vector<real_iarg>& iarg_vec );
-	bool handle_instr_ra_rb_imm16s( bool just_test, 
+	bool parse_instr_ra_rb_imm16s( bool just_test, 
 		std::vector<real_iarg>& iarg_vec );
-	bool handle_instr_ra_rb_rc_imm12s( bool just_test, 
+	bool parse_instr_ra_rb_rc_imm12s( bool just_test, 
 		std::vector<real_iarg>& iarg_vec );
-	bool handle_instr_ra_rb_rc( bool just_test, 
+	bool parse_instr_ra_rb_rc( bool just_test, 
 		std::vector<real_iarg>& iarg_vec );
-	bool handle_instr_ra_rb_abs( bool just_test, 
+	bool parse_instr_ra_rb_abs( bool just_test, 
+		std::vector<real_iarg>& iarg_vec );
+	
+	
+	// Pseudo instruction argument parsing
+	bool parse_instr_pseudo_r0hidden_rb( bool just_test,
+		std::vector<real_iarg>& iarg_vec );
+	bool parse_instr_pseudo_r0hidden_rb_imm16u( bool just_test,
+		std::vector<real_iarg>& iarg_vec );
+	bool parse_instr_pseudo_ra_rb_imm0hidden( bool just_test,
+		std::vector<real_iarg>& iarg_vec );
+	bool parse_instr_pseudo_ra_rb_imm16sneg1hidden( bool just_test,
+		std::vector<real_iarg>& iarg_vec );
+	bool parse_instr_pseudo_ra_rb_r0hidden_imm0hidden( bool just_test,
+		std::vector<real_iarg>& iarg_vec );
+	bool parse_instr_pseudo_ra_rb_rc_imm0hidden( bool just_test,
+		std::vector<real_iarg>& iarg_vec );
+	bool parse_instr_pseudo_ra_rb_r0hidden_imm12s( bool just_test,
+		std::vector<real_iarg>& iarg_vec );
+	bool parse_instr_pseudo_r0hidden_rb_rc( bool just_test,
+		std::vector<real_iarg>& iarg_vec );
+	bool parse_instr_pseudo_ra_rahidden_rc( bool just_test,
+		std::vector<real_iarg>& iarg_vec );
+	bool parse_instr_pseudo_pc_rb( bool just_test,
+		std::vector<real_iarg>& iarg_vec );
+	bool parse_instr_pseudo_ra_sphidden( bool just_test,
+		std::vector<real_iarg>& iarg_vec );
+	bool parse_instr_pseudo_ra_r0hidden_abs( bool just_test,
+		std::vector<real_iarg>& iarg_vec );
+	bool parse_instr_pseudo_r0hidden_r0hidden_abs( bool just_test,
+		std::vector<real_iarg>& iarg_vec );
+	bool parse_instr_pseudo_ra_rahidden_abs( bool just_test,
 		std::vector<real_iarg>& iarg_vec );
 	
 	

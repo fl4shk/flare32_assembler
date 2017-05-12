@@ -268,7 +268,7 @@ const instruction* assembler::determine_instr()
 	
 	
 	if ( ( instr_sym == nullptr )
-		|| ( instr_sym->typ() != static_cast<tok>(tok_defn::instr) ) )
+		|| ( instr_sym->typ() != cast_typ(tok_defn::instr) ) )
 	{
 		//we.expected("instruction");
 		return ret;
@@ -308,7 +308,7 @@ const instruction* assembler::determine_instr()
 		
 		iarg_vec.clear();
 		
-		if ( handle_iargs( iter, true, iarg_vec ) )
+		if ( parse_iargs( iter, true, iarg_vec ) )
 		{
 			//return &iter;
 			ret = &iter;
@@ -325,50 +325,106 @@ const instruction* assembler::determine_instr()
 	
 	return ret;
 }
-bool assembler::handle_iargs( const instruction& iter, bool just_test,
+bool assembler::parse_iargs( const instruction& iter, bool just_test,
 	std::vector<real_iarg>& iarg_vec )
 {
 	switch ( iter.iargs() )
 	{
 		case instr_args::noargs:
-			return handle_instr_noargs( just_test, iarg_vec );
+			return parse_instr_noargs( just_test, iarg_vec );
 		case instr_args::ra:
-			return handle_instr_ra( just_test, iarg_vec );
+			return parse_instr_ra( just_test, iarg_vec );
 		case instr_args::ra_rb:
-			return handle_instr_ra_rb( just_test, iarg_vec );
+			return parse_instr_ra_rb( just_test, iarg_vec );
 		case instr_args::ra_imm16u:
-			return handle_instr_ra_imm16u( just_test, iarg_vec );
+			return parse_instr_ra_imm16u( just_test, iarg_vec );
 		case instr_args::imm16u:
-			return handle_instr_imm16u( just_test, iarg_vec );
+			return parse_instr_imm16u( just_test, iarg_vec );
 		case instr_args::imm16s:
-			return handle_instr_imm16s( just_test, iarg_vec );
+			return parse_instr_imm16s( just_test, iarg_vec );
 		case instr_args::branchoffset:
-			return handle_instr_branchoffset( just_test, iarg_vec );
+			return parse_instr_branchoffset( just_test, iarg_vec );
 		case instr_args::flags:
-			return handle_instr_flags( just_test, iarg_vec );
+			return parse_instr_flags( just_test, iarg_vec );
 		case instr_args::ra_flags:
-			return handle_instr_ra_flags( just_test, iarg_vec );
+			return parse_instr_ra_flags( just_test, iarg_vec );
 		case instr_args::flags_ra:
-			return handle_instr_flags_ra( just_test, iarg_vec );
+			return parse_instr_flags_ra( just_test, iarg_vec );
 		case instr_args::ira:
-			return handle_instr_ira( just_test, iarg_vec );
+			return parse_instr_ira( just_test, iarg_vec );
 		case instr_args::ira_ra:
-			return handle_instr_ira_ra( just_test, iarg_vec );
+			return parse_instr_ira_ra( just_test, iarg_vec );
 		case instr_args::ra_ira:
-			return handle_instr_ra_ira( just_test, iarg_vec );
+			return parse_instr_ra_ira( just_test, iarg_vec );
 		case instr_args::ra_pc:
-			return handle_instr_ra_pc( just_test, iarg_vec );
+			return parse_instr_ra_pc( just_test, iarg_vec );
 		case instr_args::ra_rb_imm16u:
-			return handle_instr_ra_rb_imm16u( just_test, iarg_vec );
+			return parse_instr_ra_rb_imm16u( just_test, iarg_vec );
 		case instr_args::ra_rb_imm16s:
-			return handle_instr_ra_rb_imm16s( just_test, iarg_vec );
+			return parse_instr_ra_rb_imm16s( just_test, iarg_vec );
 		case instr_args::ra_rb_rc_imm12s:
-			return handle_instr_ra_rb_rc_imm12s( just_test, iarg_vec );
+			return parse_instr_ra_rb_rc_imm12s( just_test, iarg_vec );
 		case instr_args::ra_rb_rc:
-			return handle_instr_ra_rb_rc( just_test, iarg_vec );
+			return parse_instr_ra_rb_rc( just_test, iarg_vec );
 		case instr_args::ra_rb_abs:
-			return handle_instr_ra_rb_abs( just_test, iarg_vec );
+			return parse_instr_ra_rb_abs( just_test, iarg_vec );
 		
+		
+		
+		case instr_args::pseudo_r0hidden_rb:
+			return parse_instr_pseudo_r0hidden_rb
+				( just_test, iarg_vec );
+		case instr_args::pseudo_r0hidden_rb_imm16u:
+			return parse_instr_pseudo_r0hidden_rb_imm16u
+				( just_test, iarg_vec );
+		
+		// cpn rA, rB
+		case instr_args::pseudo_ra_rb_imm0hidden:
+			return parse_instr_pseudo_ra_rb_imm0hidden
+				( just_test, iarg_vec );
+		
+		// cpc rA, rB
+		case instr_args::pseudo_ra_rb_imm16sneg1hidden:
+			return parse_instr_pseudo_ra_rb_imm16sneg1hidden
+				( just_test, iarg_vec );
+		
+		case instr_args::pseudo_ra_rb_r0hidden_imm0hidden:
+			return parse_instr_pseudo_ra_rb_r0hidden_imm0hidden
+				( just_test, iarg_vec );
+		case instr_args::pseudo_ra_rb_rc_imm0hidden:
+			return parse_instr_pseudo_ra_rb_rc_imm0hidden
+				( just_test, iarg_vec );
+		case instr_args::pseudo_ra_rb_r0hidden_imm12s:
+			return parse_instr_pseudo_ra_rb_r0hidden_imm12s
+				( just_test, iarg_vec );
+		case instr_args::pseudo_r0hidden_rb_rc:
+			return parse_instr_pseudo_r0hidden_rb_rc
+				( just_test, iarg_vec );
+		
+		
+		case instr_args::pseudo_ra_rahidden_rc:
+			return parse_instr_pseudo_ra_rahidden_rc
+				( just_test, iarg_vec );
+		
+		// cpy pc, rB
+		case instr_args::pseudo_pc_rb:
+			return parse_instr_pseudo_pc_rb
+				( just_test, iarg_vec );
+		
+		case instr_args::pseudo_ra_sphidden:
+			return parse_instr_pseudo_ra_sphidden
+				( just_test, iarg_vec );
+		
+		
+		case instr_args::pseudo_ra_r0hidden_abs:
+			return parse_instr_pseudo_ra_r0hidden_abs
+				( just_test, iarg_vec );
+		case instr_args::pseudo_r0hidden_r0hidden_abs:
+			return parse_instr_pseudo_r0hidden_r0hidden_abs
+				( just_test, iarg_vec );
+		case instr_args::pseudo_ra_rahidden_abs:
+			return parse_instr_pseudo_ra_rahidden_abs
+				( just_test, iarg_vec );
 		default:
 			we.unknown("instr_args!");
 			break;
@@ -378,7 +434,7 @@ bool assembler::handle_iargs( const instruction& iter, bool just_test,
 	return false;
 }
 
-bool assembler::handle_iarg_reg( bool just_test, 
+bool assembler::parse_iarg_reg( bool just_test, 
 	std::vector<real_iarg>& iarg_vec, const std::string& name )
 {
 	bool did_fail;
@@ -392,7 +448,7 @@ bool assembler::handle_iarg_reg( bool just_test,
 	
 	return !did_fail;
 }
-bool assembler::handle_iarg_reg_flags( bool just_test, 
+bool assembler::parse_iarg_reg_flags( bool just_test, 
 	std::vector<real_iarg>& iarg_vec, const std::string& name )
 {
 	bool did_fail;
@@ -406,7 +462,7 @@ bool assembler::handle_iarg_reg_flags( bool just_test,
 	
 	return !did_fail;
 }
-bool assembler::handle_iarg_reg_ira( bool just_test, 
+bool assembler::parse_iarg_reg_ira( bool just_test, 
 	std::vector<real_iarg>& iarg_vec, const std::string& name )
 {
 	bool did_fail;
@@ -420,7 +476,7 @@ bool assembler::handle_iarg_reg_ira( bool just_test,
 	
 	return !did_fail;
 }
-bool assembler::handle_iarg_reg_pc( bool just_test, 
+bool assembler::parse_iarg_reg_pc( bool just_test, 
 	std::vector<real_iarg>& iarg_vec, const std::string& name )
 {
 	bool did_fail;
@@ -434,7 +490,7 @@ bool assembler::handle_iarg_reg_pc( bool just_test,
 	
 	return !did_fail;
 }
-bool assembler::handle_iarg_braoffs( bool just_test, 
+bool assembler::parse_iarg_braoffs( bool just_test, 
 	std::vector<real_iarg>& iarg_vec, const std::string& name )
 {
 	bool did_fail;
@@ -442,14 +498,14 @@ bool assembler::handle_iarg_braoffs( bool just_test,
 	
 	if ( !just_test && !did_fail )
 	{
-		iarg_vec.push_back(real_iarg( static_cast<tok>(tok_defn::number),
+		iarg_vec.push_back(real_iarg( cast_typ(tok_defn::number),
 			imm ));
 		iarg_vec.back().name = name;
 	}
 	
 	return !did_fail;
 }
-bool assembler::handle_iarg_immed16( bool just_test, 
+bool assembler::parse_iarg_immed16( bool just_test, 
 	std::vector<real_iarg>& iarg_vec, const std::string& name )
 {
 	bool did_fail;
@@ -457,14 +513,14 @@ bool assembler::handle_iarg_immed16( bool just_test,
 	
 	if ( !just_test && !did_fail )
 	{
-		iarg_vec.push_back(real_iarg( static_cast<tok>(tok_defn::number),
+		iarg_vec.push_back(real_iarg( cast_typ(tok_defn::number),
 			imm ));
 		iarg_vec.back().name = name;
 	}
 	
 	return !did_fail;
 }
-bool assembler::handle_iarg_immed12( bool just_test, 
+bool assembler::parse_iarg_immed12( bool just_test, 
 	std::vector<real_iarg>& iarg_vec, const std::string& name )
 {
 	bool did_fail;
@@ -472,14 +528,14 @@ bool assembler::handle_iarg_immed12( bool just_test,
 	
 	if ( !just_test && !did_fail )
 	{
-		iarg_vec.push_back(real_iarg( static_cast<tok>(tok_defn::number),
+		iarg_vec.push_back(real_iarg( cast_typ(tok_defn::number),
 			imm ));
 		iarg_vec.back().name = name;
 	}
 	
 	return !did_fail;
 }
-bool assembler::handle_iarg_abs( bool just_test, 
+bool assembler::parse_iarg_abs( bool just_test, 
 	std::vector<real_iarg>& iarg_vec, const std::string& name )
 {
 	bool did_fail;
@@ -487,7 +543,7 @@ bool assembler::handle_iarg_abs( bool just_test,
 	
 	if ( !just_test && !did_fail )
 	{
-		iarg_vec.push_back(real_iarg( static_cast<tok>(tok_defn::number),
+		iarg_vec.push_back(real_iarg( cast_typ(tok_defn::number),
 			imm ));
 		iarg_vec.back().name = name;
 	}
@@ -496,271 +552,475 @@ bool assembler::handle_iarg_abs( bool just_test,
 }
 
 
-bool assembler::handle_instr_noargs( bool just_test, 
+bool assembler::parse_instr_noargs( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	return lex.match( '\n', just_test );
 }
 
-#ifdef X
-#error "Can't re-define X"
+#ifdef IARG_X
+#error "Can't re-define IARG_X"
 #endif
 
-#define X( suffix, str ) if (!handle_iarg_##suffix(just_test,iarg_vec,str)) \
+#define IARG_X( suffix, str ) \
+	if (!parse_iarg_##suffix( just_test, iarg_vec, str )) \
 	{ \
 		return false; \
 	}
 
-#ifdef ASSUME_COMMA
+#ifdef IARG_HIDDEN
+#error "Can't re-define IARG_HIDDEN"
+#endif
+
+#define IARG_HIDDEN( nextt, nextval, str ) \
+	iarg_vec.push_back(real_iarg( cast_typ(nextt), nextval )); \
+	iarg_vec.back().name = str; \
+
+#ifdef IARG_SAME
+#error "Can't re-define IARG_SAME"
+#endif
+
+#define IARG_SAME( old_name, str ) \
+	for ( size_t i=0; i<iarg_vec.size(); ++i ) \
+	{ \
+		if ( iarg_vec.at(i).name == old_name ) \
+		{ \
+			iarg_vec.push_back(iarg_vec.at(i)); \
+			iarg_vec.back().name = str; \
+		} \
+	}
+
+#ifdef IARG_ASSUME_COMMA
 #error "Can't re-define assume_comma"
 #endif
 
-#define ASSUME_COMMA \
+#define IARG_ASSUME_COMMA \
 	/* lex(just_test); */ \
 	if ( !lex.match( ',', just_test ) ) \
 	{ \
 		return false; \
 	}
 
-bool assembler::handle_instr_ra( bool just_test, 
+bool assembler::parse_instr_ra( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	X( reg, "ra" );
+	IARG_X( reg, "ra" );
 	
-	ASSUME_COMMA
+	IARG_ASSUME_COMMA
 	
 	return lex_match_end_of_line(just_test);
 }
-bool assembler::handle_instr_ra_rb( bool just_test, 
+bool assembler::parse_instr_ra_rb( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	X( reg, "ra" );
+	IARG_X( reg, "ra" );
 	
-	ASSUME_COMMA
+	IARG_ASSUME_COMMA
 	
 	// rB
-	X( reg, "rb" );
+	IARG_X( reg, "rb" );
 	
 	return lex_match_end_of_line(just_test);
 }
-bool assembler::handle_instr_ra_imm16u( bool just_test, 
+bool assembler::parse_instr_ra_imm16u( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	X( reg, "ra" );
+	IARG_X( reg, "ra" );
 	
-	ASSUME_COMMA
+	IARG_ASSUME_COMMA
 	
 	// imm16u
-	X( immed16, "imm" );
+	IARG_X( immed16, "imm" );
 	
 	return lex_match_end_of_line(just_test);
 }
-bool assembler::handle_instr_imm16u( bool just_test, 
+bool assembler::parse_instr_imm16u( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// imm16u
-	X( immed16, "imm" );
+	IARG_X( immed16, "imm" );
 	
 	return lex_match_end_of_line(just_test);
 }
-bool assembler::handle_instr_imm16s( bool just_test, 
+bool assembler::parse_instr_imm16s( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// imm16s
-	X( immed16, "imm" );
+	IARG_X( immed16, "imm" );
 	
 	return lex_match_end_of_line(just_test);
 }
-bool assembler::handle_instr_branchoffset( bool just_test, 
+bool assembler::parse_instr_branchoffset( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// braoffs
-	X( braoffs, "imm" )
+	IARG_X( braoffs, "imm" )
 	
 	return lex_match_end_of_line(just_test);
 }
-bool assembler::handle_instr_flags( bool just_test, 
+bool assembler::parse_instr_flags( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// flags, a special-purpose register
-	X( reg_flags, "" )
+	IARG_X( reg_flags, "" )
 	
 	return lex_match_end_of_line(just_test);
 }
-bool assembler::handle_instr_ra_flags( bool just_test, 
+bool assembler::parse_instr_ra_flags( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	X( reg, "ra" );
+	IARG_X( reg, "ra" );
 	
-	ASSUME_COMMA
+	IARG_ASSUME_COMMA
 	
 	// flags, a special-purpose register
-	X( reg_flags, "" );
+	IARG_X( reg_flags, "" );
 	
 	return lex_match_end_of_line(just_test);
 }
-bool assembler::handle_instr_flags_ra( bool just_test, 
+bool assembler::parse_instr_flags_ra( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// flags, a special-purpose register
-	X( reg_flags, "" );
+	IARG_X( reg_flags, "" );
 	
-	ASSUME_COMMA
+	IARG_ASSUME_COMMA
 	
 	// rA
-	X( reg, "ra" );
+	IARG_X( reg, "ra" );
 	
 	return lex_match_end_of_line(just_test);
 }
-bool assembler::handle_instr_ira( bool just_test, 
+bool assembler::parse_instr_ira( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// ira, a special-purpose register
-	X( reg_ira, "" );
+	IARG_X( reg_ira, "" );
 	
 	return lex_match_end_of_line(just_test);
 }
-bool assembler::handle_instr_ira_ra( bool just_test, 
+bool assembler::parse_instr_ira_ra( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// ira, a special-purpose register
-	X( reg_ira, "" );
+	IARG_X( reg_ira, "" );
 	
-	ASSUME_COMMA
+	IARG_ASSUME_COMMA
 	
 	// rA
-	X( reg, "ra" );
+	IARG_X( reg, "ra" );
 	
 	return lex_match_end_of_line(just_test);
 }
-bool assembler::handle_instr_ra_ira( bool just_test, 
+bool assembler::parse_instr_ra_ira( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	X( reg, "ra" );
+	IARG_X( reg, "ra" );
 	
-	ASSUME_COMMA
+	IARG_ASSUME_COMMA
 	
 	// ira, a special-purpose register
-	X( reg_ira, "" );
+	IARG_X( reg_ira, "" );
 	
 	return lex_match_end_of_line(just_test);
 }
-bool assembler::handle_instr_ra_pc( bool just_test, 
+bool assembler::parse_instr_ra_pc( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	X( reg, "ra" );
+	IARG_X( reg, "ra" );
 	
-	ASSUME_COMMA
+	IARG_ASSUME_COMMA
 	
 	// pc, a special-purpose register
-	X( reg_pc, "" );
+	IARG_X( reg_pc, "" );
 	
 	return lex_match_end_of_line(just_test);
 }
-bool assembler::handle_instr_ra_rb_imm16u( bool just_test, 
+bool assembler::parse_instr_ra_rb_imm16u( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	X( reg, "ra" );
+	IARG_X( reg, "ra" );
 	
-	ASSUME_COMMA
+	IARG_ASSUME_COMMA
 	
 	// rB
-	X( reg, "rb" )
+	IARG_X( reg, "rb" )
 	
-	ASSUME_COMMA
+	IARG_ASSUME_COMMA
 	
 	// imm16u
-	X( immed16, "imm" );
+	IARG_X( immed16, "imm" );
 	
 	return lex_match_end_of_line(just_test);
 }
-bool assembler::handle_instr_ra_rb_imm16s( bool just_test, 
+bool assembler::parse_instr_ra_rb_imm16s( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	X( reg, "ra" );
+	IARG_X( reg, "ra" );
 	
-	ASSUME_COMMA
+	IARG_ASSUME_COMMA
 	
 	// rB
-	X( reg, "rb" );
+	IARG_X( reg, "rb" );
 	
-	ASSUME_COMMA
+	IARG_ASSUME_COMMA
 	
 	// imm16s
-	X( immed16, "imm" );
+	IARG_X( immed16, "imm" );
 	
 	return lex_match_end_of_line(just_test);
 }
-bool assembler::handle_instr_ra_rb_rc_imm12s( bool just_test, 
+bool assembler::parse_instr_ra_rb_rc_imm12s( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	X( reg, "ra" );
+	IARG_X( reg, "ra" );
 	
-	ASSUME_COMMA
+	IARG_ASSUME_COMMA
 	
 	// rB
-	X( reg, "rb" );
+	IARG_X( reg, "rb" );
 	
-	ASSUME_COMMA
+	IARG_ASSUME_COMMA
 	
 	// rC
-	X( reg, "rc" );
+	IARG_X( reg, "rc" );
 	
-	ASSUME_COMMA
+	IARG_ASSUME_COMMA
 	
 	// imm12s
-	X( immed12, "imm" );
+	IARG_X( immed12, "imm" );
 	
 	return lex_match_end_of_line(just_test);
 }
-bool assembler::handle_instr_ra_rb_rc( bool just_test, 
+bool assembler::parse_instr_ra_rb_rc( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	X( reg, "ra" );
+	IARG_X( reg, "ra" );
 	
-	ASSUME_COMMA
+	IARG_ASSUME_COMMA
 	
 	// rB
-	X( reg, "rb" );
+	IARG_X( reg, "rb" );
 	
-	ASSUME_COMMA
+	IARG_ASSUME_COMMA
 	
 	// rC
-	X( reg, "rc" );
+	IARG_X( reg, "rc" );
 	
 	return lex_match_end_of_line(just_test);
 }
-bool assembler::handle_instr_ra_rb_abs( bool just_test, 
+bool assembler::parse_instr_ra_rb_abs( bool just_test, 
 	std::vector<real_iarg>& iarg_vec )
 {
 	// rA
-	X( reg, "ra" );
+	IARG_X( reg, "ra" );
 	
-	ASSUME_COMMA
+	IARG_ASSUME_COMMA
 	
 	// rB
-	X( reg, "rb" );
+	IARG_X( reg, "rb" );
 	
-	ASSUME_COMMA
+	IARG_ASSUME_COMMA
 	
 	// 32-bit absolute
-	X( abs, "imm" );
+	IARG_X( abs, "imm" );
 	
 	return lex_match_end_of_line(just_test);
 }
 
-#undef X
-#undef ASSUME_COMMA
+
+// Pseudo instruction argument parsing
+bool assembler::parse_instr_pseudo_r0hidden_rb( bool just_test,
+	std::vector<real_iarg>& iarg_vec )
+{
+	// r0hidden
+	
+	// rB
+	IARG_X( reg, "rb" );
+	
+	return lex_match_end_of_line(just_test);
+}
+bool assembler::parse_instr_pseudo_r0hidden_rb_imm16u( bool just_test,
+	std::vector<real_iarg>& iarg_vec )
+{
+	// r0hidden
+	
+	// rB
+	IARG_X( reg, "rb" );
+	
+	IARG_ASSUME_COMMA
+	
+	// imm16u
+	IARG_X( immed16, "imm" );
+	
+	return lex_match_end_of_line(just_test);
+}
+bool assembler::parse_instr_pseudo_ra_rb_imm0hidden( bool just_test,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
+	// rA
+	IARG_X( reg, "ra" );
+	
+	IARG_ASSUME_COMMA
+	
+	IARG_X( reg, "rb" );
+	
+	// imm0hidden
+	
+	return lex_match_end_of_line(just_test);
+}
+bool assembler::parse_instr_pseudo_ra_rb_imm16sneg1hidden( bool just_test,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
+	// rA
+	IARG_X( reg, "ra" );
+	
+	IARG_ASSUME_COMMA
+	
+	// rB
+	IARG_X( reg, "rb" );
+	
+	// imm16sneg1hidden
+	IARG_HIDDEN( tok_defn::number, -1, "imm" );
+	
+	return lex_match_end_of_line(just_test);
+}
+bool assembler::parse_instr_pseudo_ra_rb_r0hidden_imm0hidden
+	( bool just_test, std::vector<real_iarg>& iarg_vec )
+{
+	// rA
+	IARG_X( reg, "ra" );
+	
+	IARG_ASSUME_COMMA
+	
+	// rB
+	IARG_X( reg, "rb" );
+	
+	// r0hidden
+	
+	// imm0hidden
+	
+	return lex_match_end_of_line(just_test);
+}
+bool assembler::parse_instr_pseudo_ra_rb_rc_imm0hidden( bool just_test,
+	std::vector<real_iarg>& iarg_vec )
+{
+	// rA
+	IARG_X( reg, "ra" );
+	
+	IARG_ASSUME_COMMA
+	
+	// rB
+	IARG_X( reg, "rb" );
+	
+	IARG_ASSUME_COMMA
+	
+	// rC
+	IARG_X( reg, "rc" );
+	
+	// imm0hidden
+	
+	return lex_match_end_of_line(just_test);
+}
+bool assembler::parse_instr_pseudo_ra_rb_r0hidden_imm12s( bool just_test,
+	std::vector<real_iarg>& iarg_vec )
+{
+	// rA
+	IARG_X( reg, "ra" );
+	
+	IARG_ASSUME_COMMA
+	
+	// rB
+	IARG_X( reg, "rb" );
+	
+	IARG_ASSUME_COMMA
+	
+	// r0hidden
+	
+	
+	// imm12s
+	IARG_X( immed12, "imm" );
+	
+	return lex_match_end_of_line(just_test);
+}
+bool assembler::parse_instr_pseudo_r0hidden_rb_rc( bool just_test,
+	std::vector<real_iarg>& iarg_vec )
+{
+	// r0hidden
+	
+	// rB
+	IARG_X( reg, "rb" );
+	
+	IARG_ASSUME_COMMA
+	
+	// rC
+	IARG_X( reg, "rc" );
+	
+	return lex_match_end_of_line(just_test);
+}
+bool assembler::parse_instr_pseudo_ra_rahidden_rc( bool just_test,
+	std::vector<real_iarg>& iarg_vec )
+{
+	// rA
+	IARG_X( reg, "ra" );
+	
+	IARG_SAME( "ra", "rb" );
+	
+	IARG_ASSUME_COMMA
+	
+	// rC
+	IARG_X( reg, "rc" );
+	
+	return lex_match_end_of_line(just_test);
+}
+bool assembler::parse_instr_pseudo_pc_rb( bool just_test,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
+	return lex_match_end_of_line(just_test);
+}
+bool assembler::parse_instr_pseudo_ra_sphidden( bool just_test,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
+	return lex_match_end_of_line(just_test);
+}
+bool assembler::parse_instr_pseudo_ra_r0hidden_abs( bool just_test,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
+	return lex_match_end_of_line(just_test);
+}
+bool assembler::parse_instr_pseudo_r0hidden_r0hidden_abs( bool just_test,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
+	return lex_match_end_of_line(just_test);
+}
+bool assembler::parse_instr_pseudo_ra_rahidden_abs( bool just_test,
+	std::vector<real_iarg>& iarg_vec )
+{
+	
+	return lex_match_end_of_line(just_test);
+}
+
+
+#undef IARG_X
+#undef IARG_HIDDEN
+#undef IARG_SAME
+#undef IARG_ASSUME_COMMA
 
 
 s32 assembler::unary( bool use_special, bool just_test, bool* did_fail )
@@ -886,7 +1146,7 @@ s32 assembler::iarg_specific_reg( tok_defn typ,
 	set_did_fail( did_fail, false );
 	
 	if ( ( lex.special_nextsym() != nullptr )
-		&& ( lex.special_nextsym()->typ() == static_cast<tok>(typ) ) )
+		&& ( lex.special_nextsym()->typ() == cast_typ(typ) ) )
 	{
 		return lex.special_nextsym()->val();
 	}
@@ -1028,15 +1288,31 @@ void assembler::line()
 		std::vector<real_iarg> iarg_vec;
 		
 		lex_regular();
-		if (!handle_iargs( *some_instr, false, iarg_vec ))
+		if (!parse_iargs( *some_instr, false, iarg_vec ))
 		{
 			we.error("assembler::line():  Eek!\n");
 		}
 		
+		if ( some_instr->real_instr() != nullptr )
+		{
+			some_instr = some_instr->real_instr();
+		}
 		
 		gen_any_instruction( some_instr->grp(), 
 			some_instr->sym()->has_dot_f(), some_instr->opcode(),
 			iarg_vec );
+		
+		//if ( some_instr->real_instr() == nullptr )
+		//{
+		//	gen_any_instruction( some_instr->grp(), 
+		//		some_instr->sym()->has_dot_f(), some_instr->opcode(),
+		//		iarg_vec );
+		//}
+		//else // if ( some_instr->real_instr() != nullptr )
+		//{
+		//	we.error( "assembler::line():  pseudo instructions not ",
+		//		"fully implemented yet!\n" );
+		//}
 		
 		
 	}

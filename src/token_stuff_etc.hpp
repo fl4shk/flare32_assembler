@@ -68,7 +68,7 @@ enum class instr_args : tok
 	
 	pseudo_ra_rb_r0hidden_imm0hidden,
 	pseudo_ra_rb_rc_imm0hidden,
-	pseudo_ra_rb_r0hidden_imm16u,
+	pseudo_ra_rb_r0hidden_imm12s,
 	pseudo_r0hidden_rb_rc,
 	
 	
