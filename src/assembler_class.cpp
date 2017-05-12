@@ -181,6 +181,7 @@ void assembler::gen_any_instruction( const size_t grp,
 		case 0:
 			break;
 		
+		
 		// Group 1 Instructions
 		// 01fo oooo aaaa bbbb  iiii iiii iiii iiii
 		// 
@@ -195,6 +196,7 @@ void assembler::gen_any_instruction( const size_t grp,
 			gen16(imm);
 			break;
 		
+		
 		// Group 2 Instructions
 		// 10fo oooo aaaa bbbb  cccc iiii iiii iiii
 		// 
@@ -208,11 +210,25 @@ void assembler::gen_any_instruction( const size_t grp,
 		//  i:  12-bit immediate value
 		case 2:
 			//clear_and_set_bits_with_range( temp, rc, 
+			clear_and_set_bits_with_range( temp, rc, 15, 12 );
+			clear_and_set_bits_with_range( temp, imm, 11, 0 );
+			gen16(temp);
 			
 			break;
 		
+		
+		// Group 3 Instructions
+		// 11fo oooo aaaa bbbb  iiii iiii iiii iiii  iiii iiii iiii iiii
+		// 
+		//  f:  1 if can affect flags (and instruction type supports it), 0
+		//  if flags unchanged.
+		//  
+		//  o:  opcode
+		//  a:  rA
+		//  b:  rB
+		//  i:  32-bit immediate value
 		case 3:
-			
+			gen32(imm);
 			break;
 		
 		default:
@@ -511,7 +527,6 @@ bool assembler::handle_instr_ra_rb( bool just_test,
 	// rB
 	X( reg, "rb" );
 	
-	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_imm16u( bool just_test, 
@@ -525,7 +540,6 @@ bool assembler::handle_instr_ra_imm16u( bool just_test,
 	// imm16u
 	X( immed16, "imm" );
 	
-	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_imm16u( bool just_test, 
@@ -534,7 +548,6 @@ bool assembler::handle_instr_imm16u( bool just_test,
 	// imm16u
 	X( immed16, "imm" );
 	
-	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_imm16s( bool just_test, 
@@ -543,7 +556,6 @@ bool assembler::handle_instr_imm16s( bool just_test,
 	// imm16s
 	X( immed16, "imm" );
 	
-	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_branchoffset( bool just_test, 
@@ -552,7 +564,6 @@ bool assembler::handle_instr_branchoffset( bool just_test,
 	// braoffs
 	X( braoffs, "imm" )
 	
-	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_flags( bool just_test, 
@@ -561,7 +572,6 @@ bool assembler::handle_instr_flags( bool just_test,
 	// flags, a special-purpose register
 	X( reg_flags, "" )
 	
-	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_flags( bool just_test, 
@@ -575,7 +585,6 @@ bool assembler::handle_instr_ra_flags( bool just_test,
 	// flags, a special-purpose register
 	X( reg_flags, "" );
 	
-	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_flags_ra( bool just_test, 
@@ -587,7 +596,6 @@ bool assembler::handle_instr_flags_ra( bool just_test,
 	// rA
 	X( reg, "ra" );
 	
-	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ira( bool just_test, 
@@ -596,7 +604,6 @@ bool assembler::handle_instr_ira( bool just_test,
 	// ira, a special-purpose register
 	X( reg_ira, "" );
 	
-	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ira_ra( bool just_test, 
@@ -610,7 +617,6 @@ bool assembler::handle_instr_ira_ra( bool just_test,
 	// rA
 	X( reg, "ra" );
 	
-	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_ira( bool just_test, 
@@ -624,7 +630,6 @@ bool assembler::handle_instr_ra_ira( bool just_test,
 	// ira, a special-purpose register
 	X( reg_ira, "" );
 	
-	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_pc( bool just_test, 
@@ -638,7 +643,6 @@ bool assembler::handle_instr_ra_pc( bool just_test,
 	// pc, a special-purpose register
 	X( reg_pc, "" );
 	
-	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_rb_imm16u( bool just_test, 
@@ -657,7 +661,6 @@ bool assembler::handle_instr_ra_rb_imm16u( bool just_test,
 	// imm16u
 	X( immed16, "imm" );
 	
-	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_rb_imm16s( bool just_test, 
@@ -676,7 +679,6 @@ bool assembler::handle_instr_ra_rb_imm16s( bool just_test,
 	// imm16s
 	X( immed16, "imm" );
 	
-	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_rb_rc_imm12s( bool just_test, 
@@ -700,7 +702,6 @@ bool assembler::handle_instr_ra_rb_rc_imm12s( bool just_test,
 	// imm12s
 	X( immed12, "imm" );
 	
-	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_rb_rc( bool just_test, 
@@ -719,7 +720,6 @@ bool assembler::handle_instr_ra_rb_rc( bool just_test,
 	// rC
 	X( reg, "rc" );
 	
-	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 bool assembler::handle_instr_ra_rb_abs( bool just_test, 
@@ -738,7 +738,6 @@ bool assembler::handle_instr_ra_rb_abs( bool just_test,
 	// 32-bit absolute
 	X( abs, "imm" );
 	
-	//lex(just_test);
 	return lex_match_end_of_line(just_test);
 }
 
@@ -804,7 +803,7 @@ s32 assembler::unary( bool use_special, bool just_test, bool* did_fail )
 s32 assembler::expr( bool use_special, bool just_test, bool* did_fail,
 	bool did_init )
 {
-	const bool old_did_init = did_init;
+	//const bool old_did_init = did_init;
 	if (!did_init)
 	{
 		set_did_fail( did_fail, false );
