@@ -15,33 +15,8 @@ assembler::assembler( int argc, char** argv, std::FILE* s_infile )
 		internal_args_vec.push_back(string_view(argv[i]));
 	}
 	
-	// General purpose registers
-	special_sym_tbl.enter( "r0", cast_typ(tok_defn::reg), 0, true );
-	special_sym_tbl.enter( "r1", cast_typ(tok_defn::reg), 1, true );
-	special_sym_tbl.enter( "r2", cast_typ(tok_defn::reg), 2, true );
-	special_sym_tbl.enter( "r3", cast_typ(tok_defn::reg), 3, true );
-	special_sym_tbl.enter( "r4", cast_typ(tok_defn::reg), 4, true );
-	special_sym_tbl.enter( "r5", cast_typ(tok_defn::reg), 5, true );
-	special_sym_tbl.enter( "r6", cast_typ(tok_defn::reg), 6, true );
-	special_sym_tbl.enter( "r7", cast_typ(tok_defn::reg), 7, true );
-	special_sym_tbl.enter( "r8", cast_typ(tok_defn::reg), 8, true );
-	special_sym_tbl.enter( "r9", cast_typ(tok_defn::reg), 9, true );
-	special_sym_tbl.enter( "r10", cast_typ(tok_defn::reg), 10, true );
-	special_sym_tbl.enter( "r11", cast_typ(tok_defn::reg), 11, true );
-	special_sym_tbl.enter( "r12", cast_typ(tok_defn::reg), 12, true );
-	special_sym_tbl.enter( "r13", cast_typ(tok_defn::reg), 13, true );
-	special_sym_tbl.enter( "r14", cast_typ(tok_defn::reg), 14, true );
-	special_sym_tbl.enter( "r15", cast_typ(tok_defn::reg), 15, true );
-	special_sym_tbl.enter( "lr", cast_typ(tok_defn::reg), 14, true );
-	special_sym_tbl.enter( "sp", cast_typ(tok_defn::reg), 15, true );
 	
-	// Special purpose registers
-	special_sym_tbl.enter( "flags", cast_typ(tok_defn::reg_flags), 0, 
-		true );
-	special_sym_tbl.enter( "ira", cast_typ(tok_defn::reg_ira), 0, true );
-	special_sym_tbl.enter( "pc", cast_typ(tok_defn::reg_pc), 0, true );
-	
-	
+	insert_registers();
 	insert_grp_0_instructions();
 	insert_grp_1_instructions();
 	insert_grp_2_instructions();
@@ -68,11 +43,10 @@ int assembler::run()
 		
 		
 		set_lc(0);
-		lex.set_lineno(0);;
+		lex.set_lineno(1);;
 		std::rewind(infile);
 		lex.set_nextc(' ');
 		lex.set_nextt(' ');
-		//lex_regular();
 		
 		while ( lex.nextt() != EOF )
 		{
@@ -84,11 +58,10 @@ int assembler::run()
 	set_pass(0);
 	set_changed(false);
 	set_lc(0);
-	lex.set_lineno(0);
+	lex.set_lineno(1);
 	std::rewind(infile);
 	lex.set_nextc(' ');
 	lex.set_nextt(' ');
-	//lex_regular();
 	while ( lex.nextt() != EOF )
 	{
 		line();
@@ -98,6 +71,38 @@ int assembler::run()
 	return 0;
 }
 
+// Constructor stuff
+void assembler::insert_registers()
+{
+	// General purpose registers
+	special_sym_tbl.enter( "r0", cast_typ(tok_defn::reg), 0, true );
+	special_sym_tbl.enter( "r1", cast_typ(tok_defn::reg), 1, true );
+	special_sym_tbl.enter( "r2", cast_typ(tok_defn::reg), 2, true );
+	special_sym_tbl.enter( "r3", cast_typ(tok_defn::reg), 3, true );
+	special_sym_tbl.enter( "r4", cast_typ(tok_defn::reg), 4, true );
+	special_sym_tbl.enter( "r5", cast_typ(tok_defn::reg), 5, true );
+	special_sym_tbl.enter( "r6", cast_typ(tok_defn::reg), 6, true );
+	special_sym_tbl.enter( "r7", cast_typ(tok_defn::reg), 7, true );
+	special_sym_tbl.enter( "r8", cast_typ(tok_defn::reg), 8, true );
+	special_sym_tbl.enter( "r9", cast_typ(tok_defn::reg), 9, true );
+	special_sym_tbl.enter( "r10", cast_typ(tok_defn::reg), 10, true );
+	special_sym_tbl.enter( "r11", cast_typ(tok_defn::reg), 11, true );
+	special_sym_tbl.enter( "r12", cast_typ(tok_defn::reg), 12, true );
+	special_sym_tbl.enter( "r13", cast_typ(tok_defn::reg), 13, true );
+	special_sym_tbl.enter( "r14", cast_typ(tok_defn::reg), 14, true );
+	special_sym_tbl.enter( "r15", cast_typ(tok_defn::reg), 15, true );
+	special_sym_tbl.enter( "lr", cast_typ(tok_defn::reg), 14, true );
+	special_sym_tbl.enter( "sp", cast_typ(tok_defn::reg), 15, true );
+	
+	// Special purpose registers
+	special_sym_tbl.enter( "flags", cast_typ(tok_defn::reg_flags), 0, 
+		true );
+	special_sym_tbl.enter( "ira", cast_typ(tok_defn::reg_ira), 0, true );
+	special_sym_tbl.enter( "pc", cast_typ(tok_defn::reg_pc), 0, true );
+	
+}
+
+//
 
 // Code generator stuff
 void assembler::gen8( s32 v )

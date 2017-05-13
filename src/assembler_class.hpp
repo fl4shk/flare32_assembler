@@ -96,6 +96,7 @@ private:		// functions
 	gen_setter_by_val(changed);
 	
 	// Constructor stuff
+	void insert_registers();
 	void insert_grp_0_instructions();
 	void insert_grp_1_instructions();
 	void insert_grp_2_instructions();
