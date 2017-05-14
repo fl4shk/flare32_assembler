@@ -250,7 +250,7 @@ void assembler::gen_any_instruction( const size_t grp,
 	
 	if ( pass() == 0 )
 	{
-		//printout("\n");
+		printout("\n");
 	}
 }
 
