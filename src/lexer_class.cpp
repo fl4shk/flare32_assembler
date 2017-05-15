@@ -122,8 +122,11 @@ void lexer::lex_no_ws( bool keep_lineno )
 		}
 		else
 		{
+			//std::string aaaa = ident_str;
+			
 			const bool did_find = special_sym_tbl()->find( ident_sym,
 				ident_str );
+			
 			
 			if (did_find)
 			{
@@ -135,7 +138,7 @@ void lexer::lex_no_ws( bool keep_lineno )
 				set_special_nextsym(nullptr);
 			}
 			
-			set_nextsym(&(user_sym_tbl()->enter( std::move(ident_str), 
+			set_nextsym(&(user_sym_tbl()->enter( ident_str, 
 				static_cast<tok>(tok_defn::ident), 0, false )));
 			update_nextval_and_nextt();
 		}

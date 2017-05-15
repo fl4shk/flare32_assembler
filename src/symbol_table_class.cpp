@@ -3,7 +3,7 @@
 namespace navichip32
 {
 
-bool symbol_table::sym_name_has_dot_f( const string_view& name ) const
+bool symbol_table::sym_name_has_dot_f( const std::string& name ) const
 {
 	if ( name.size() >= 2 )
 	{
@@ -14,23 +14,33 @@ bool symbol_table::sym_name_has_dot_f( const string_view& name ) const
 	return false;
 }
 
-string_view symbol_table::get_name( std::string&& name_as_str )
-{
-	return string_view(*str_set().insert(std::move(name_as_str)).first);
-}
+//string_view symbol_table::get_name( std::string&& name )
+//{
+//	return string_view(*str_set().insert(std::move(name)).first);
+//}
+//const std::string* symbol_table::get_name( const std::string& name )
+//{
+//	return &(*str_set().insert(name).first);
+//}
 
 
-symbol& symbol_table::enter( std::string&& name_as_str, tok typ, int val,
+symbol& symbol_table::enter( const std::string& name, tok typ, int val, 
 	bool is_special )
 {
-	string_view name = get_name(std::move(name_as_str));
-	
 	return table().insert( { name, symbol( name, typ, val, is_special,
 		sym_name_has_dot_f(name) ) } ).first->second;
 }
-bool symbol_table::find( symbol*& ret, const std::string& name_as_str )
+symbol& symbol_table::enter( std::string&& name, tok typ, int val, 
+	bool is_special )
 {
-	auto temp = table().find(string_view(name_as_str));
+	const std::string temp = name;
+	return table().insert( { std::move(name), symbol( temp, typ, val, 
+		is_special, sym_name_has_dot_f(temp) ) } ).first->second;
+}
+bool symbol_table::find( symbol*& ret, const std::string& name )
+{
+	//auto temp = table().find(string_view(name));
+	auto temp = table().find(name);
 	
 	if ( temp == table().end() )
 	{
@@ -42,10 +52,10 @@ bool symbol_table::find( symbol*& ret, const std::string& name_as_str )
 	return true;
 }
 
-void symbol_table::erase( const std::string& name_as_str )
+void symbol_table::erase( const std::string& name )
 {
-	str_set().erase(name_as_str);
-	table().erase(string_view(name_as_str));
+	//str_set().erase(name);
+	table().erase(name);
 }
 
 

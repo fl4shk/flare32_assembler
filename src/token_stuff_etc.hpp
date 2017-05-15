@@ -87,6 +87,11 @@ enum class instr_args : tok
 };
 
 
+template< typename typ_type >
+inline tok cast_typ( typ_type typ )
+{
+	return static_cast<tok>(typ);
+}
 
 }
 

@@ -10,8 +10,7 @@ namespace navichip32
 class symbol
 {
 private:		// variables
-	string_view internal_name;
-	
+	std::string internal_name;
 	tok internal_typ = 0;
 	int internal_val = 0;
 	
@@ -30,7 +29,7 @@ public:		// functions
 	inline symbol()
 	{
 	}
-	inline symbol( const string_view& s_name, tok s_typ, int s_val,
+	inline symbol( const std::string& s_name, tok s_typ, int s_val, 
 		bool s_is_special, bool s_has_dot_f )
 	{
 		set_name(s_name);
@@ -39,14 +38,25 @@ public:		// functions
 		set_is_special(s_is_special);
 		set_has_dot_f(s_has_dot_f);
 	}
-	virtual inline ~symbol()
+	inline symbol( std::string&& s_name, tok s_typ, int s_val, 
+		bool s_is_special, bool s_has_dot_f )
+	{
+		set_name(std::move(s_name));
+		set_typ(s_typ);
+		set_val(s_val);
+		set_is_special(s_is_special);
+		set_has_dot_f(s_has_dot_f);
+	}
+	inline symbol( const symbol& to_copy ) = default;
+	inline symbol( symbol&& to_move ) = default;
+	inline ~symbol()
 	{
 	}
 	
-	inline symbol& operator = ( const symbol& other ) = default;
+	inline symbol& operator = ( const symbol& to_copy ) = default;
+	inline symbol& operator = ( symbol&& to_move ) = default;
 	
 	gen_setter_by_val(val);
-	
 	gen_getter_by_con_ref(name);
 	gen_getter_by_val(typ);
 	gen_getter_by_val(val);
@@ -60,35 +70,36 @@ public:		// functions
 class symbol_table
 {
 private:		// variables
-	// Prevent duplicate std::strings, should be okay, not the fastest
-	// thing I could ever do, though.
-	std::unordered_set<std::string> internal_str_set;
-	std::unordered_map< string_view, symbol > internal_table;
+	//// Prevent duplicate std::strings, should be okay, not the fastest
+	//// thing I could ever do, though.
+	std::unordered_map< std::string, symbol > internal_table;
 	
 	
 private:		// functions
-	gen_getter_by_ref(str_set);
+	//gen_getter_by_ref(str_set);
 	gen_getter_by_ref(table);
 	
-	bool sym_name_has_dot_f( const string_view& name ) const;
+	bool sym_name_has_dot_f( const std::string& name ) const;
 	
-	string_view get_name( std::string&& name_as_str );
+	////string_view get_name( std::string&& name );
+	//const std::string* get_name( const std::string& name );
 	
 public:		// functions
 	inline symbol_table()
 	{
 	}
 	inline symbol_table( const symbol_table& to_copy ) = delete;
-	virtual inline ~symbol_table()
+	inline ~symbol_table()
 	{
 	}
 	symbol_table& operator = ( const symbol_table& to_copy ) = delete;
 	
 	
-	symbol& enter( std::string&& name_as_str, tok typ, int val, 
+	symbol& enter( const std::string& name, tok typ, int val, 
 		bool is_special );
-	bool find( symbol*& ret, const std::string& name_as_str );
-	void erase( const std::string& name_as_str );
+	symbol& enter( std::string&& name, tok typ, int val, bool is_special );
+	bool find( symbol*& ret, const std::string& name );
+	void erase( const std::string& name );
 	
 	inline auto cbegin() const
 	{
@@ -99,7 +110,7 @@ public:		// functions
 		return table().cend();
 	}
 	
-	gen_getter_by_con_ref(str_set);
+	//gen_getter_by_con_ref(str_set);
 	gen_getter_by_con_ref(table);
 	
 };

@@ -9,26 +9,32 @@ void assembler::insert_grp_0_instructions()
 	static constexpr size_t grp = 0;
 	size_t opcode = 0;
 	symbol * sym, * sym_dot_f;
-	const instruction * real_instr = nullptr, * real_instr_dot_f = nullptr;
+	std::string real_instr_name, real_instr_name_dot_f;
+	size_t real_instr_index = 0, real_instr_index_dot_f = 0;
 	
 	auto insert_instr_keep_opcode = [ this, &opcode ]
-		( symbol*& some_sym, std::string&& some_orig_name, 
-		const instr_args& iargs, const instruction* some_real_instr ) 
+		( symbol*& some_sym, const std::string& some_orig_name, 
+		const instr_args& iargs, 
+		const std::string& some_real_instr_name="", 
+		size_t some_real_instr_index=0 ) 
 		-> void
 	{
-		some_sym = &special_sym_tbl.enter( std::move(some_orig_name), 
+		some_sym = &special_sym_tbl.enter( some_orig_name, 
 			cast_typ(tok_defn::instr), 0, true );
-		instr_tbl.enter( some_sym, opcode, grp, iargs, some_real_instr );
+		instr_tbl.enter( some_orig_name, opcode, grp, iargs, 
+			some_real_instr_name, some_real_instr_index );
 	};
-	//auto insert_instr = [ this, &insert_instr_keep_opcode, &opcode ]
-	//	(  symbol*& some_sym, std::string&& some_orig_name, 
-	//	const instr_args& iargs, const instruction* some_real_instr )
-	//	-> void
-	//{
-	//	insert_instr_keep_opcode( some_sym, std::move(some_orig_name),
-	//		iargs, some_real_instr );
-	//	++opcode;
-	//};
+	auto insert_instr = [ this, &insert_instr_keep_opcode, &opcode ]
+		(  symbol*& some_sym, const std::string& some_orig_name, 
+		const instr_args& iargs, 
+		const std::string& some_real_instr_name="",
+		size_t some_real_instr_index=0 )
+		-> void
+	{
+		insert_instr_keep_opcode( some_sym, some_orig_name, iargs, 
+			some_real_instr_name, some_real_instr_index );
+		++opcode;
+	};
 	// This inserts an instruction and also one with ".f" appended to its
 	// name.
 	auto insert_instr_and_with_dot_f = [&]( const std::string& orig_name, 
@@ -36,16 +42,16 @@ void assembler::insert_grp_0_instructions()
 	{
 		std::string temp_name_0 = orig_name;
 		std::string temp_name_1 = temp_name_0 + std::string(".f");
-		insert_instr_keep_opcode( sym, std::move(temp_name_0), iargs,
-			real_instr );
-		insert_instr_keep_opcode( sym_dot_f, std::move(temp_name_1), iargs,
-			real_instr_dot_f );
+		insert_instr_keep_opcode( sym, temp_name_0, iargs,
+			real_instr_name, real_instr_index );
+		insert_instr_keep_opcode( sym_dot_f, temp_name_1, iargs,
+			real_instr_name_dot_f, real_instr_index_dot_f );
 		
 		++opcode;
 	};
-	auto find_real_instr = [this]( const instruction*& some_real_instr,
-		const std::string& some_orig_name, const instr_args& iargs, 
-		size_t eek_number=1 ) -> void
+	auto find_real_instr = [this]( std::string& some_real_instr_name,
+		size_t& some_real_instr_index, const std::string& some_orig_name, 
+		const instr_args& iargs, size_t eek_number=1 ) -> void
 	{
 		symbol* some_sym;
 		
@@ -55,21 +61,22 @@ void assembler::insert_grp_0_instructions()
 				", group ", grp, "):  Eek ", eek_number, "!\n" );
 		}
 		
-		const std::vector<instruction>& some_instr_vec
-			= instr_tbl.at(some_sym);
+		const auto& some_instr_vec = instr_tbl.at(some_orig_name);
 		
-		some_real_instr = nullptr;
+		some_real_instr_name = "";
+		some_real_instr_index = 0;
 		for ( size_t i=0; i<some_instr_vec.size(); ++i )
 		{
 			const instruction& iter = some_instr_vec.at(i);
 			if ( iter.iargs() == iargs )
 			{
-				some_real_instr = &iter;
+				some_real_instr_name = iter.name();
+				some_real_instr_index = i;
 				break;
 			}
 		}
 		
-		if ( some_real_instr == nullptr )
+		if ( some_real_instr_name.size() == 0 )
 		{
 			we.error( "assembler constructor (", some_orig_name, 
 				", group ", grp, "):  Eek ", ( eek_number + 1 ), "!\n" );
@@ -80,8 +87,10 @@ void assembler::insert_grp_0_instructions()
 		( const std::string& orig_name, const instr_args& iargs ) -> void
 	{
 		const std::string orig_name_dot_f = orig_name + std::string(".f");
-		find_real_instr( real_instr, orig_name, iargs, 1 );
-		find_real_instr( real_instr_dot_f, orig_name_dot_f, iargs, 3 );
+		find_real_instr( real_instr_name, real_instr_index, orig_name, 
+			iargs, 1 );
+		find_real_instr( real_instr_name_dot_f, real_instr_index_dot_f, 
+			orig_name_dot_f, iargs, 3 );
 	};
 	
 	// Instructions:
@@ -261,24 +270,30 @@ void assembler::insert_grp_1_instructions()
 	static constexpr size_t grp = 1;
 	size_t opcode = 0;
 	symbol * sym, * sym_dot_f;
-	const instruction * real_instr = nullptr, * real_instr_dot_f = nullptr;
+	std::string real_instr_name, real_instr_name_dot_f;
+	size_t real_instr_index = 0, real_instr_index_dot_f = 0;
 	
 	auto insert_instr_keep_opcode = [ this, &opcode ]
-		( symbol*& some_sym, std::string&& some_orig_name, 
-		const instr_args& iargs, const instruction* some_real_instr ) 
+		( symbol*& some_sym, const std::string& some_orig_name, 
+		const instr_args& iargs, 
+		const std::string& some_real_instr_name="", 
+		size_t some_real_instr_index=0 ) 
 		-> void
 	{
-		some_sym = &special_sym_tbl.enter( std::move(some_orig_name), 
+		some_sym = &special_sym_tbl.enter( some_orig_name, 
 			cast_typ(tok_defn::instr), 0, true );
-		instr_tbl.enter( some_sym, opcode, grp, iargs, some_real_instr );
+		instr_tbl.enter( some_orig_name, opcode, grp, iargs, 
+			some_real_instr_name, some_real_instr_index );
 	};
 	auto insert_instr = [ this, &insert_instr_keep_opcode, &opcode ]
-		(  symbol*& some_sym, std::string&& some_orig_name, 
-		const instr_args& iargs, const instruction* some_real_instr )
+		(  symbol*& some_sym, const std::string& some_orig_name, 
+		const instr_args& iargs, 
+		const std::string& some_real_instr_name="",
+		size_t some_real_instr_index=0 )
 		-> void
 	{
-		insert_instr_keep_opcode( some_sym, std::move(some_orig_name),
-			iargs, some_real_instr );
+		insert_instr_keep_opcode( some_sym, some_orig_name, iargs, 
+			some_real_instr_name, some_real_instr_index );
 		++opcode;
 	};
 	// This inserts an instruction and also one with ".f" appended to its
@@ -288,16 +303,16 @@ void assembler::insert_grp_1_instructions()
 	{
 		std::string temp_name_0 = orig_name;
 		std::string temp_name_1 = temp_name_0 + std::string(".f");
-		insert_instr_keep_opcode( sym, std::move(temp_name_0), iargs,
-			real_instr );
-		insert_instr_keep_opcode( sym_dot_f, std::move(temp_name_1), iargs,
-			real_instr_dot_f );
+		insert_instr_keep_opcode( sym, temp_name_0, iargs,
+			real_instr_name, real_instr_index );
+		insert_instr_keep_opcode( sym_dot_f, temp_name_1, iargs,
+			real_instr_name_dot_f, real_instr_index_dot_f );
 		
 		++opcode;
 	};
-	auto find_real_instr = [this]( const instruction*& some_real_instr,
-		const std::string& some_orig_name, const instr_args& iargs, 
-		size_t eek_number=1 ) -> void
+	auto find_real_instr = [this]( std::string& some_real_instr_name,
+		size_t& some_real_instr_index, const std::string& some_orig_name, 
+		const instr_args& iargs, size_t eek_number=1 ) -> void
 	{
 		symbol* some_sym;
 		
@@ -307,21 +322,22 @@ void assembler::insert_grp_1_instructions()
 				", group ", grp, "):  Eek ", eek_number, "!\n" );
 		}
 		
-		const std::vector<instruction>& some_instr_vec
-			= instr_tbl.at(some_sym);
+		const auto& some_instr_vec = instr_tbl.at(some_orig_name);
 		
-		some_real_instr = nullptr;
+		some_real_instr_name = "";
+		some_real_instr_index = 0;
 		for ( size_t i=0; i<some_instr_vec.size(); ++i )
 		{
 			const instruction& iter = some_instr_vec.at(i);
 			if ( iter.iargs() == iargs )
 			{
-				some_real_instr = &iter;
+				some_real_instr_name = iter.name();
+				some_real_instr_index = i;
 				break;
 			}
 		}
 		
-		if ( some_real_instr == nullptr )
+		if ( some_real_instr_name.size() == 0 )
 		{
 			we.error( "assembler constructor (", some_orig_name, 
 				", group ", grp, "):  Eek ", ( eek_number + 1 ), "!\n" );
@@ -332,8 +348,10 @@ void assembler::insert_grp_1_instructions()
 		( const std::string& orig_name, const instr_args& iargs ) -> void
 	{
 		const std::string orig_name_dot_f = orig_name + std::string(".f");
-		find_real_instr( real_instr, orig_name, iargs, 1 );
-		find_real_instr( real_instr_dot_f, orig_name_dot_f, iargs, 3 );
+		find_real_instr( real_instr_name, real_instr_index, orig_name, 
+			iargs, 1 );
+		find_real_instr( real_instr_name_dot_f, real_instr_index_dot_f, 
+			orig_name_dot_f, iargs, 3 );
 	};
 	
 	
@@ -532,10 +550,10 @@ void assembler::insert_grp_1_instructions()
 	//// Encoded like this:  subi.f r0, rB, imm
 	//// This instruction can affect N, V, Z, and C flags.
 	//cmpi rB, imm
-	find_real_instr( real_instr_dot_f, "subi.f", 
+	find_real_instr( real_instr_name_dot_f, real_instr_index_dot_f, "subi.f", 
 		instr_args::ra_rb_imm16u );
 	insert_instr( sym_dot_f, std::string("cmpi"), 
-		instr_args::pseudo_r0hidden_rb_imm16u, real_instr_dot_f );
+		instr_args::pseudo_r0hidden_rb_imm16u, real_instr_name_dot_f, real_instr_index_dot_f );
 	
 	// Pseudo instruction:
 	//// Compare rB to negated (zero-extended imm)
@@ -543,10 +561,10 @@ void assembler::insert_grp_1_instructions()
 	//// Encoded like this:  addi.f r0, rB, imm
 	//// This instruction can affect N, V, Z, and C flags.
 	//cmni rB, imm
-	find_real_instr( real_instr_dot_f, "addi.f", 
+	find_real_instr( real_instr_name_dot_f, real_instr_index_dot_f, "addi.f", 
 		instr_args::ra_rb_imm16u );
 	insert_instr( sym_dot_f, std::string("cmni"), 
-		instr_args::pseudo_r0hidden_rb_imm16u, real_instr_dot_f );
+		instr_args::pseudo_r0hidden_rb_imm16u, real_instr_name_dot_f, real_instr_index_dot_f );
 	
 	// Pseudo instruction:
 	//// Compare reversed with immediate value
@@ -554,10 +572,10 @@ void assembler::insert_grp_1_instructions()
 	//// Encoded like this:  rsbi.f r0, rB, imm
 	//// This instruction can affect N, V, Z, and C flags.
 	//cmri rB, imm
-	find_real_instr( real_instr_dot_f, "rsbi.f", 
+	find_real_instr( real_instr_name_dot_f, real_instr_index_dot_f, "rsbi.f", 
 		instr_args::ra_rb_imm16u );
 	insert_instr( sym_dot_f, std::string("cmri"), 
-		instr_args::pseudo_r0hidden_rb_imm16u, real_instr_dot_f );
+		instr_args::pseudo_r0hidden_rb_imm16u, real_instr_name_dot_f, real_instr_index_dot_f );
 	
 	// Pseudo instruction:
 	//// Copy Negated
@@ -594,24 +612,30 @@ void assembler::insert_grp_2_instructions()
 	static constexpr size_t grp = 2;
 	size_t opcode = 0;
 	symbol * sym, * sym_dot_f;
-	const instruction * real_instr = nullptr, * real_instr_dot_f = nullptr;
+	std::string real_instr_name, real_instr_name_dot_f;
+	size_t real_instr_index = 0, real_instr_index_dot_f = 0;
 	
 	auto insert_instr_keep_opcode = [ this, &opcode ]
-		( symbol*& some_sym, std::string&& some_orig_name, 
-		const instr_args& iargs, const instruction* some_real_instr ) 
+		( symbol*& some_sym, const std::string& some_orig_name, 
+		const instr_args& iargs, 
+		const std::string& some_real_instr_name="", 
+		size_t some_real_instr_index=0 ) 
 		-> void
 	{
-		some_sym = &special_sym_tbl.enter( std::move(some_orig_name), 
+		some_sym = &special_sym_tbl.enter( some_orig_name, 
 			cast_typ(tok_defn::instr), 0, true );
-		instr_tbl.enter( some_sym, opcode, grp, iargs, some_real_instr );
+		instr_tbl.enter( some_orig_name, opcode, grp, iargs, 
+			some_real_instr_name, some_real_instr_index );
 	};
 	auto insert_instr = [ this, &insert_instr_keep_opcode, &opcode ]
-		(  symbol*& some_sym, std::string&& some_orig_name, 
-		const instr_args& iargs, const instruction* some_real_instr )
+		(  symbol*& some_sym, const std::string& some_orig_name, 
+		const instr_args& iargs, 
+		const std::string& some_real_instr_name="",
+		size_t some_real_instr_index=0 )
 		-> void
 	{
-		insert_instr_keep_opcode( some_sym, std::move(some_orig_name),
-			iargs, some_real_instr );
+		insert_instr_keep_opcode( some_sym, some_orig_name, iargs, 
+			some_real_instr_name, some_real_instr_index );
 		++opcode;
 	};
 	// This inserts an instruction and also one with ".f" appended to its
@@ -621,16 +645,16 @@ void assembler::insert_grp_2_instructions()
 	{
 		std::string temp_name_0 = orig_name;
 		std::string temp_name_1 = temp_name_0 + std::string(".f");
-		insert_instr_keep_opcode( sym, std::move(temp_name_0), iargs,
-			real_instr );
-		insert_instr_keep_opcode( sym_dot_f, std::move(temp_name_1), iargs,
-			real_instr_dot_f );
+		insert_instr_keep_opcode( sym, temp_name_0, iargs,
+			real_instr_name, real_instr_index );
+		insert_instr_keep_opcode( sym_dot_f, temp_name_1, iargs,
+			real_instr_name_dot_f, real_instr_index_dot_f );
 		
 		++opcode;
 	};
-	auto find_real_instr = [this]( const instruction*& some_real_instr,
-		const std::string& some_orig_name, const instr_args& iargs, 
-		size_t eek_number=1 ) -> void
+	auto find_real_instr = [this]( std::string& some_real_instr_name,
+		size_t& some_real_instr_index, const std::string& some_orig_name, 
+		const instr_args& iargs, size_t eek_number=1 ) -> void
 	{
 		symbol* some_sym;
 		
@@ -640,21 +664,22 @@ void assembler::insert_grp_2_instructions()
 				", group ", grp, "):  Eek ", eek_number, "!\n" );
 		}
 		
-		const std::vector<instruction>& some_instr_vec
-			= instr_tbl.at(some_sym);
+		const auto& some_instr_vec = instr_tbl.at(some_orig_name);
 		
-		some_real_instr = nullptr;
+		some_real_instr_name = "";
+		some_real_instr_index = 0;
 		for ( size_t i=0; i<some_instr_vec.size(); ++i )
 		{
 			const instruction& iter = some_instr_vec.at(i);
 			if ( iter.iargs() == iargs )
 			{
-				some_real_instr = &iter;
+				some_real_instr_name = iter.name();
+				some_real_instr_index = i;
 				break;
 			}
 		}
 		
-		if ( some_real_instr == nullptr )
+		if ( some_real_instr_name.size() == 0 )
 		{
 			we.error( "assembler constructor (", some_orig_name, 
 				", group ", grp, "):  Eek ", ( eek_number + 1 ), "!\n" );
@@ -665,8 +690,10 @@ void assembler::insert_grp_2_instructions()
 		( const std::string& orig_name, const instr_args& iargs ) -> void
 	{
 		const std::string orig_name_dot_f = orig_name + std::string(".f");
-		find_real_instr( real_instr, orig_name, iargs, 1 );
-		find_real_instr( real_instr_dot_f, orig_name_dot_f, iargs, 3 );
+		find_real_instr( real_instr_name, real_instr_index, orig_name, 
+			iargs, 1 );
+		find_real_instr( real_instr_name_dot_f, real_instr_index_dot_f, 
+			orig_name_dot_f, iargs, 3 );
 	};
 	
 	
@@ -1073,27 +1100,33 @@ void assembler::insert_grp_2_instructions()
 	//// This instruction can affect N, V, Z, and C flags.
 	//// Encoded like this:  sub.f r0, rB, rC
 	//cmp rB, rC
-	find_real_instr( real_instr_dot_f, "sub.f", instr_args::ra_rb_rc );
+	find_real_instr( real_instr_name_dot_f, real_instr_index_dot_f, 
+		"sub.f", instr_args::ra_rb_rc );
 	insert_instr( sym_dot_f, std::string("cmp"), 
-		instr_args::pseudo_r0hidden_rb_rc, real_instr_dot_f );
+		instr_args::pseudo_r0hidden_rb_rc, real_instr_name_dot_f, 
+		real_instr_index_dot_f );
 	
 	// Pseudo instruction:
 	//// temp = rB - (-rC)
 	//// This instruction can affect N, V, Z, and C flags.
 	//// Encoded like this:  add.f r0, rB, rC
 	//cmn rB, rC
-	find_real_instr( real_instr_dot_f, "add.f", instr_args::ra_rb_rc );
+	find_real_instr( real_instr_name_dot_f, real_instr_index_dot_f, 
+		"add.f", instr_args::ra_rb_rc );
 	insert_instr( sym_dot_f, std::string("cmn"), 
-		instr_args::pseudo_r0hidden_rb_rc, real_instr_dot_f );
+		instr_args::pseudo_r0hidden_rb_rc, real_instr_name_dot_f, 
+		real_instr_index_dot_f );
 	
 	// Pseudo instruction:
 	//// temp = rC - rB
 	//// This instruction can affect N, V, Z, and C flags.
 	//// Encoded like this:  rsb.f r0, rB, rC
 	//cmr rB, rC
-	find_real_instr( real_instr_dot_f, "rsb.f", instr_args::ra_rb_rc );
+	find_real_instr( real_instr_name_dot_f, real_instr_index_dot_f, 
+		"rsb.f", instr_args::ra_rb_rc );
 	insert_instr( sym_dot_f, std::string("cmr"), 
-		instr_args::pseudo_r0hidden_rb_rc, real_instr_dot_f );
+		instr_args::pseudo_r0hidden_rb_rc, real_instr_name_dot_f, 
+		real_instr_index_dot_f );
 	
 	// Pseudo instruction:
 	//// temp = rB & rC
@@ -1150,26 +1183,32 @@ void assembler::insert_grp_3_instructions()
 	static constexpr size_t grp = 3;
 	size_t opcode = 0;
 	symbol * sym, * sym_dot_f;
-	const instruction * real_instr = nullptr, * real_instr_dot_f = nullptr;
+	std::string real_instr_name, real_instr_name_dot_f;
+	size_t real_instr_index = 0, real_instr_index_dot_f = 0;
 	
 	auto insert_instr_keep_opcode = [ this, &opcode ]
-		( symbol*& some_sym, std::string&& some_orig_name, 
-		const instr_args& iargs, const instruction* some_real_instr ) 
+		( symbol*& some_sym, const std::string& some_orig_name, 
+		const instr_args& iargs, 
+		const std::string& some_real_instr_name="", 
+		size_t some_real_instr_index=0 ) 
 		-> void
 	{
-		some_sym = &special_sym_tbl.enter( std::move(some_orig_name), 
+		some_sym = &special_sym_tbl.enter( some_orig_name, 
 			cast_typ(tok_defn::instr), 0, true );
-		instr_tbl.enter( some_sym, opcode, grp, iargs, some_real_instr );
+		instr_tbl.enter( some_orig_name, opcode, grp, iargs, 
+			some_real_instr_name, some_real_instr_index );
 	};
-	//auto insert_instr = [ this, &insert_instr_keep_opcode, &opcode ]
-	//	(  symbol*& some_sym, std::string&& some_orig_name, 
-	//	const instr_args& iargs, const instruction* some_real_instr )
-	//	-> void
-	//{
-	//	insert_instr_keep_opcode( some_sym, std::move(some_orig_name),
-	//		iargs, some_real_instr );
-	//	++opcode;
-	//};
+	auto insert_instr = [ this, &insert_instr_keep_opcode, &opcode ]
+		(  symbol*& some_sym, const std::string& some_orig_name, 
+		const instr_args& iargs, 
+		const std::string& some_real_instr_name="",
+		size_t some_real_instr_index=0 )
+		-> void
+	{
+		insert_instr_keep_opcode( some_sym, some_orig_name, iargs, 
+			some_real_instr_name, some_real_instr_index );
+		++opcode;
+	};
 	// This inserts an instruction and also one with ".f" appended to its
 	// name.
 	auto insert_instr_and_with_dot_f = [&]( const std::string& orig_name, 
@@ -1177,16 +1216,16 @@ void assembler::insert_grp_3_instructions()
 	{
 		std::string temp_name_0 = orig_name;
 		std::string temp_name_1 = temp_name_0 + std::string(".f");
-		insert_instr_keep_opcode( sym, std::move(temp_name_0), iargs,
-			real_instr );
-		insert_instr_keep_opcode( sym_dot_f, std::move(temp_name_1), iargs,
-			real_instr_dot_f );
+		insert_instr_keep_opcode( sym, temp_name_0, iargs,
+			real_instr_name, real_instr_index );
+		insert_instr_keep_opcode( sym_dot_f, temp_name_1, iargs,
+			real_instr_name_dot_f, real_instr_index_dot_f );
 		
 		++opcode;
 	};
-	auto find_real_instr = [this]( const instruction*& some_real_instr,
-		const std::string& some_orig_name, const instr_args& iargs, 
-		size_t eek_number=1 ) -> void
+	auto find_real_instr = [this]( std::string& some_real_instr_name,
+		size_t& some_real_instr_index, const std::string& some_orig_name, 
+		const instr_args& iargs, size_t eek_number=1 ) -> void
 	{
 		symbol* some_sym;
 		
@@ -1196,21 +1235,22 @@ void assembler::insert_grp_3_instructions()
 				", group ", grp, "):  Eek ", eek_number, "!\n" );
 		}
 		
-		const std::vector<instruction>& some_instr_vec
-			= instr_tbl.at(some_sym);
+		const auto& some_instr_vec = instr_tbl.at(some_orig_name);
 		
-		some_real_instr = nullptr;
+		some_real_instr_name = "";
+		some_real_instr_index = 0;
 		for ( size_t i=0; i<some_instr_vec.size(); ++i )
 		{
 			const instruction& iter = some_instr_vec.at(i);
 			if ( iter.iargs() == iargs )
 			{
-				some_real_instr = &iter;
+				some_real_instr_name = iter.name();
+				some_real_instr_index = i;
 				break;
 			}
 		}
 		
-		if ( some_real_instr == nullptr )
+		if ( some_real_instr_name.size() == 0 )
 		{
 			we.error( "assembler constructor (", some_orig_name, 
 				", group ", grp, "):  Eek ", ( eek_number + 1 ), "!\n" );
@@ -1221,8 +1261,10 @@ void assembler::insert_grp_3_instructions()
 		( const std::string& orig_name, const instr_args& iargs ) -> void
 	{
 		const std::string orig_name_dot_f = orig_name + std::string(".f");
-		find_real_instr( real_instr, orig_name, iargs, 1 );
-		find_real_instr( real_instr_dot_f, orig_name_dot_f, iargs, 3 );
+		find_real_instr( real_instr_name, real_instr_index, orig_name, 
+			iargs, 1 );
+		find_real_instr( real_instr_name_dot_f, real_instr_index_dot_f, 
+			orig_name_dot_f, iargs, 3 );
 	};
 	
 	
@@ -1341,6 +1383,7 @@ void assembler::insert_grp_3_instructions()
 	find_real_instr_and_with_dot_f( "jumpa", instr_args::ra_rb_abs );
 	insert_instr_and_with_dot_f( "jumpa",
 		instr_args::pseudo_r0hidden_r0hidden_abs );
+	
 	
 	// Pseudo instruction:
 	//// Subroutine call using (rA + absolute_addr) as 

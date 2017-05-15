@@ -22,6 +22,14 @@ assembler::assembler( int argc, char** argv, std::FILE* s_infile )
 	insert_grp_2_instructions();
 	insert_grp_3_instructions();
 	
+	//if (!special_sym_tbl.find( some_debug_sym, "jumpa" ))
+	//{
+	//	we.error("assembler::assembler():  Eek 1!\n");
+	//}
+	//
+	//some_debug_vec = &instr_tbl.at(some_debug_sym);
+	
+	
 }
 
 assembler::~assembler()
@@ -262,7 +270,7 @@ const instruction* assembler::determine_instr()
 	const instruction* ret = nullptr;
 	
 	const long orig_pos = std::ftell(infile);
-	const symbol* instr_sym = lex.special_nextsym();
+	symbol* instr_sym = lex.special_nextsym();
 	
 	// Keep lineno so that the function that called this one doesn't have
 	// to know about what happened to the lexer.
@@ -278,7 +286,8 @@ const instruction* assembler::determine_instr()
 		return ret;
 	}
 	
-	const std::vector<instruction>& instr_vec = instr_tbl.at(instr_sym);
+	const std::vector<instruction>& instr_vec 
+		= instr_tbl.at(instr_sym->name());
 	
 	
 	const auto temp_nextc = lex.nextc();
@@ -332,110 +341,144 @@ const instruction* assembler::determine_instr()
 bool assembler::parse_iargs( const instruction& iter, bool just_test,
 	std::vector<real_iarg>& iarg_vec )
 {
+	bool ret = false;
+	
 	switch ( iter.iargs() )
 	{
 		case instr_args::noargs:
-			return parse_instr_noargs( just_test, iarg_vec );
+			ret = parse_instr_noargs( just_test, iarg_vec );
+			break;
 		case instr_args::ra:
-			return parse_instr_ra( just_test, iarg_vec );
+			ret = parse_instr_ra( just_test, iarg_vec );
+			break;
 		case instr_args::ra_rb:
-			return parse_instr_ra_rb( just_test, iarg_vec );
+			ret = parse_instr_ra_rb( just_test, iarg_vec );
+			break;
 		case instr_args::ra_imm16u:
-			return parse_instr_ra_imm16u( just_test, iarg_vec );
+			ret = parse_instr_ra_imm16u( just_test, iarg_vec );
+			break;
 		case instr_args::imm16u:
-			return parse_instr_imm16u( just_test, iarg_vec );
+			ret = parse_instr_imm16u( just_test, iarg_vec );
+			break;
 		case instr_args::imm16s:
-			return parse_instr_imm16s( just_test, iarg_vec );
+			ret = parse_instr_imm16s( just_test, iarg_vec );
+			break;
 		case instr_args::branchoffset:
-			return parse_instr_branchoffset( just_test, iarg_vec );
+			ret = parse_instr_branchoffset( just_test, iarg_vec );
+			break;
 		case instr_args::flags:
-			return parse_instr_flags( just_test, iarg_vec );
+			ret = parse_instr_flags( just_test, iarg_vec );
+			break;
 		case instr_args::ra_flags:
-			return parse_instr_ra_flags( just_test, iarg_vec );
+			ret = parse_instr_ra_flags( just_test, iarg_vec );
+			break;
 		case instr_args::flags_ra:
-			return parse_instr_flags_ra( just_test, iarg_vec );
+			ret = parse_instr_flags_ra( just_test, iarg_vec );
+			break;
 		case instr_args::ira:
-			return parse_instr_ira( just_test, iarg_vec );
+			ret = parse_instr_ira( just_test, iarg_vec );
+			break;
 		case instr_args::ira_ra:
-			return parse_instr_ira_ra( just_test, iarg_vec );
+			ret = parse_instr_ira_ra( just_test, iarg_vec );
+			break;
 		case instr_args::ra_ira:
-			return parse_instr_ra_ira( just_test, iarg_vec );
+			ret = parse_instr_ra_ira( just_test, iarg_vec );
+			break;
 		case instr_args::ra_pc:
-			return parse_instr_ra_pc( just_test, iarg_vec );
+			ret = parse_instr_ra_pc( just_test, iarg_vec );
+			break;
 		case instr_args::ra_rb_imm16u:
-			return parse_instr_ra_rb_imm16u( just_test, iarg_vec );
+			ret = parse_instr_ra_rb_imm16u( just_test, iarg_vec );
+			break;
 		case instr_args::ra_rb_imm16s:
-			return parse_instr_ra_rb_imm16s( just_test, iarg_vec );
+			ret = parse_instr_ra_rb_imm16s( just_test, iarg_vec );
+			break;
 		case instr_args::ra_rb_rc_imm12s:
-			return parse_instr_ra_rb_rc_imm12s( just_test, iarg_vec );
+			ret = parse_instr_ra_rb_rc_imm12s( just_test, iarg_vec );
+			break;
 		case instr_args::ra_rb_rc:
-			return parse_instr_ra_rb_rc( just_test, iarg_vec );
+			ret = parse_instr_ra_rb_rc( just_test, iarg_vec );
+			break;
 		case instr_args::ra_rb_abs:
-			return parse_instr_ra_rb_abs( just_test, iarg_vec );
+			ret = parse_instr_ra_rb_abs( just_test, iarg_vec );
+			break;
 		
 		
 		
 		case instr_args::pseudo_r0hidden_rb:
-			return parse_instr_pseudo_r0hidden_rb
+			ret = parse_instr_pseudo_r0hidden_rb
 				( just_test, iarg_vec );
+			break;
 		case instr_args::pseudo_r0hidden_rb_imm16u:
-			return parse_instr_pseudo_r0hidden_rb_imm16u
+			ret = parse_instr_pseudo_r0hidden_rb_imm16u
 				( just_test, iarg_vec );
+			break;
 		
 		// cpn rA, rB
 		case instr_args::pseudo_ra_rb_imm0hidden:
-			return parse_instr_pseudo_ra_rb_imm0hidden
+			ret = parse_instr_pseudo_ra_rb_imm0hidden
 				( just_test, iarg_vec );
+			break;
 		
 		// cpc rA, rB
 		case instr_args::pseudo_ra_rb_imm16sneg1hidden:
-			return parse_instr_pseudo_ra_rb_imm16sneg1hidden
+			ret = parse_instr_pseudo_ra_rb_imm16sneg1hidden
 				( just_test, iarg_vec );
+			break;
 		
 		case instr_args::pseudo_ra_rb_r0hidden_imm0hidden:
-			return parse_instr_pseudo_ra_rb_r0hidden_imm0hidden
+			ret = parse_instr_pseudo_ra_rb_r0hidden_imm0hidden
 				( just_test, iarg_vec );
+			break;
 		case instr_args::pseudo_ra_rb_rc_imm0hidden:
-			return parse_instr_pseudo_ra_rb_rc_imm0hidden
+			ret = parse_instr_pseudo_ra_rb_rc_imm0hidden
 				( just_test, iarg_vec );
+			break;
 		case instr_args::pseudo_ra_rb_r0hidden_imm12s:
-			return parse_instr_pseudo_ra_rb_r0hidden_imm12s
+			ret = parse_instr_pseudo_ra_rb_r0hidden_imm12s
 				( just_test, iarg_vec );
+			break;
 		case instr_args::pseudo_r0hidden_rb_rc:
-			return parse_instr_pseudo_r0hidden_rb_rc
+			ret = parse_instr_pseudo_r0hidden_rb_rc
 				( just_test, iarg_vec );
+			break;
 		
 		
 		case instr_args::pseudo_ra_rahidden_rc:
-			return parse_instr_pseudo_ra_rahidden_rc
+			ret = parse_instr_pseudo_ra_rahidden_rc
 				( just_test, iarg_vec );
+			break;
 		
 		// cpy pc, rB
 		case instr_args::pseudo_pc_rb:
-			return parse_instr_pseudo_pc_rb
+			ret = parse_instr_pseudo_pc_rb
 				( just_test, iarg_vec );
+			break;
 		
 		case instr_args::pseudo_ra_sphidden:
-			return parse_instr_pseudo_ra_sphidden
+			ret = parse_instr_pseudo_ra_sphidden
 				( just_test, iarg_vec );
+			break;
 		
 		
 		case instr_args::pseudo_ra_r0hidden_abs:
-			return parse_instr_pseudo_ra_r0hidden_abs
+			ret = parse_instr_pseudo_ra_r0hidden_abs
 				( just_test, iarg_vec );
+			break;
 		case instr_args::pseudo_r0hidden_r0hidden_abs:
-			return parse_instr_pseudo_r0hidden_r0hidden_abs
+			ret = parse_instr_pseudo_r0hidden_r0hidden_abs
 				( just_test, iarg_vec );
+			break;
 		case instr_args::pseudo_ra_rahidden_abs:
-			return parse_instr_pseudo_ra_rahidden_abs
+			ret = parse_instr_pseudo_ra_rahidden_abs
 				( just_test, iarg_vec );
+			break;
 		default:
 			we.unknown("instr_args!");
 			break;
 	}
 	
-	
-	return false;
+	return ret;
 }
 
 bool assembler::parse_iarg_reg( bool just_test, 
@@ -1267,9 +1310,11 @@ void assembler::line()
 	// Process labels
 	bool found_label = false;
 	
+	
 	if ( isspace(lex.nextt()) )
 	{
 		lex_regular();
+		
 		return;
 	}
 	
@@ -1349,20 +1394,32 @@ void assembler::line()
 	if ( some_instr != nullptr )
 	{
 		std::vector<real_iarg> iarg_vec;
+		symbol* sym = nullptr;
 		
 		lex_regular();
+		
 		if (!parse_iargs( *some_instr, false, iarg_vec ))
 		{
-			we.error("assembler::line():  Eek!\n");
+			we.error("assembler::line(), parse_iargs():  Eek!\n");
 		}
 		
-		if ( some_instr->real_instr() != nullptr )
+		if ( some_instr->real_instr_name().size() != 0 )
 		{
-			some_instr = some_instr->real_instr();
+			const auto& some_instr_vec = instr_tbl.at(some_instr
+				->real_instr_name());
+			
+			some_instr = &some_instr_vec.at(some_instr
+				->real_instr_index());
 		}
+		
+		if (!special_sym_tbl.find( sym, some_instr->name() ))
+		{
+			we.error("assembler::line(), special_sym_tbl.find():  Eek!\n");
+		}
+		
 		
 		gen_any_instruction( some_instr->grp(), 
-			some_instr->sym()->has_dot_f(), some_instr->opcode(),
+			sym->has_dot_f(), some_instr->opcode(),
 			iarg_vec );
 	}
 	

@@ -3,21 +3,21 @@
 namespace navichip32
 {
 
-
-
-void instr_table::enter( symbol* sym, size_t opcode, size_t grp, 
-	instr_args iargs, const instruction* real_instr )
+void instruction_table::enter( const std::string& name, size_t opcode, 
+	size_t grp, instr_args iargs, const std::string& real_instr_name,
+	size_t real_instr_index )
 {
-	instruction to_push( sym, opcode, grp, iargs, real_instr );
+	instruction to_push( name, opcode, grp, iargs, real_instr_name,
+		real_instr_index );
 	
-	auto iter = table().find(sym);
+	auto iter = table().find(name);
 	
 	if ( iter == table().end() )
 	{
 		std::vector<instruction> to_insert;
 		to_insert.push_back(to_push);
 		
-		table().insert( { sym, std::move(to_insert) } );
+		table().insert( { name, std::move(to_insert) } );
 	}
 	else
 	{

@@ -80,12 +80,13 @@ private:		// variables
 	// Input file
 	std::FILE* infile;
 	
+	
 	// Class instances
 	lexer lex;
 	warn_error we;
 	symbol_table user_sym_tbl;
 	symbol_table special_sym_tbl;
-	instr_table instr_tbl;
+	instruction_table instr_tbl;
 	
 	
 	
@@ -94,6 +95,7 @@ private:		// functions
 	gen_setter_by_val(lc);
 	gen_setter_by_val(last_lc);
 	gen_setter_by_val(changed);
+	
 	
 	// Constructor stuff
 	void insert_registers();
@@ -259,11 +261,6 @@ private:		// functions
 		return expr( false, just_test, did_fail );
 	}
 	
-	template< typename typ_type >
-	inline tok cast_typ( typ_type typ ) const
-	{
-		return static_cast<tok>(typ);
-	}
 	void line();
 	
 	inline void lex_regular()
