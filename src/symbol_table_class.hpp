@@ -76,7 +76,6 @@ private:		// variables
 	
 	
 private:		// functions
-	//gen_getter_by_ref(str_set);
 	gen_getter_by_ref(table);
 	
 	bool sym_name_has_dot_f( const std::string& name ) const;
@@ -110,7 +109,6 @@ public:		// functions
 		return table().cend();
 	}
 	
-	//gen_getter_by_con_ref(str_set);
 	gen_getter_by_con_ref(table);
 	
 };
