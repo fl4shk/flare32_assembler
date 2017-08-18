@@ -51,7 +51,7 @@ FINAL_BASE_FLAGS:=$(OPTIMIZATION_LEVEL) \
 
 # Final compiler and linker flags
 CXX_FLAGS:=$(CXX_FLAGS) $(FINAL_BASE_FLAGS)
-LD_FLAGS:=$(LD_FLAGS) $(EXTRA_LD_FLAGS)
+LD_FLAGS:=$(LD_FLAGS) $(EXTRA_LD_FLAGS) $(COMMON_LD_FLAGS)
 
 
 
@@ -91,8 +91,7 @@ all_pre :
 	mkdir -p $(OBJDIR) $(DEPDIR)
 
 
-# This sed script is basically a hack.
-sed_script:=$(shell echo "sed -e 's/\#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' -e '/^$$/ d' -e 's/$$/ :/'")
+
 
 
 # Here's where things get really messy.
@@ -102,7 +101,7 @@ $(CXX_OFILES) : $(OBJDIR)/%.o : %.cpp
 	@echo $@" was updated or has no object file.  (Re)Compiling...." 
 	$(CXX) $(CXX_FLAGS) -MMD -c $< -o $@ 
 	@cp $(OBJDIR)/$*.d $(DEPDIR)/$*.P 
-	@$(sed_script) < $(OBJDIR)/$*.d >> $(DEPDIR)/$*.P 
+	@#$(sed_script) < $(OBJDIR)/$*.d >> $(DEPDIR)/$*.P 
 	@rm -f $(OBJDIR)/$*.d
 
 
