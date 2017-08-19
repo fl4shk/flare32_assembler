@@ -33,11 +33,13 @@ public:		// functions
 
 	gen_getter_by_con_ref(name)
 	gen_getter_by_con_ref(token)
+	gen_getter_by_val(value)
 
 	gen_setter_by_con_ref(name)
 	gen_setter_by_rval_ref(name)
 	gen_setter_by_con_ref(token)
 	gen_setter_by_rval_ref(token)
+	gen_setter_by_val(value)
 
 };
 

@@ -357,6 +357,11 @@ s64 Assembler::handle_factor()
 		//if (user_sym_tbl().contains(next_sym_str()))
 		//{
 		//}
+
+		const Symbol& sym = user_sym_tbl().at(next_sym_str());
+		s64 ret = sym.value();
+		lex();
+		return ret;
 	}
 
 	s64 ret;
