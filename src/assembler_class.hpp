@@ -1,5 +1,5 @@
-#ifndef application_class_hpp
-#define application_class_hpp
+#ifndef assembler_class_hpp
+#define assembler_class_hpp
 
 
 #include "misc_includes.hpp"
@@ -7,12 +7,12 @@
 
 #include "symbol_table_class.hpp"
 
-class Application
+class Assembler
 {
 private:		// classes
 
 private:		// variables
-	SymbolTable __sym_tbl, __user_sym_tbl;
+	SymbolTable __built_in_sym_tbl, __user_sym_tbl;
 
 	size_t __line_num = 1;
 
@@ -21,14 +21,18 @@ private:		// variables
 	std::string __next_sym_str;
 	s64 __next_num = -1;
 
+	bool __changed = false;
+
 public:		// functions
-	Application();
+	Assembler();
 
 	int operator () ();
 
 
 
 private:		// functions
+	void reinit();
+
 	template<typename... ArgTypes>
 	void err_suffix(ArgTypes&&... args) const
 	{
@@ -47,10 +51,33 @@ private:		// functions
 	{
 		err("Expected ", args...);
 	}
-	void expected(PTok tok) const
+
+
+	void __expected_tokens_innards() const
 	{
-		expected("token of type \"", tok->str(), "\"!");
 	}
+	template<typename... RemArgTypes>
+	void __expected_tokens_innards(PTok tok, RemArgTypes&&... rem_args)
+		const
+	{
+		printerr("\"", tok->str(), "\"");
+
+		if (sizeof...(rem_args) > 0)
+		{
+			printerr(" or ");
+			__expected_tokens_innards(rem_args...);
+		}
+	}
+	
+	template<typename... ArgTypes>
+	void expected_tokens(ArgTypes&&... args) const
+	{
+		printerr("Expected token of type ");
+		__expected_tokens_innards(args...);
+		printerr("!\n");
+		exit(1);
+	}
+
 	void need(PTok tok);
 
 	void advance();
@@ -66,10 +93,11 @@ private:		// functions
 	s64 handle_expr();
 
 	bool next_tok_is_punct() const;
+	bool next_tok_is_ident_ish() const;
 
 
 
-	gen_getter_by_ref(sym_tbl)
+	gen_getter_by_ref(built_in_sym_tbl)
 	gen_getter_by_ref(user_sym_tbl)
 
 	gen_getter_by_val(line_num)
@@ -77,6 +105,7 @@ private:		// functions
 	gen_getter_by_val(next_tok)
 	gen_getter_by_con_ref(next_sym_str)
 	gen_getter_by_val(next_num)
+	gen_getter_by_val(changed)
 
 
 	gen_setter_by_val(line_num)
@@ -84,9 +113,10 @@ private:		// functions
 	gen_setter_by_val(next_tok)
 	gen_setter_by_con_ref(next_sym_str)
 	gen_setter_by_val(next_num);
+	gen_setter_by_val(changed)
 
 
 };
 
 
-#endif		// application_class_hpp
+#endif		// assembler_class_hpp

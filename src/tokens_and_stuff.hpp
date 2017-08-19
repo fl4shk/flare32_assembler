@@ -44,16 +44,21 @@ LIST_OF_MULTI_CHAR_OPERATOR_TOKESN(VARNAME, VALUE)
 
 
 
-
-#define LIST_OF_EXTRA_TOKENS(VARNAME, VALUE) \
-/* "Number", "Identifier" */ \
-VARNAME(NatNum) VALUE("NaturalNumber") \
+#define LIST_OF_IDENT_ISH_TOKENS(VARNAME, VALUE) \
+/* "Instruction", "Register", "Identifier" */ \
 VARNAME(Instr) VALUE("Instruction") \
 VARNAME(Reg) VALUE("Register") \
-VARNAME(Ident) VALUE("Identifier") \
+VARNAME(Ident) VALUE("Identifier")
+
+#define LIST_OF_EXTRA_TOKENS(VARNAME, VALUE) \
+/* "Number" */ \
+VARNAME(NatNum) VALUE("NaturalNumber") \
+\
+LIST_OF_IDENT_ISH_TOKENS(VARNAME, VALUE) \
 \
 /* "Blank" */ \
 VARNAME(Blank) VALUE("Blank")
+
 
 
 

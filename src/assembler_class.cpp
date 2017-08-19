@@ -1,18 +1,19 @@
-#include "application_class.hpp"
+#include "assembler_class.hpp"
 
 
-Application::Application()
+Assembler::Assembler()
 {
 }
 
-int Application::operator () ()
+int Assembler::operator () ()
 {
-	advance();
-	lex();
-	while (next_tok() != &Tok::Blank)
-	{
-		parse();
-	}
+	//expected_tokens(&Tok::Ident, &Tok::NatNum, &Tok::Reg);
+	//advance();
+	//lex();
+	//while (next_tok() != &Tok::Blank)
+	//{
+	//	parse();
+	//}
 
 	//for (auto& block_iter : blk_map())
 	//{
@@ -32,10 +33,39 @@ int Application::operator () ()
 	//	printout(sprite_iter.second.cvec);
 	//}
 
+
+	do
+	{
+		reinit();
+
+		advance();
+		lex();
+
+		while (next_tok() != &Tok::Blank)
+		{
+			parse();
+		}
+
+	} while (changed());
+
 	return 0;
 }
 
-void Application::need(PTok tok)
+
+
+void Assembler::reinit()
+{
+	rewind(stdin);
+	set_line_num(1);
+	set_next_char(' ');
+	set_next_tok(nullptr);
+	set_next_sym_str("");
+	set_next_num(-1);
+	set_changed(false);
+}
+
+
+void Assembler::need(PTok tok)
 {
 	if (next_tok() == tok)
 	{
@@ -46,11 +76,11 @@ void Application::need(PTok tok)
 	else
 	{
 		printerr("need():  ");
-		expected(tok);
+		expected_tokens(tok);
 	}
 }
 
-void Application::advance()
+void Assembler::advance()
 {
 	if (next_char() == EOF)
 	{
@@ -58,7 +88,8 @@ void Application::advance()
 		return;
 	}
 
-	set_next_char(getchar());
+	//set_next_char(getchar());
+	set_next_char(fgetc(stdin));
 
 	if (next_char() == '\n')
 	{
@@ -68,7 +99,7 @@ void Application::advance()
 
 
 
-void Application::lex()
+void Assembler::lex()
 {
 	while (isspace(next_char()))
 	{
@@ -129,8 +160,16 @@ void Application::lex()
 			user_sym_tbl().at(next_str) = to_insert;
 		}
 
+		if (built_in_sym_tbl().contains(next_str))
+		{
+			const Symbol& temp = built_in_sym_tbl().at(next_str);
+			set_next_tok(temp.token());
+		}
+		else
+		{
+			set_next_tok(&Tok::Ident);
+		}
 
-		set_next_tok(&Tok::Ident);
 		set_next_sym_str(next_str);
 
 		return;
@@ -206,7 +245,7 @@ void Application::lex()
 
 }
 
-void Application::parse()
+void Assembler::parse()
 {
 	printout("parse():  ", next_tok()->str(), "\n");
 
@@ -238,7 +277,7 @@ void Application::parse()
 
 
 
-s64 Application::handle_term()
+s64 Assembler::handle_term()
 {
 	s64 ret = handle_factor();
 
@@ -284,7 +323,7 @@ s64 Application::handle_term()
 	return ret;
 }
 
-s64 Application::handle_factor()
+s64 Assembler::handle_factor()
 {
 	if (next_tok() == &Tok::NatNum)
 	{
@@ -293,27 +332,33 @@ s64 Application::handle_factor()
 		return ret;
 	}
 	//else if (next_tok() == &Tok::Ident)
-	//{
-	//	size_t index;
-	//	if (some_cvec.contains(next_sym_str(), index))
-	//	{
-	//		s64 ret = some_cvec.vec.at(index).get_s64();
-	//		lex();
-	//		return ret;
-	//	}
-	//	else
-	//	{
-	//		expected("existing constant of name \"", next_sym_str(),
-	//			"\"!");
-	//	}
-	//}
+	else if (next_tok_is_ident_ish())
+	{
+		//size_t index;
+		//if (some_cvec.contains(next_sym_str(), index))
+		//{
+		//	s64 ret = some_cvec.vec.at(index).get_s64();
+		//	lex();
+		//	return ret;
+		//}
+		//else
+		//{
+		//	expected("existing constant of name \"", next_sym_str(),
+		//		"\"!");
+		//}
+
+		//if (user_sym_tbl().contains(next_sym_str()))
+		//{
+		//}
+	}
 
 	s64 ret;
 
 	if (next_tok() != &Tok::LParen)
 	{
-		expected("token of type \"", Tok::NatNum.str(), "\" or \"", 
-			Tok::Ident.str(), "\" or \"", Tok::LParen.str(), "\"!");
+		//expected("token of type \"", Tok::NatNum.str(), "\" or \"", 
+		//	Tok::Ident.str(), "\" or \"", Tok::LParen.str(), "\"!");
+		expected_tokens(&Tok::NatNum, &Tok::Ident, &Tok::LParen);
 	}
 
 	need(&Tok::LParen);
@@ -325,7 +370,7 @@ s64 Application::handle_factor()
 	return ret;
 }
 
-s64 Application::handle_expr()
+s64 Assembler::handle_expr()
 {
 	const auto old_next_tok = next_tok();
 
@@ -362,7 +407,7 @@ s64 Application::handle_expr()
 
 
 
-bool Application::next_tok_is_punct() const
+bool Assembler::next_tok_is_punct() const
 {
 	if (next_tok() == nullptr)
 	{
@@ -380,6 +425,27 @@ bool Application::next_tok_is_punct() const
 	#undef VARNAME
 	#undef VALUE
 
+
+	return false;
+}
+
+bool Assembler::next_tok_is_ident_ish() const
+{
+	if (next_tok() == nullptr)
+	{
+	}
+
+	#define VARNAME(some_tok) \
+		else if (next_tok() == &Tok::some_tok) \
+		{ \
+			return true; \
+		}
+	#define VALUE(some_str) 
+	
+	LIST_OF_IDENT_ISH_TOKENS(VARNAME, VALUE)
+
+	#undef VARNAME
+	#undef VALUE
 
 	return false;
 }
