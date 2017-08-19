@@ -10,7 +10,7 @@ private:		// variables
 	std::string __name;
 	PTok __token;
 
-	// This is used for labels
+	// This is used for labels and stuff
 	s64 __value;
 
 public:		// functions

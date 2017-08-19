@@ -140,7 +140,7 @@ void Application::lex()
 	if (next_char() == '0')
 	{
 		set_next_num(0);
-		set_next_tok(&Tok::NaturalNumber);
+		set_next_tok(&Tok::NatNum);
 
 		advance();
 
@@ -161,7 +161,7 @@ void Application::lex()
 			advance();
 		} while (isdigit(next_char()));
 
-		set_next_tok(&Tok::NaturalNumber);
+		set_next_tok(&Tok::NatNum);
 
 		return;
 
@@ -286,7 +286,7 @@ s64 Application::handle_term()
 
 s64 Application::handle_factor()
 {
-	if (next_tok() == &Tok::NaturalNumber)
+	if (next_tok() == &Tok::NatNum)
 	{
 		s64 ret = next_num();
 		lex();
@@ -312,8 +312,8 @@ s64 Application::handle_factor()
 
 	if (next_tok() != &Tok::LParen)
 	{
-		expected("token of type \"NaturalNumber\" or \"Identifier\" or ",
-			"\"(\"!");
+		expected("token of type \"", Tok::NatNum.str(), "\" or \"", 
+			Tok::Ident.str(), "\" or \"", Tok::LParen.str(), "\"!");
 	}
 
 	need(&Tok::LParen);
