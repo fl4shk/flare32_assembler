@@ -35,6 +35,7 @@ public:		// functions
 
 private:		// functions
 	void reinit();
+	void fill_built_in_sym_tbl();
 
 	template<typename... ArgTypes>
 	void err_suffix(ArgTypes&&... args) const

@@ -10,6 +10,8 @@ Assembler::Assembler(char* s_input_filename)
 	{
 		err("Cannot read file");
 	}
+
+	fill_built_in_sym_tbl();
 }
 
 int Assembler::operator () ()
@@ -69,6 +71,10 @@ void Assembler::reinit()
 	set_next_sym_str("");
 	set_next_num(-1);
 	set_changed(false);
+}
+
+void Assembler::fill_built_in_sym_tbl()
+{
 }
 
 
