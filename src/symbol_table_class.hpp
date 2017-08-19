@@ -3,6 +3,7 @@
 
 #include "misc_includes.hpp"
 #include "tokens_and_stuff.hpp"
+#include "instruction_class.hpp"
 
 class Symbol
 {
