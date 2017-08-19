@@ -23,8 +23,11 @@ private:		// variables
 
 	bool __changed = false;
 
+	char* __input_filename = nullptr;
+	std::FILE* __infile = nullptr;
+
 public:		// functions
-	Assembler();
+	Assembler(char* s_input_filename);
 
 	int operator () ();
 
@@ -106,6 +109,8 @@ private:		// functions
 	gen_getter_by_con_ref(next_sym_str)
 	gen_getter_by_val(next_num)
 	gen_getter_by_val(changed)
+	gen_getter_by_val(input_filename)
+	gen_getter_by_val(infile)
 
 
 	gen_setter_by_val(line_num)
@@ -114,6 +119,8 @@ private:		// functions
 	gen_setter_by_con_ref(next_sym_str)
 	gen_setter_by_val(next_num);
 	gen_setter_by_val(changed)
+	gen_setter_by_val(input_filename)
+	gen_setter_by_val(infile)
 
 
 };

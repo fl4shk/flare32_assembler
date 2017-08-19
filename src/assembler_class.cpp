@@ -1,8 +1,15 @@
 #include "assembler_class.hpp"
 
 
-Assembler::Assembler()
+Assembler::Assembler(char* s_input_filename) 
 {
+	set_input_filename(s_input_filename);
+	set_infile(fopen(input_filename(), "r"));
+
+	if (infile() == nullptr)
+	{
+		err("Cannot read file");
+	}
 }
 
 int Assembler::operator () ()
@@ -55,7 +62,7 @@ int Assembler::operator () ()
 
 void Assembler::reinit()
 {
-	rewind(stdin);
+	rewind(infile());
 	set_line_num(1);
 	set_next_char(' ');
 	set_next_tok(nullptr);
@@ -89,7 +96,7 @@ void Assembler::advance()
 	}
 
 	//set_next_char(getchar());
-	set_next_char(fgetc(stdin));
+	set_next_char(getc(infile()));
 
 	if (next_char() == '\n')
 	{
