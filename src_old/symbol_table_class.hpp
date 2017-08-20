@@ -4,7 +4,7 @@
 #include "token_stuff_etc.hpp"
 #include "instruction_table_class.hpp"
 
-namespace navichip32
+namespace gigachip32
 {
 
 class symbol

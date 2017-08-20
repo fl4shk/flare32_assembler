@@ -1,6 +1,6 @@
 #include "instruction_table_class.hpp"
 
-namespace navichip32
+namespace gigachip32
 {
 
 void instruction_table::enter( const std::string& name, size_t opcode, 

@@ -3,7 +3,7 @@
 
 #include <cstdio>
 
-namespace navichip32
+namespace gigachip32
 {
 
 std::FILE* get_copy_of_stdin();

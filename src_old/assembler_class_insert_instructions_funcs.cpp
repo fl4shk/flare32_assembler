@@ -1,6 +1,6 @@
 #include "assembler_class.hpp"
 
-namespace navichip32
+namespace gigachip32
 {
 
 // Constructor stuff

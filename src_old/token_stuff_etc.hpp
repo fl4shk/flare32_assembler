@@ -4,7 +4,7 @@
 #include "misc_includes.hpp"
 
 
-namespace navichip32
+namespace gigachip32
 {
 
 typedef s32 tok;

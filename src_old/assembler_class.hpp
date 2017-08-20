@@ -5,7 +5,7 @@
 #include "instruction_table_class.hpp"
 
 
-namespace navichip32
+namespace gigachip32
 {
 
 class real_iarg

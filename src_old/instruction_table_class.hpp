@@ -3,7 +3,7 @@
 
 #include "token_stuff_etc.hpp"
 
-namespace navichip32
+namespace gigachip32
 {
 
 class symbol;

@@ -1,7 +1,7 @@
 #include "get_copy_of_stdin.hpp"
 
 
-namespace navichip32
+namespace gigachip32
 {
 
 std::FILE* get_copy_of_stdin()

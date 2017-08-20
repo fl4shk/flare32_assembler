@@ -5,7 +5,7 @@
 #include "symbol_table_class.hpp"
 //#include "warn_error_stuff.hpp"
 
-namespace navichip32
+namespace gigachip32
 {
 
 class warn_error;
