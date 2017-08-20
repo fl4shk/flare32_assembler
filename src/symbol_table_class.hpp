@@ -5,6 +5,9 @@
 #include "tokens_and_stuff.hpp"
 #include "instruction_class.hpp"
 
+namespace gigachip32
+{
+
 class Symbol
 {
 private:		// variables
@@ -83,5 +86,6 @@ private:		// functions
 
 };
 
+}
 
 #endif		// symbol_table_class_hpp

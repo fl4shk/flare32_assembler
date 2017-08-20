@@ -1,5 +1,7 @@
 #include "assembler_class.hpp"
 
+namespace gigachip32
+{
 
 Assembler::Assembler(char* s_input_filename) 
 {
@@ -468,3 +470,4 @@ bool Assembler::next_tok_is_ident_ish() const
 	return false;
 }
 
+}

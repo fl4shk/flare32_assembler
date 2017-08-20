@@ -68,6 +68,8 @@ LIST_OF_OPERATOR_TOKENS(VARNAME, VALUE) \
 LIST_OF_EXTRA_TOKENS(VARNAME, VALUE)
 
 
+namespace gigachip32
+{
 
 
 class Tok;
@@ -143,6 +145,8 @@ public:		// functions
 	gen_setter_by_rval_ref(str)
 
 };
+
+}
 
 
 #endif		// tokens_and_stuff_hpp

@@ -7,6 +7,10 @@
 
 #include "symbol_table_class.hpp"
 
+
+namespace gigachip32
+{
+
 class Assembler
 {
 private:		// classes
@@ -126,5 +130,6 @@ private:		// functions
 
 };
 
+}
 
 #endif		// assembler_class_hpp
