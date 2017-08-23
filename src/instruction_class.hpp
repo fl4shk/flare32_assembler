@@ -18,31 +18,33 @@ namespace gigachip32
 enum class InstrArgs
 {
 	no_args,
-	imm,
+	uimm16,
+	simm16,
+	imm32,
 
 	ra,
-	ra_imm,
 	ra_rb,
-	ra_rb_imm,
+	ra_rb_uimm16,
+	ra_rb_simm16,
 	ra_rb_rc,
-	ra_rb_rc_imm,
+	ra_rb_rc_simm12,
 
-	ldst_ra_rb_rc_imm,
+	ldst_ra_rb_rc_simm12,
 	ldst_ra_rb_rc,
-	ldst_ra_rb_imm,
+	ldst_ra_rb_simm12,
 	ldst_ra_rb,
-	ldst_ra_imm,
-	ldst_generic_ra_rb_rc_imm,
+	ldst_generic_ra_rb_rc_simm12,
 
 
-	ldst_block_rx_ra,
-	ldst_block_rx_ra_rb,
-	ldst_block_rx_ra_rb_rc,
-	ldst_block_rx_ra_rb_rc_rd,
-	ldst_block_rx_ra_rb_rc_rd_re,
-	ldst_block_rx_ra_rb_rc_rd_re_rf,
-	ldst_block_rx_ra_rb_rc_rd_re_rf_rg,
-	ldst_block_rx_ra_rb_rc_rd_re_rf_rg_rh,
+	// Block moves (ldmia, stmia, stmdb) with number of {} args
+	ldst_block_1,
+	ldst_block_2,
+	ldst_block_3,
+	ldst_block_4,
+	ldst_block_5,
+	ldst_block_6,
+	ldst_block_7,
+	ldst_block_8,
 
 	ira,
 	ra_ira,
@@ -54,23 +56,25 @@ enum class InstrArgs
 
 	ra_pc,
 
-	pseudo_rb,
-	pseudo_rb_imm,
-	pseudo_rb_rc,
-	pseudo_rb_rc_imm,
-	pseudo_ra_rc,
-	pseudo_pc_rb,
+	//pseudo_ldst_ra_imm32,
+
+	//pseudo_rb,
+	//pseudo_rb_imm,
+	//pseudo_rb_rc,
+	//pseudo_rb_rc_imm,
+	//pseudo_ra_rc,
+	//pseudo_pc_rb,
 
 
-	// Block-move style push and pop
-	pseudo_ldst_stack_block_ra,
-	pseudo_ldst_stack_block_ra_rb,
-	pseudo_ldst_stack_block_ra_rb_rc,
-	pseudo_ldst_stack_block_ra_rb_rc_rd,
-	pseudo_ldst_stack_block_ra_rb_rc_rd_re,
-	pseudo_ldst_stack_block_ra_rb_rc_rd_re_rf,
-	pseudo_ldst_stack_block_ra_rb_rc_rd_re_rf_rg,
-	pseudo_ldst_stack_block_ra_rb_rc_rd_re_rf_rg_rh,
+	//// Block-move style push and pop
+	//pseudo_ldst_stack_block_1,
+	//pseudo_ldst_stack_block_2,
+	//pseudo_ldst_stack_block_3,
+	//pseudo_ldst_stack_block_4,
+	//pseudo_ldst_stack_block_5,
+	//pseudo_ldst_stack_block_6,
+	//pseudo_ldst_stack_block_7,
+	//pseudo_ldst_stack_block_8,
 };
 
 
