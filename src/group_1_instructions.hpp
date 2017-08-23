@@ -13,7 +13,7 @@
 	// b: rB
 	// i:  16-bit immediate value
 
-#define LIST_OF_INSTR_G1_RA_RB_IMM__COLLECTION_0(ARGS, VARNAME, VALUE) \
+#define LIST_OF_INSTR_G1_RA_RB_UIMM16__COLLECTION_0(ARGS, VARNAME, VALUE) \
 /* rA = rB + (zero-extended imm) */ \
 /* This instruction can affect N, V, Z, and C flags. */ \
 ARGS(ra_rb_uimm16) VARNAME(Addi) VALUE("addi") \
@@ -74,7 +74,7 @@ ARGS(ra_rb_uimm16) VARNAME(Roli) VALUE("roli") \
 ARGS(ra_rb_uimm16) VARNAME(Rori) VALUE("rori") \
 
 
-#define LIST_OF_INSTR_G1_IMM__COLLECTION_0(ARGS, VARNAME, VALUE) \
+#define LIST_OF_INSTR_G1_SIMM16__COLLECTION_0(ARGS, VARNAME, VALUE) \
 /* Branch always,  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
@@ -164,12 +164,18 @@ ARGS(simm16) VARNAME(Bgt) VALUE("bgt") \
 ARGS(simm16) VARNAME(Ble) VALUE("ble") \
 
 
-#define LIST_OF_INSTR_G1_RA_RB_SIMM__COLLECTION_1(ARGS, VARNAME, VALUE) \
+#define LIST_OF_INSTR_G1_RA_RB_SIMM16__COLLECTION_0(ARGS, VARNAME, VALUE) \
 /* rA = rB ^ (sign-extended imm) */ \
 /* This instruction can affect the N and Z flags. */ \
 ARGS(ra_rb_simm16) VARNAME(Xorsi) VALUE("xorsi")
 
 /* Reserved for future expansion. */
+
+
+#define LIST_OF_GROUP_1_INSTRUCTIONS(ARGS, VARNAME, VALUE) \
+LIST_OF_INSTR_G1_RA_RB_UIMM16__COLLECTION_0(ARGS, VARNAME, VALUE) \
+LIST_OF_INSTR_G1_SIMM16__COLLECTION_0(ARGS, VARNAME, VALUE) \
+LIST_OF_INSTR_G1_RA_RB_SIMM16__COLLECTION_0(ARGS, VARNAME, VALUE) \
 
 
 #endif		// group_1_instructions_hpp
