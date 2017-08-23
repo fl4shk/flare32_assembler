@@ -5,6 +5,9 @@
 
 
 #include "group_0_instructions.hpp"
+#include "group_1_instructions.hpp"
+#include "group_2_instructions.hpp"
+#include "group_3_instructions.hpp"
 
 
 
