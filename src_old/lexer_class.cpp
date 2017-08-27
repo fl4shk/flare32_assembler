@@ -1,7 +1,7 @@
 #include "lexer_class.hpp"
 
 
-namespace gigachip32
+namespace flare32
 {
 
 void lexer::init( std::FILE* s_infile, warn_error* s_we, size_t* s_pass,

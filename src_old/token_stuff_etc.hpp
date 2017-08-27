@@ -4,7 +4,7 @@
 #include "misc_includes.hpp"
 
 
-namespace gigachip32
+namespace flare32
 {
 
 typedef s32 tok;

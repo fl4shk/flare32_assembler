@@ -5,7 +5,7 @@
 #include "symbol_table_class.hpp"
 //#include "warn_error_stuff.hpp"
 
-namespace gigachip32
+namespace flare32
 {
 
 class warn_error;

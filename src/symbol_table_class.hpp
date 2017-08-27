@@ -5,7 +5,7 @@
 #include "tokens_and_stuff.hpp"
 #include "instruction_class.hpp"
 
-namespace gigachip32
+namespace flare32
 {
 
 class Symbol

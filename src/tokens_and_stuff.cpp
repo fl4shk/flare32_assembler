@@ -1,7 +1,7 @@
 #include "tokens_and_stuff.hpp"
 
 
-namespace gigachip32
+namespace flare32
 {
 
 #define VARNAME(some_tok) Tok::some_tok

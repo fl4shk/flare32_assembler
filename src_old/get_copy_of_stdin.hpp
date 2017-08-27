@@ -3,7 +3,7 @@
 
 #include <cstdio>
 
-namespace gigachip32
+namespace flare32
 {
 
 std::FILE* get_copy_of_stdin();

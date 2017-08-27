@@ -1,6 +1,6 @@
 #include "symbol_table_class.hpp"
 
-namespace gigachip32
+namespace flare32
 {
 
 bool symbol_table::sym_name_has_dot_f( const std::string& name ) const

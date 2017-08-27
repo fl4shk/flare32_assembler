@@ -1,6 +1,6 @@
 #include "assembler_class.hpp"
 
-namespace gigachip32
+namespace flare32
 {
 
 Assembler::Assembler(char* s_input_filename) 

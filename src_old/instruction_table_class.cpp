@@ -1,6 +1,6 @@
 #include "instruction_table_class.hpp"
 
-namespace gigachip32
+namespace flare32
 {
 
 void instruction_table::enter( const std::string& name, size_t opcode, 

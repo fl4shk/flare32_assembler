@@ -1,2 +1,2 @@
-# GigaChip32 Assembler
+# Flare32 Assembler
 My first real attempt at writing an assembler

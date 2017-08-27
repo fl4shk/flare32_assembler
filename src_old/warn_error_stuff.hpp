@@ -4,7 +4,7 @@
 #include "misc_includes.hpp"
 //#include "lexer_class.hpp"
 
-namespace gigachip32
+namespace flare32
 {
 
 class lexer;

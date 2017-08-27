@@ -11,7 +11,7 @@
 
 
 
-namespace gigachip32
+namespace flare32
 {
 
 

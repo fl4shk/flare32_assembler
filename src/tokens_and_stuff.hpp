@@ -68,7 +68,7 @@ LIST_OF_OPERATOR_TOKENS(VARNAME, VALUE) \
 LIST_OF_EXTRA_TOKENS(VARNAME, VALUE)
 
 
-namespace gigachip32
+namespace flare32
 {
 
 

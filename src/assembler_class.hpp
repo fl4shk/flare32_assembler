@@ -8,7 +8,7 @@
 #include "symbol_table_class.hpp"
 
 
-namespace gigachip32
+namespace flare32
 {
 
 class Assembler
