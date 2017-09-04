@@ -15,34 +15,34 @@
 #define LIST_OF_INSTR_G0_LDST_RA_RB__COLLECTION_0(ENC_GROUP, ARGS, \
 	VARNAME, VALUE) \
 /* Load 32-bit value from address rB into rA. */ \
-INSTR_LDST_RA_RB(ldr) \
+ENC_GROUP(0) ARGS(ldst_ra_rb) VARNAME(Ldr) VALUE("ldr") \
 \
 /* Load zero-extended 16-bit value from address rB into rA. */ \
 /* This zero-extends the value. */ \
-INSTR_LDST_RA_RB(ldh) \
+ENC_GROUP(0) ARGS(ldst_ra_rb) VARNAME(Ldh) VALUE("ldh") \
 \
 /* Load sign-extended 16-bit value from address rB into rA. */ \
 /* This sign-extends the value. */ \
-INSTR_LDST_RA_RB(ldsh) \
+ENC_GROUP(0) ARGS(ldst_ra_rb) VARNAME(Ldsh) VALUE("ldsh") \
 \
 /* Load zero-extended 8-bit value from address rB into rA. */ \
 /* This zero-extends the value. */ \
-INSTR_LDST_RA_RB(ldb) \
+ENC_GROUP(0) ARGS(ldst_ra_rb) VARNAME(Ldb) VALUE("ldb") \
 \
 \
 \
 /* Load sign-extended 8-bit value from address rB into rA. */ \
 /* This sign-extends the value. */ \
-INSTR_LDST_RA_RB(ldsb) \
+ENC_GROUP(0) ARGS(ldst_ra_rb) VARNAME(Ldsb) VALUE("ldsb") \
 \
 /* Store 32-bit value in rA to address rB. */ \
-INSTR_LDST_RA_RB(str) \
+ENC_GROUP(0) ARGS(ldst_ra_rb) VARNAME(Str) VALUE("str") \
 \
 /* Store low 16 bits of rA to address rB. */ \
-INSTR_LDST_RA_RB(sth) \
+ENC_GROUP(0) ARGS(ldst_ra_rb) VARNAME(Sth) VALUE("sth") \
 \
 /* Store low 8 bits of rA to address rB. */ \
-INSTR_LDST_RA_RB(stb)
+ENC_GROUP(0) ARGS(ldst_ra_rb) VARNAME(Stb) VALUE("stb")
 
 
 
@@ -50,91 +50,91 @@ INSTR_LDST_RA_RB(stb)
 	VALUE) \
 /* rA = rA + rB */ \
 /* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_RA_RB(add) \
+ENC_GROUP(0) ARGS(ra_rb) VARNAME(Add) VALUE("add") \
 \
 /* rA = rA + rB + carry_flag */ \
 /* Add with carry */ \
 /* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_RA_RB(adc) \
+ENC_GROUP(0) ARGS(ra_rb) VARNAME(Adc) VALUE("adc") \
 \
 /* rA = rA - rB */ \
 /* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_RA_RB(sub) \
+ENC_GROUP(0) ARGS(ra_rb) VARNAME(Sub) VALUE("sub") \
 \
 /* rA = rA + (~rB) + carry_flag */ \
 /* Subtract with borrow (6502 style) */ \
 /* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_RA_RB(sbc) \
+ENC_GROUP(0) ARGS(ra_rb) VARNAME(Sbc) VALUE("sbc") \
 \
 \
 \
 /* rA = rB - rA */ \
 /* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_RA_RB(rsb) \
+ENC_GROUP(0) ARGS(ra_rb) VARNAME(Rsb) VALUE("rsb") \
 \
 /* rA = rA * rB */ \
-INSTR_RA_RB(mul) \
+ENC_GROUP(0) ARGS(ra_rb) VARNAME(Mul) VALUE("mul") \
 \
 /* rA = rA & rB */ \
 /* This instruction can affect the N and Z flags. */ \
-INSTR_RA_RB(and) \
+ENC_GROUP(0) ARGS(ra_rb) VARNAME(And) VALUE("and") \
 \
 /* rA = rA | rB */ \
 /* This instruction can affect the N and Z flags. */ \
-INSTR_RA_RB(or) \
+ENC_GROUP(0) ARGS(ra_rb) VARNAME(Or) VALUE("or") \
 \
 \
 \
 /* rA = rA ^ rB */ \
 /* This instruction can affect the N and Z flags. */ \
-INSTR_RA_RB(xor) \
+ENC_GROUP(0) ARGS(ra_rb) VARNAME(Xor) VALUE("xor") \
 \
 /* Logical shift left */ \
 /* rA = rA << rB */ \
-INSTR_RA_RB(lsl) \
+ENC_GROUP(0) ARGS(ra_rb) VARNAME(Lsl) VALUE("lsl") \
 \
 /* Logical shift right */ \
-INSTR_RA_RB(lsr) \
+ENC_GROUP(0) ARGS(ra_rb) VARNAME(Lsr) VALUE("lsr") \
 \
 /* Arithmetic shift right */ \
-INSTR_RA_RB(asr) \
+ENC_GROUP(0) ARGS(ra_rb) VARNAME(Asr) VALUE("asr") \
 \
 \
 \
 /* Rotate rA left by rB bits, then store result in rA. */ \
-INSTR_RA_RB(rol) \
+ENC_GROUP(0) ARGS(ra_rb) VARNAME(Rol) VALUE("rol") \
 \
 /* Rotate rA right by rB bits, then store result in rA. */ \
-INSTR_RA_RB(ror) \
+ENC_GROUP(0) ARGS(ra_rb) VARNAME(Ror) VALUE("ror") \
 \
 /* Rotate rB left (THROUGH carry) by 1 bit, then store result in rA. */ \
 /* This instruction can only affect the C flag. */ \
-INSTR_RA_RB(rlc) \
+ENC_GROUP(0) ARGS(ra_rb) VARNAME(Rlc) VALUE("rlc") \
 \
 /* Rotate rB right (THROUGH carry) by 1 bit, then store result in rA. */ \
 /* This instruction can only affect the C flag. */ \
-INSTR_RA_RB(rrc)
+ENC_GROUP(0) ARGS(ra_rb) VARNAME(Rrc) VALUE("rrc")
 
 
 
 #define LIST_OF_INSTR_G0_IRA_RA__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, \
 	VALUE) \
 /* Copy rA to the Interrupt Return Address */ \
-INSTR_IRA_RA(cpy)
+ENC_GROUP(0) ARGS(ira_ra) VARNAME(Cpy) VALUE("cpy")
 
 #define LIST_OF_INSTR_G0_RA_IRA__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, \
 	VALUE)\
 /* Copy the Interrupt Return Address to rA */ \
-INSTR_RA_IRA(cpy)
+ENC_GROUP(0) ARGS(ra_ira) VARNAME(Cpy) VALUE("cpy")
 
 #define LIST_OF_INSTR_G0_RA_RB__COLLECTION_1(ENC_GROUP, ARGS, VARNAME, \
 	VALUE)\
 /* Subroutine call using (rA + rB) as destination address.  */ \
 /* The return address is stored in the link register (lr). */ \
-INSTR_RA_RB(callx) \
+ENC_GROUP(0) ARGS(ra_rb) VARNAME(Callx) VALUE("callx") \
 \
 /* Set pc to destination address in (rA + rB). */ \
-INSTR_RA_RB(jumpx)
+ENC_GROUP(0) ARGS(ra_rb) VARNAME(Jumpx) VALUE("jumpx")
 
 
 
@@ -142,7 +142,7 @@ INSTR_RA_RB(jumpx)
 	VALUE) \
 /* Copy pc to rA (this can be used for pc-relative loads */ \
 /* and stores) */ \
-INSTR_RA_PC(cpy)
+ENC_GROUP(0) ARGS(ra_pc) VARNAME(Cpy) VALUE("cpy")
 
 
 
@@ -150,14 +150,14 @@ INSTR_RA_PC(cpy)
 	VALUE) \
 /* Copy */ \
 /* rA = rB */ \
-INSTR_RA_RB(cpy) \
+ENC_GROUP(0) ARGS(ra_rb) VARNAME(Cpy) VALUE("cpy") \
 \
 /* rA = Sign extend of low 16 bits in rB */ \
 /* Note that the high 16 bits of rB are ignored */ \
-INSTR_RA_RB(seh) \
+ENC_GROUP(0) ARGS(ra_rb) VARNAME(Seh) VALUE("seh") \
 \
 /* rA = Sign extend of low 8 bits in rB */ \
-INSTR_RA_RB(seb)
+ENC_GROUP(0) ARGS(ra_rb) VARNAME(Seb) VALUE("seb")
 
 
 
