@@ -20,7 +20,7 @@ ifdef DEBUG
 endif
 
 # This is the name of the output file.  Change this if needed!
-PROJ:=$(shell basename $(CURDIR))$(DEBUG_SUFFIX)
+PROJ:=$(shell basename $(CURDIR))$(DEBUG_SUFFIX).elf
 
 
 
