@@ -9,7 +9,7 @@ CXX_DIRS:=$(SHARED_SRC_DIRS)
 
 # Comment out or un-comment out the next line to enable debugging stuff to
 # be generated
-DEBUG:=yeah do debug
+#DEBUG:=yeah do debug
 
 DEBUG_OPTIMIZATION_LEVEL:=-O0
 REGULAR_OPTIMIZATION_LEVEL:=-O2
@@ -20,7 +20,7 @@ ifdef DEBUG
 endif
 
 # This is the name of the output file.  Change this if needed!
-PROJ:=$(shell basename $(CURDIR))$(DEBUG_SUFFIX).elf
+PROJ:=$(shell basename $(CURDIR))$(DEBUG_SUFFIX)
 
 
 
@@ -43,6 +43,9 @@ ifdef DEBUG
 else
 	OPTIMIZATION_LEVEL:=$(REGULAR_OPTIMIZATION_LEVEL)
 endif
+
+
+
 
 
 
