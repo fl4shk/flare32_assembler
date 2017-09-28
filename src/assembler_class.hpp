@@ -16,12 +16,12 @@ class Assembler
 private:		// classes
 
 private:		// variables
-	SymbolTable __built_in_sym_tbl, __user_sym_tbl;
+	SymbolTable __builtin_sym_tbl, __user_sym_tbl;
 
 	size_t __line_num = 1;
 
 	int __next_char = ' ';
-	PTok __next_tok = nullptr;
+	PTok __next_builtin_tok = nullptr, __next_tok = nullptr;
 	std::string __next_sym_str;
 	s64 __next_num = -1;
 
@@ -39,7 +39,7 @@ public:		// functions
 
 private:		// functions
 	void reinit();
-	void fill_built_in_sym_tbl();
+	void fill_builtin_sym_tbl();
 
 	template<typename... ArgTypes>
 	void err_suffix(ArgTypes&&... args) const
@@ -105,11 +105,12 @@ private:		// functions
 
 
 
-	gen_getter_by_ref(built_in_sym_tbl)
+	gen_getter_by_ref(builtin_sym_tbl)
 	gen_getter_by_ref(user_sym_tbl)
 
 	gen_getter_by_val(line_num)
 	gen_getter_by_val(next_char)
+	gen_getter_by_val(next_builtin_tok)
 	gen_getter_by_val(next_tok)
 	gen_getter_by_con_ref(next_sym_str)
 	gen_getter_by_val(next_num)
@@ -120,6 +121,7 @@ private:		// functions
 
 	gen_setter_by_val(line_num)
 	gen_setter_by_val(next_char)
+	gen_setter_by_val(next_builtin_tok)
 	gen_setter_by_val(next_tok)
 	gen_setter_by_con_ref(next_sym_str)
 	gen_setter_by_val(next_num);

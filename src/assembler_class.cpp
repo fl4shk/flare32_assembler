@@ -13,7 +13,7 @@ Assembler::Assembler(char* s_input_filename)
 		err("Cannot read file");
 	}
 
-	fill_built_in_sym_tbl();
+	fill_builtin_sym_tbl();
 }
 
 int Assembler::operator () ()
@@ -69,13 +69,14 @@ void Assembler::reinit()
 	rewind(infile());
 	set_line_num(1);
 	set_next_char(' ');
+	set_next_builtin_tok(nullptr);
 	set_next_tok(nullptr);
 	set_next_sym_str("");
 	set_next_num(-1);
 	set_changed(false);
 }
 
-void Assembler::fill_built_in_sym_tbl()
+void Assembler::fill_builtin_sym_tbl()
 {
 }
 
@@ -173,15 +174,15 @@ void Assembler::lex()
 			user_sym_tbl().at(next_str) = to_insert;
 		}
 
-		if (built_in_sym_tbl().contains(next_str))
-		{
-			const Symbol& temp = built_in_sym_tbl().at(next_str);
-			set_next_tok(temp.token());
-		}
-		else
-		{
-			set_next_tok(&Tok::Ident);
-		}
+		//if (builtin_sym_tbl().contains(next_str))
+		//{
+		//	const Symbol& temp = builtin_sym_tbl().at(next_str);
+		//	set_next_tok(temp.token());
+		//}
+		//else
+		//{
+		//	set_next_tok(&Tok::Ident);
+		//}
 
 		set_next_sym_str(next_str);
 
