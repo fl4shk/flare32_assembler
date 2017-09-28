@@ -34,7 +34,10 @@ enum class InstrArgs
 	ldst_ra_rb_rc_simm12,
 	ldst_ra_rb_rc,
 	ldst_ra_rb_simm12,
-	ldst_generic_ra_rb_rc_simm12,
+
+
+	ldst_ra_rb_imm32,
+	ra_rb_imm32,
 
 
 	// Block moves (ldmia, stmia, stmdb) with number of {} args
