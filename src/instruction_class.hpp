@@ -23,6 +23,7 @@ enum class InstrArgs
 	imm32,
 
 	ra,
+	ra_uimm16,
 	ra_rb,
 	ra_rb_uimm16,
 	ra_rb_simm16,
