@@ -42,18 +42,12 @@ public:		// functions
 	inline Symbol& operator = (const Symbol& to_copy) = default;
 	inline Symbol& operator = (Symbol&& to_move) = default;
 
-	gen_getter_by_con_ref(name)
-	gen_getter_by_con_ref(token)
-	gen_getter_by_con_ref(instr);
-	gen_getter_by_val(value)
-	gen_getter_by_val(initialized)
-
-	gen_setter_by_con_ref(name)
+	gen_getter_and_setter_by_con_ref(name)
 	gen_setter_by_rval_ref(name)
-	gen_setter_by_con_ref(token)
-	gen_setter_by_con_ref(instr);
-	gen_setter_by_val(value)
-	gen_setter_by_val(initialized)
+	gen_getter_and_setter_by_con_ref(token)
+	gen_getter_and_setter_by_con_ref(instr)
+	gen_getter_and_setter_by_val(value)
+	gen_getter_and_setter_by_val(initialized)
 
 };
 

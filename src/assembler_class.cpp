@@ -27,10 +27,12 @@ int Assembler::operator () ()
 
 		while (next_tok() != &Tok::Blank)
 		{
-			parse();
+			line();
 		}
 
 	} while (changed());
+
+	return 0;
 }
 
 
