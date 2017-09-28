@@ -29,238 +29,153 @@
 	// i:  2-bit immediate value
 
 
+#define LIST_OF_INSTR_G2_LDST_RA_RB_RC_SIMM12__COLLECTION_0(ENC_GROUP, \
+	ARGS, VARNAME, VALUE) \
 /* Load 32-bit value from address (rB + rC + (sign-extended imm)) into 
 rA. */ \
-INSTR_LDST_RA_RB_RC_IMM(ldr) \
-
+ENC_GROUP(2) ARGS(ldst_ra_rb_rc_simm12) VARNAME(Ldr) VALUE("ldr") \
+\
 /* Load zero-extended 16-bit value from address (rB + rC + (sign-extended
 imm)) into rA. */ \
 /* This zero-extends the value. */ \
-INSTR_LDST_RA_RB_RC_IMM(ldh) \
-
+ENC_GROUP(2) ARGS(ldst_ra_rb_rc_simm12) VARNAME(Ldh) VALUE("ldh") \
+\
 /* Load sign-extended 16-bit value from address (rB + rC + (sign-extended
 imm)) into rA. */ \
 /* This sign-extends the value. */ \
-INSTR_LDST_RA_RB_RC_IMM(ldsh) \
-
+ENC_GROUP(2) ARGS(ldst_ra_rb_rc_simm12) VARNAME(Ldsh) VALUE("ldsh") \
+\
 /* Load zero-extended 8-bit value from address (rB + rC + (sign-extended
  imm)) into rA. */ \
 /* This zero-extends the value. */ \
-INSTR_LDST_RA_RB_RC_IMM(ldb) \
-
-
-
+ENC_GROUP(2) ARGS(ldst_ra_rb_rc_simm12) VARNAME(Ldb) VALUE("ldb") \
+\
+\
+\
 /* Load sign-extended 8-bit value from address (rB + rC + (sign-extended
 imm)) into rA. */ \
 /* This sign-extends the value. */ \
-INSTR_LDST_RA_RB_RC_IMM(ldsb) \
-
+ENC_GROUP(2) ARGS(ldst_ra_rb_rc_simm12) VARNAME(Ldsb) VALUE("ldsb") \
+\
 /* Store 32-bit value in rA to address (rB + rC + (sign-extended 
 imm)). */ \
-INSTR_LDST_RA_RB_RC_IMM(str) \
-
+ENC_GROUP(2) ARGS(ldst_ra_rb_rc_simm12) VARNAME(Str) VALUE("str") \
+\
 /* Store low 16 bits of rA to address (rB + rC + (sign-extended imm)). */ \
-INSTR_LDST_RA_RB_RC_IMM(sth) \
-
+ENC_GROUP(2) ARGS(ldst_ra_rb_rc_simm12) VARNAME(Sth) VALUE("sth") \
+\
 /* Store low 8 bits of rA to address (rB + rC + (sign-extended imm)). */ \
-INSTR_LDST_RA_RB_RC_IMM(stb) \
+ENC_GROUP(2) ARGS(ldst_ra_rb_rc_simm12) VARNAME(Stb) VALUE("stb")
 
 
+#define LIST_OF_INSTR_G2_RA_RB_RC__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, \
+	VALUE) \
 /* rA = rB + rC */ \
 /* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_RA_RB_RC(add) \
-
+ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Add) VALUE("add") \
+\
 /* rA = rB + rC + carry_flag */ \
 /* Add with carry */ \
 /* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_RA_RB_RC(adc) \
-
+ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Adc) VALUE("adc") \
+\
 /* rA = rB - rC */ \
 /* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_RA_RB_RC(sub) \
-
+ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Sub) VALUE("sub") \
+\
 /* rA = rB + (~rC) + carry_flag */ \
 /* Subtract with borrow (6502 style) */ \
 /* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_RA_RB_RC(sbc) \
-
-
-
+ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Sbc) VALUE("sbc") \
+\
+\
+\
 /* rA = rC - rB */ \
 /* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_RA_RB_RC(rsb) \
-
+ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Rsb) VALUE("rsb") \
+\
 /* rA = rB * rC */ \
-INSTR_RA_RB_RC(mul) \
-
+ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Mul) VALUE("mul") \
+\
 /* rA = rB & rC */ \
 /* This instruction can affect the N and Z flags. */ \
-INSTR_RA_RB_RC(and) \
-
+ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(And) VALUE("and") \
+\
 /* rA = rB | rC */ \
 /* This instruction can affect the N and Z flags. */ \
-INSTR_RA_RB_RC(or) \
-
-
-
+ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Or) VALUE("or") \
+\
+\
+\
 /* rA = rB ^ rC */ \
 /* This instruction can affect the N and Z flags. */ \
-INSTR_RA_RB_RC(xor) \
-
+ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Xor) VALUE("xor") \
+\
 /* Logical shift left */ \
 /* rA = rB << rC */ \
-INSTR_RA_RB_RC(lsl) \
-
+ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Lsl) VALUE("lsl") \
+\
 /* Logical shift right */ \
-INSTR_RA_RB_RC(lsr) \
-
+ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Lsr) VALUE("lsr") \
+\
 /* Arithmetic shift right */ \
-INSTR_RA_RB_RC(asr) \
-
-
-
+ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Asr) VALUE("asr") \
+\
+\
+\
 /* Rotate rC left by rC bits, then store result in rA. */ \
-INSTR_RA_RB_RC(rol) \
-
+ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Rol) VALUE("rol") \
+\
 /* Rotate rC right by rC bits, then store result in rA. */ \
-INSTR_RA_RB_RC(ror) \
-
+ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Ror) VALUE("ror") \
+\
 /* Fused multiply-add */ \
 /* rA = rA + (rB * rC) */ \
-INSTR_RA_RB_RC(fma) \
-
+ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Fma) VALUE("fma") \
+\
 /* Copy rC to rA and to rB */ \
 /* If rA is the same register as rB, then the  */ \
 /* register will only be written once. */ \
-INSTR_RA_RB_RC(cpyp) \
+ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Cpyp) VALUE("cpyp")
 
 
-
+#define LIST_OF_INSTR_G2_LDST_BLOCK_1_TO_4__COLLECTION_0(ENC_GROUP, ARGS, \
+	VARNAME, VALUE) \
 /* STore Multiple, Decrement Before */ \
 /* Note that this instruction takes multiple forms */ \
-/* Form 0: */ \
-	/* Encoding:  10f0 oooo aaaa 0000 0000 0000 xxxx 0000  */ \
-	/* Effect:    */ \
-		/* rX -= 4;  */ \
-		/* [rX] = rA;  */ \
-	/* Syntax:  stmdb rX, {rA} */ \
-
-/* Form 1: */ \
-	/* Encoding:  10f0 oooo aaaa bbbb 0000 0000 xxxx 0001  */ \
-	/* Effect:    */ \
-		/* rX -= 8;  */ \
-		/* [rX] = rA;  */ \
-		/* [rX + 4] = rB;  */ \
-	/* Syntax:  stmdb rX, {rA, rB} */ \
-
-/* Form 2: */ \
-	/* Encoding:  10f0 oooo aaaa bbbb cccc 0000 xxxx 0010  */ \
-	/* Effect:    */ \
-		/* rX -= 12;  */ \
-		/* [rX] = rA;  */ \
-		/* [rX + 4] = rB;  */ \
-		/* [rX + 8] = rC;  */ \
-	/* Syntax:  stmdb rX, {rA, rB, rC} */ \
-
-/* Form 3: */ \
-	/* Encoding:  10f0 oooo aaaa bbbb cccc dddd xxxx 0011  */ \
-	/* Effect:    */ \
-		/* rX -= 16;  */ \
-		/* [rX] = rA;  */ \
-		/* [rX + 4] = rB;  */ \
-		/* [rX + 8] = rC;  */ \
-		/* [rX + 12] = rD;  */ \
-	/* Syntax:  stmdb rX, {rA, rB, rC, rD} */ \
-
-
-
+ENC_GROUP(2) ARGS(ldst_block_1_to_4) VARNAME(Stmdb) VALUE("stmdb") \
+\
+\
 /* LoaD Multiple, Increment After */ \
 /* Note that this instruction takes multiple forms */ \
-/* Form 0: */ \
-	/* Encoding:  10f0 oooo aaaa 0000 0000 0000 xxxx 0000  */ \
-	/* Effect:    */ \
-		/* rA = [rX];   */ \
-		/* rX += 4;  */ \
-	/* Syntax:  ldmia rX, {rA} */ \
-
-/* Form 1: */ \
-	/* Encoding:  10f0 oooo aaaa bbbb 0000 0000 xxxx 0001  */ \
-	/* Effect:    */ \
-		/* rA = [rX];   */ \
-		/* rB = [rX + 4];  */ \
-		/* rX += 8;  */ \
-	/* Syntax:  ldmia rX, {rA, rB} */ \
-
-/* Form 2: */ \
-	/* Encoding:  10f0 oooo aaaa bbbb cccc 0000 xxxx 0010  */ \
-	/* Effect:    */ \
-		/* rA = [rX];   */ \
-		/* rB = [rX + 4];  */ \
-		/* rC = [rX + 8];  */ \
-		/* rX += 12;  */ \
-	/* Syntax:  ldmia rX, {rA, rB, rC} */ \
-
-/* Form 3: */ \
-	/* Encoding:  10f0 oooo aaaa bbbb cccc dddd xxxx 0011  */ \
-	/* Effect:    */ \
-		/* rA = [rX];   */ \
-		/* rB = [rX + 4];  */ \
-		/* rC = [rX + 8];  */ \
-		/* rD = [rX + 12];  */ \
-		/* rX += 16;  */ \
-	/* Syntax:  ldmia rX, {rA, rB, rC, rD} */ \
-
-
+ENC_GROUP(2) ARGS(ldst_block_1_to_4) VARNAME(Ldmia) VALUE("ldmia") \
+\
+\
 /* STore Multiple, Increment After */ \
 /* Note that this instruction takes multiple forms */ \
-/* Form 0: */ \
-	/* Encoding:  10f0 oooo aaaa 0000 0000 0000 xxxx 0000  */ \
-	/* Effect:    */ \
-		/* [rX] = rA;  */ \
-		/* rX += 4;  */ \
-	/* Syntax:  stmia rX, {rA} */ \
+ENC_GROUP(2) ARGS(ldst_block_1_to_4) VARNAME(Stmia) VALUE("stmia")
 
-/* Form 1: */ \
-	/* Encoding:  10f0 oooo aaaa bbbb 0000 0000 xxxx 0001  */ \
-	/* Effect:    */ \
-		/* [rX] = rA;  */ \
-		/* [rX + 4] = rB;  */ \
-		/* rX += 8;  */ \
-	/* Syntax:  stmia rX, {rA, rB} */ \
 
-/* Form 2: */ \
-	/* Encoding:  10f0 oooo aaaa bbbb cccc 0000 xxxx 0010  */ \
-	/* Effect:    */ \
-		/* [rX] = rA;  */ \
-		/* [rX + 4] = rB;  */ \
-		/* [rX + 8] = rC;  */ \
-		/* rX += 12;  */ \
-	/* Syntax:  stmia rX, {rA, rB, rC} */ \
 
-/* Form 3: */ \
-	/* Encoding:  10f0 oooo aaaa bbbb cccc dddd xxxx 0011  */ \
-	/* Effect:    */ \
-		/* [rX] = rA;  */ \
-		/* [rX + 4] = rB;  */ \
-		/* [rX + 8] = rC;  */ \
-		/* [rX + 12] = rD;  */ \
-		/* rX += 16;  */ \
-	/* Syntax:  stmia rX, {rA, rB, rC, rD} */ \
-
+#define LIST_OF_INSTR_G2_NO_ARGS__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, \
+	VALUE) \
 /* ENable Interrupts */ \
-INSTR_NO_ARGS(eni) \
-
-
-
+ENC_GROUP(2) ARGS(no_args) VARNAME(Eni) VALUE("eni") \
+\
+\
+\
 /* DIsable Interrupts */ \
-INSTR_NO_ARGS(dii) \
-
+ENC_GROUP(2) ARGS(no_args) VARNAME(Dii) VALUE("dii") \
+\
 /* Set the PC to interrupt RETurn address and enable Interrupts */ \
-INSTR_NO_ARGS(reti) \
+ENC_GROUP(2) ARGS(no_args) VARNAME(Reti) VALUE("reti")
 
+
+#define LIST_OF_INSTR_G2_IRA__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, \
+	VALUE) \
 /* Set the PC to the Interrupt Return Address, but DON'T enable */ \
 /* interrupts */ \
-INSTR_IRA(jump) \
+ENC_GROUP(2) ARGS(ira) VARNAME(Jump) VALUE("jump")
 
 /* Reserved for future expansion. */ \
 
@@ -394,85 +309,20 @@ INSTR_IRA(jump) \
 // Pseudo instruction:
 // Pop
 // Note that this instruction takes multiple forms
-// Form 0:
-	// Encoding:  10f0 oooo aaaa 0000 0000 0000 1111 0000
-	// Encoded like this:  ldmia sp, {rA}
-	// Effect:  
-		// rA = [sp];
-		// sp += 4;
 	// Syntax:  pop rA
-
-// Form 1:
-	// Encoding:  10f0 oooo aaaa bbbb 0000 0000 1111 0001
-	// Encoded like this:  ldmia sp, {rA, rB}
-	// Effect:  
-		// rA = [sp];
-		// rB = [sp + 4];
-		// sp += 8;
-	// Syntax:  pop rA, rB
-
-// Form 2:
-	// Encoding:  10f0 oooo aaaa bbbb cccc 0000 1111 0010
-	// Encoded like this:  ldmia sp, {rA, rB, rC}
-	// Effect:  
-		// rA = [sp];
-		// rB = [sp + 4];
-		// rC = [sp + 8];
-		// sp += 12;
-	// Syntax:  pop rA, rB, rC
-
-// Form 3:
-	// Encoding:  10f0 oooo aaaa bbbb cccc dddd 1111 0011
-	// Encoded like this:  ldmia sp, {rA, rB, rC, rD}
-	// Effect:  
-		// rA = [sp];
-		// rB = [sp + 4];
-		// rC = [sp + 8];
-		// rD = [sp + 12];
-		// sp += 16;
-	// Syntax:  pop rA, rB, rC, rD
-
 
 // Pseudo instruction:
 // Push
 // Note that this instruction takes multiple forms
-// Form 0:
-	// Encoding:  10f0 oooo aaaa 0000 0000 0000 xxxx 0000
-	// Encoded like this:  stmdb sp, {rA}
-	// Effect:  
-		// sp -= 4;
-		// [sp] = rA;
 	// Syntax:  push rA
 
-// Form 1:
-	// Encoding:  10f0 oooo aaaa bbbb 0000 0000 xxxx 0001
-	// Encoded like this:  stmdb sp, {rA, rB}
-	// Effect:  
-		// sp -= 8;
-		// [sp] = rA;
-		// [sp + 4] = rB;
-	// Syntax:  push rA, rB
-
-// Form 2:
-	// Encoding:  10f0 oooo aaaa bbbb cccc 0000 xxxx 0010
-	// Encoded like this:  stmdb sp, {rA, rB, rC}
-	// Effect:  
-		// sp -= 12;
-		// [sp] = rA;
-		// [sp + 4] = rB;
-		// [sp + 8] = rC;
-	// Syntax:  push rA, rB, rC
-
-// Form 3:
-	// Encoding:  10f0 oooo aaaa bbbb cccc dddd xxxx 0011
-	// Effect:  
-	// Encoded like this:  stmdb sp, {rA, rB, rC, rD}
-		// sp -= 16;
-		// [sp] = rA;
-		// [sp + 4] = rB;
-		// [sp + 8] = rC;
-		// [sp + 12] = rD;
-	// Syntax:  push rA, rB, rC, rD
-
+#define LIST_OF_GROUP_2_INSTRUCTIONS(ENC_GROUP, ARGS, VARNAME, VALUE) \
+LIST_OF_INSTR_G2_LDST_RA_RB_RC_SIMM12__COLLECTION_0(ENC_GROUP, ARGS, \
+	VARNAME, VALUE) \
+LIST_OF_INSTR_G2_RA_RB_RC__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, VALUE) \
+LIST_OF_INSTR_G2_LDST_BLOCK_1_TO_4__COLLECTION_0(ENC_GROUP, ARGS, \
+	VARNAME, VALUE) \
+LIST_OF_INSTR_G2_NO_ARGS__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, VALUE) \
+LIST_OF_INSTR_G2_IRA__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, VALUE)
 
 #endif		// group_2_instructions_hpp

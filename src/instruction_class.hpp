@@ -38,14 +38,8 @@ enum class InstrArgs
 
 
 	// Block moves (ldmia, stmia, stmdb) with number of {} args
-	ldst_block_1,
-	ldst_block_2,
-	ldst_block_3,
-	ldst_block_4,
-	ldst_block_5,
-	ldst_block_6,
-	ldst_block_7,
-	ldst_block_8,
+	ldst_block_1_to_4,
+	ldst_block_5_to_8,
 
 	ira,
 	ra_ira,
@@ -68,14 +62,8 @@ enum class InstrArgs
 
 
 	//// Block-move style push and pop
-	//pseudo_ldst_stack_block_1,
-	//pseudo_ldst_stack_block_2,
-	//pseudo_ldst_stack_block_3,
-	//pseudo_ldst_stack_block_4,
-	//pseudo_ldst_stack_block_5,
-	//pseudo_ldst_stack_block_6,
-	//pseudo_ldst_stack_block_7,
-	//pseudo_ldst_stack_block_8,
+	//pseudo_ldst_stack_block_1_to_4,
+	//pseudo_ldst_stack_block_5_to_8,
 };
 
 
