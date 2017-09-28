@@ -1,0 +1,140 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	0.0.0	/249c3c0/
+Assembler	assembler_class.cpp	/^Assembler::Assembler(char* s_input_filename) $/;"	kind:f	class:flare32::Assembler	signature:(char * s_input_filename)
+Assembler	assembler_class.hpp	/^	Assembler(char* s_input_filename);$/;"	kind:p	class:flare32::Assembler	access:public	signature:(char * s_input_filename)
+Assembler	assembler_class.hpp	/^class Assembler$/;"	kind:c	namespace:flare32
+Symbol	symbol_table_class.hpp	/^	inline Symbol()$/;"	kind:f	class:flare32::Symbol	access:public	signature:()
+Symbol	symbol_table_class.hpp	/^	inline Symbol(Symbol&& to_move) = default;$/;"	kind:p	class:flare32::Symbol	access:public	signature:(Symbol && to_move)
+Symbol	symbol_table_class.hpp	/^	inline Symbol(const Symbol& to_copy) = default;$/;"	kind:p	class:flare32::Symbol	access:public	signature:(const Symbol & to_copy)
+Symbol	symbol_table_class.hpp	/^	inline Symbol(const std::string& s_name, PTok s_token, $/;"	kind:f	class:flare32::Symbol	access:public	signature:(const std::string & s_name,PTok s_token,PInstr s_instr=nullptr,s64 s_value=0)
+Symbol	symbol_table_class.hpp	/^	inline Symbol(std::string&& s_name, PTok s_token, $/;"	kind:f	class:flare32::Symbol	access:public	signature:(std::string && s_name,PTok s_token,PInstr s_instr=nullptr,s64 s_value=0)
+Symbol	symbol_table_class.hpp	/^class Symbol$/;"	kind:c	namespace:flare32
+SymbolTable	symbol_table_class.hpp	/^	inline SymbolTable()$/;"	kind:f	class:flare32::SymbolTable	access:public	signature:()
+SymbolTable	symbol_table_class.hpp	/^class SymbolTable$/;"	kind:c	namespace:flare32
+VALUE	assembler_class.cpp	/^	#define VALUE(/;"	kind:d	file:	signature:(some_str)
+VARNAME	assembler_class.cpp	/^	#define VARNAME(/;"	kind:d	file:	signature:(some_tok)
+__builtin_sym_tbl	assembler_class.hpp	/^	SymbolTable __builtin_sym_tbl, __user_sym_tbl;$/;"	kind:m	class:flare32::Assembler	typeref:typename:SymbolTable	access:private
+__changed	assembler_class.hpp	/^	bool __changed = false;$/;"	kind:m	class:flare32::Assembler	typeref:typename:bool	access:private
+__expected_tokens_innards	assembler_class.hpp	/^	void __expected_tokens_innards() const$/;"	kind:f	class:flare32::Assembler	typeref:typename:void	access:private	signature:() const
+__expected_tokens_innards	assembler_class.hpp	/^	void __expected_tokens_innards(PTok tok, RemArgTypes&&... rem_args)$/;"	kind:f	class:flare32::Assembler	typeref:typename:void	access:private	signature:(PTok tok,RemArgTypes &&...rem_args) const
+__infile	assembler_class.hpp	/^	std::FILE* __infile = nullptr;$/;"	kind:m	class:flare32::Assembler	typeref:typename:std::FILE *	access:private
+__input_filename	assembler_class.hpp	/^	char* __input_filename = nullptr;$/;"	kind:m	class:flare32::Assembler	typeref:typename:char *	access:private
+__instr	symbol_table_class.hpp	/^	PInstr __instr;$/;"	kind:m	class:flare32::Symbol	typeref:typename:PInstr	access:private
+__line_num	assembler_class.hpp	/^	size_t __line_num = 1;$/;"	kind:m	class:flare32::Assembler	typeref:typename:size_t	access:private
+__name	symbol_table_class.hpp	/^	std::string __name;$/;"	kind:m	class:flare32::Symbol	typeref:typename:std::string	access:private
+__next_builtin_tok	assembler_class.hpp	/^	PTok __next_builtin_tok = nullptr, __next_tok = nullptr;$/;"	kind:m	class:flare32::Assembler	typeref:typename:PTok	access:private
+__next_char	assembler_class.hpp	/^	int __next_char = ' ';$/;"	kind:m	class:flare32::Assembler	typeref:typename:int	access:private
+__next_num	assembler_class.hpp	/^	s64 __next_num = -1;$/;"	kind:m	class:flare32::Assembler	typeref:typename:s64	access:private
+__next_sym_str	assembler_class.hpp	/^	std::string __next_sym_str;$/;"	kind:m	class:flare32::Assembler	typeref:typename:std::string	access:private
+__next_tok	assembler_class.hpp	/^	PTok __next_builtin_tok = nullptr, __next_tok = nullptr;$/;"	kind:m	class:flare32::Assembler	typeref:typename:PTok	access:private
+__table	symbol_table_class.hpp	/^	std::map<std::string, Symbol> __table;$/;"	kind:m	class:flare32::SymbolTable	typeref:typename:std::map<std::string,Symbol>	access:private
+__token	symbol_table_class.hpp	/^	PTok __token;$/;"	kind:m	class:flare32::Symbol	typeref:typename:PTok	access:private
+__user_sym_tbl	assembler_class.hpp	/^	SymbolTable __builtin_sym_tbl, __user_sym_tbl;$/;"	kind:m	class:flare32::Assembler	typeref:typename:SymbolTable	access:private
+__value	symbol_table_class.hpp	/^	s64 __value;$/;"	kind:m	class:flare32::Symbol	typeref:typename:s64	access:private
+advance	assembler_class.cpp	/^void Assembler::advance()$/;"	kind:f	class:flare32::Assembler	typeref:typename:void	signature:()
+advance	assembler_class.hpp	/^	void advance();$/;"	kind:p	class:flare32::Assembler	typeref:typename:void	access:private	signature:()
+assembler_class_hpp	assembler_class.hpp	/^#define assembler_class_hpp$/;"	kind:d
+at	symbol_table_class.hpp	/^	inline Symbol& at(const std::string& some_name)$/;"	kind:f	class:flare32::SymbolTable	typeref:typename:Symbol &	access:public	signature:(const std::string & some_name)
+at	symbol_table_class.hpp	/^	inline const Symbol& at(const std::string& some_name) const$/;"	kind:f	class:flare32::SymbolTable	typeref:typename:const Symbol &	access:public	signature:(const std::string & some_name) const
+contains	symbol_table_class.hpp	/^	inline bool contains(const std::string& some_name) const$/;"	kind:f	class:flare32::SymbolTable	typeref:typename:bool	access:public	signature:(const std::string & some_name) const
+err	assembler_class.hpp	/^	void err(ArgTypes&&... args) const$/;"	kind:f	class:flare32::Assembler	typeref:typename:void	access:private	signature:(ArgTypes &&...args) const
+err_suffix	assembler_class.hpp	/^	void err_suffix(ArgTypes&&... args) const$/;"	kind:f	class:flare32::Assembler	typeref:typename:void	access:private	signature:(ArgTypes &&...args) const
+expected	assembler_class.hpp	/^	void expected(ArgTypes&&... args) const$/;"	kind:f	class:flare32::Assembler	typeref:typename:void	access:private	signature:(ArgTypes &&...args) const
+expected_tokens	assembler_class.hpp	/^	void expected_tokens(ArgTypes&&... args) const$/;"	kind:f	class:flare32::Assembler	typeref:typename:void	access:private	signature:(ArgTypes &&...args) const
+fill_builtin_sym_tbl	assembler_class.cpp	/^void Assembler::fill_builtin_sym_tbl()$/;"	kind:f	class:flare32::Assembler	typeref:typename:void	signature:()
+fill_builtin_sym_tbl	assembler_class.hpp	/^	void fill_builtin_sym_tbl();$/;"	kind:p	class:flare32::Assembler	typeref:typename:void	access:private	signature:()
+flare32	assembler_class.cpp	/^namespace flare32$/;"	kind:n	file:
+flare32	assembler_class.hpp	/^namespace flare32$/;"	kind:n
+flare32	symbol_table_class.hpp	/^namespace flare32$/;"	kind:n
+flare32::Assembler	assembler_class.hpp	/^class Assembler$/;"	kind:c	namespace:flare32
+flare32::Assembler::Assembler	assembler_class.cpp	/^Assembler::Assembler(char* s_input_filename) $/;"	kind:f	class:flare32::Assembler	signature:(char * s_input_filename)
+flare32::Assembler::Assembler	assembler_class.hpp	/^	Assembler(char* s_input_filename);$/;"	kind:p	class:flare32::Assembler	access:public	signature:(char * s_input_filename)
+flare32::Assembler::__builtin_sym_tbl	assembler_class.hpp	/^	SymbolTable __builtin_sym_tbl, __user_sym_tbl;$/;"	kind:m	class:flare32::Assembler	typeref:typename:SymbolTable	access:private
+flare32::Assembler::__changed	assembler_class.hpp	/^	bool __changed = false;$/;"	kind:m	class:flare32::Assembler	typeref:typename:bool	access:private
+flare32::Assembler::__expected_tokens_innards	assembler_class.hpp	/^	void __expected_tokens_innards() const$/;"	kind:f	class:flare32::Assembler	typeref:typename:void	access:private	signature:() const
+flare32::Assembler::__expected_tokens_innards	assembler_class.hpp	/^	void __expected_tokens_innards(PTok tok, RemArgTypes&&... rem_args)$/;"	kind:f	class:flare32::Assembler	typeref:typename:void	access:private	signature:(PTok tok,RemArgTypes &&...rem_args) const
+flare32::Assembler::__infile	assembler_class.hpp	/^	std::FILE* __infile = nullptr;$/;"	kind:m	class:flare32::Assembler	typeref:typename:std::FILE *	access:private
+flare32::Assembler::__input_filename	assembler_class.hpp	/^	char* __input_filename = nullptr;$/;"	kind:m	class:flare32::Assembler	typeref:typename:char *	access:private
+flare32::Assembler::__line_num	assembler_class.hpp	/^	size_t __line_num = 1;$/;"	kind:m	class:flare32::Assembler	typeref:typename:size_t	access:private
+flare32::Assembler::__next_builtin_tok	assembler_class.hpp	/^	PTok __next_builtin_tok = nullptr, __next_tok = nullptr;$/;"	kind:m	class:flare32::Assembler	typeref:typename:PTok	access:private
+flare32::Assembler::__next_char	assembler_class.hpp	/^	int __next_char = ' ';$/;"	kind:m	class:flare32::Assembler	typeref:typename:int	access:private
+flare32::Assembler::__next_num	assembler_class.hpp	/^	s64 __next_num = -1;$/;"	kind:m	class:flare32::Assembler	typeref:typename:s64	access:private
+flare32::Assembler::__next_sym_str	assembler_class.hpp	/^	std::string __next_sym_str;$/;"	kind:m	class:flare32::Assembler	typeref:typename:std::string	access:private
+flare32::Assembler::__next_tok	assembler_class.hpp	/^	PTok __next_builtin_tok = nullptr, __next_tok = nullptr;$/;"	kind:m	class:flare32::Assembler	typeref:typename:PTok	access:private
+flare32::Assembler::__user_sym_tbl	assembler_class.hpp	/^	SymbolTable __builtin_sym_tbl, __user_sym_tbl;$/;"	kind:m	class:flare32::Assembler	typeref:typename:SymbolTable	access:private
+flare32::Assembler::advance	assembler_class.cpp	/^void Assembler::advance()$/;"	kind:f	class:flare32::Assembler	typeref:typename:void	signature:()
+flare32::Assembler::advance	assembler_class.hpp	/^	void advance();$/;"	kind:p	class:flare32::Assembler	typeref:typename:void	access:private	signature:()
+flare32::Assembler::err	assembler_class.hpp	/^	void err(ArgTypes&&... args) const$/;"	kind:f	class:flare32::Assembler	typeref:typename:void	access:private	signature:(ArgTypes &&...args) const
+flare32::Assembler::err_suffix	assembler_class.hpp	/^	void err_suffix(ArgTypes&&... args) const$/;"	kind:f	class:flare32::Assembler	typeref:typename:void	access:private	signature:(ArgTypes &&...args) const
+flare32::Assembler::expected	assembler_class.hpp	/^	void expected(ArgTypes&&... args) const$/;"	kind:f	class:flare32::Assembler	typeref:typename:void	access:private	signature:(ArgTypes &&...args) const
+flare32::Assembler::expected_tokens	assembler_class.hpp	/^	void expected_tokens(ArgTypes&&... args) const$/;"	kind:f	class:flare32::Assembler	typeref:typename:void	access:private	signature:(ArgTypes &&...args) const
+flare32::Assembler::fill_builtin_sym_tbl	assembler_class.cpp	/^void Assembler::fill_builtin_sym_tbl()$/;"	kind:f	class:flare32::Assembler	typeref:typename:void	signature:()
+flare32::Assembler::fill_builtin_sym_tbl	assembler_class.hpp	/^	void fill_builtin_sym_tbl();$/;"	kind:p	class:flare32::Assembler	typeref:typename:void	access:private	signature:()
+flare32::Assembler::gen_getter_by_ref	assembler_class.hpp	/^	gen_getter_by_ref(builtin_sym_tbl)$/;"	kind:p	class:flare32::Assembler	access:private	signature:(builtin_sym_tbl)
+flare32::Assembler::handle_expr	assembler_class.cpp	/^s64 Assembler::handle_expr()$/;"	kind:f	class:flare32::Assembler	typeref:typename:s64	signature:()
+flare32::Assembler::handle_expr	assembler_class.hpp	/^	s64 handle_expr();$/;"	kind:p	class:flare32::Assembler	typeref:typename:s64	access:private	signature:()
+flare32::Assembler::handle_factor	assembler_class.cpp	/^s64 Assembler::handle_factor()$/;"	kind:f	class:flare32::Assembler	typeref:typename:s64	signature:()
+flare32::Assembler::handle_factor	assembler_class.hpp	/^	s64 handle_factor();$/;"	kind:p	class:flare32::Assembler	typeref:typename:s64	access:private	signature:()
+flare32::Assembler::handle_term	assembler_class.cpp	/^s64 Assembler::handle_term()$/;"	kind:f	class:flare32::Assembler	typeref:typename:s64	signature:()
+flare32::Assembler::handle_term	assembler_class.hpp	/^	s64 handle_term();$/;"	kind:p	class:flare32::Assembler	typeref:typename:s64	access:private	signature:()
+flare32::Assembler::lex	assembler_class.cpp	/^void Assembler::lex()$/;"	kind:f	class:flare32::Assembler	typeref:typename:void	signature:()
+flare32::Assembler::lex	assembler_class.hpp	/^	void lex();$/;"	kind:p	class:flare32::Assembler	typeref:typename:void	access:private	signature:()
+flare32::Assembler::need	assembler_class.cpp	/^void Assembler::need(PTok tok)$/;"	kind:f	class:flare32::Assembler	typeref:typename:void	signature:(PTok tok)
+flare32::Assembler::need	assembler_class.hpp	/^	void need(PTok tok);$/;"	kind:p	class:flare32::Assembler	typeref:typename:void	access:private	signature:(PTok tok)
+flare32::Assembler::next_tok_is_ident_ish	assembler_class.cpp	/^bool Assembler::next_tok_is_ident_ish() const$/;"	kind:f	class:flare32::Assembler	typeref:typename:bool	signature:() const
+flare32::Assembler::next_tok_is_ident_ish	assembler_class.hpp	/^	bool next_tok_is_ident_ish() const;$/;"	kind:p	class:flare32::Assembler	typeref:typename:bool	access:private	signature:() const
+flare32::Assembler::next_tok_is_punct	assembler_class.cpp	/^bool Assembler::next_tok_is_punct() const$/;"	kind:f	class:flare32::Assembler	typeref:typename:bool	signature:() const
+flare32::Assembler::next_tok_is_punct	assembler_class.hpp	/^	bool next_tok_is_punct() const;$/;"	kind:p	class:flare32::Assembler	typeref:typename:bool	access:private	signature:() const
+flare32::Assembler::operator () 	assembler_class.cpp	/^int Assembler::operator () ()$/;"	kind:f	class:flare32::Assembler	typeref:typename:int	signature:()
+flare32::Assembler::operator () 	assembler_class.hpp	/^	int operator () ();$/;"	kind:p	class:flare32::Assembler	typeref:typename:int	access:public	signature:()
+flare32::Assembler::parse	assembler_class.cpp	/^void Assembler::parse()$/;"	kind:f	class:flare32::Assembler	typeref:typename:void	signature:()
+flare32::Assembler::parse	assembler_class.hpp	/^	void parse();$/;"	kind:p	class:flare32::Assembler	typeref:typename:void	access:private	signature:()
+flare32::Assembler::reinit	assembler_class.cpp	/^void Assembler::reinit()$/;"	kind:f	class:flare32::Assembler	typeref:typename:void	signature:()
+flare32::Assembler::reinit	assembler_class.hpp	/^	void reinit();$/;"	kind:p	class:flare32::Assembler	typeref:typename:void	access:private	signature:()
+flare32::Symbol	symbol_table_class.hpp	/^class Symbol$/;"	kind:c	namespace:flare32
+flare32::Symbol::Symbol	symbol_table_class.hpp	/^	inline Symbol()$/;"	kind:f	class:flare32::Symbol	access:public	signature:()
+flare32::Symbol::Symbol	symbol_table_class.hpp	/^	inline Symbol(Symbol&& to_move) = default;$/;"	kind:p	class:flare32::Symbol	access:public	signature:(Symbol && to_move)
+flare32::Symbol::Symbol	symbol_table_class.hpp	/^	inline Symbol(const Symbol& to_copy) = default;$/;"	kind:p	class:flare32::Symbol	access:public	signature:(const Symbol & to_copy)
+flare32::Symbol::Symbol	symbol_table_class.hpp	/^	inline Symbol(const std::string& s_name, PTok s_token, $/;"	kind:f	class:flare32::Symbol	access:public	signature:(const std::string & s_name,PTok s_token,PInstr s_instr=nullptr,s64 s_value=0)
+flare32::Symbol::Symbol	symbol_table_class.hpp	/^	inline Symbol(std::string&& s_name, PTok s_token, $/;"	kind:f	class:flare32::Symbol	access:public	signature:(std::string && s_name,PTok s_token,PInstr s_instr=nullptr,s64 s_value=0)
+flare32::Symbol::__instr	symbol_table_class.hpp	/^	PInstr __instr;$/;"	kind:m	class:flare32::Symbol	typeref:typename:PInstr	access:private
+flare32::Symbol::__name	symbol_table_class.hpp	/^	std::string __name;$/;"	kind:m	class:flare32::Symbol	typeref:typename:std::string	access:private
+flare32::Symbol::__token	symbol_table_class.hpp	/^	PTok __token;$/;"	kind:m	class:flare32::Symbol	typeref:typename:PTok	access:private
+flare32::Symbol::__value	symbol_table_class.hpp	/^	s64 __value;$/;"	kind:m	class:flare32::Symbol	typeref:typename:s64	access:private
+flare32::Symbol::operator =	symbol_table_class.hpp	/^	inline Symbol& operator = (Symbol&& to_move) = default;$/;"	kind:p	class:flare32::Symbol	typeref:typename:Symbol &	access:public	signature:(Symbol && to_move)
+flare32::Symbol::operator =	symbol_table_class.hpp	/^	inline Symbol& operator = (const Symbol& to_copy) = default;$/;"	kind:p	class:flare32::Symbol	typeref:typename:Symbol &	access:public	signature:(const Symbol & to_copy)
+flare32::SymbolTable	symbol_table_class.hpp	/^class SymbolTable$/;"	kind:c	namespace:flare32
+flare32::SymbolTable::SymbolTable	symbol_table_class.hpp	/^	inline SymbolTable()$/;"	kind:f	class:flare32::SymbolTable	access:public	signature:()
+flare32::SymbolTable::__table	symbol_table_class.hpp	/^	std::map<std::string, Symbol> __table;$/;"	kind:m	class:flare32::SymbolTable	typeref:typename:std::map<std::string,Symbol>	access:private
+flare32::SymbolTable::at	symbol_table_class.hpp	/^	inline Symbol& at(const std::string& some_name)$/;"	kind:f	class:flare32::SymbolTable	typeref:typename:Symbol &	access:public	signature:(const std::string & some_name)
+flare32::SymbolTable::at	symbol_table_class.hpp	/^	inline const Symbol& at(const std::string& some_name) const$/;"	kind:f	class:flare32::SymbolTable	typeref:typename:const Symbol &	access:public	signature:(const std::string & some_name) const
+flare32::SymbolTable::contains	symbol_table_class.hpp	/^	inline bool contains(const std::string& some_name) const$/;"	kind:f	class:flare32::SymbolTable	typeref:typename:bool	access:public	signature:(const std::string & some_name) const
+gen_getter_by_ref	assembler_class.hpp	/^	gen_getter_by_ref(builtin_sym_tbl)$/;"	kind:p	class:flare32::Assembler	access:private	signature:(builtin_sym_tbl)
+handle_expr	assembler_class.cpp	/^s64 Assembler::handle_expr()$/;"	kind:f	class:flare32::Assembler	typeref:typename:s64	signature:()
+handle_expr	assembler_class.hpp	/^	s64 handle_expr();$/;"	kind:p	class:flare32::Assembler	typeref:typename:s64	access:private	signature:()
+handle_factor	assembler_class.cpp	/^s64 Assembler::handle_factor()$/;"	kind:f	class:flare32::Assembler	typeref:typename:s64	signature:()
+handle_factor	assembler_class.hpp	/^	s64 handle_factor();$/;"	kind:p	class:flare32::Assembler	typeref:typename:s64	access:private	signature:()
+handle_term	assembler_class.cpp	/^s64 Assembler::handle_term()$/;"	kind:f	class:flare32::Assembler	typeref:typename:s64	signature:()
+handle_term	assembler_class.hpp	/^	s64 handle_term();$/;"	kind:p	class:flare32::Assembler	typeref:typename:s64	access:private	signature:()
+lex	assembler_class.cpp	/^void Assembler::lex()$/;"	kind:f	class:flare32::Assembler	typeref:typename:void	signature:()
+lex	assembler_class.hpp	/^	void lex();$/;"	kind:p	class:flare32::Assembler	typeref:typename:void	access:private	signature:()
+need	assembler_class.cpp	/^void Assembler::need(PTok tok)$/;"	kind:f	class:flare32::Assembler	typeref:typename:void	signature:(PTok tok)
+need	assembler_class.hpp	/^	void need(PTok tok);$/;"	kind:p	class:flare32::Assembler	typeref:typename:void	access:private	signature:(PTok tok)
+next_tok_is_ident_ish	assembler_class.cpp	/^bool Assembler::next_tok_is_ident_ish() const$/;"	kind:f	class:flare32::Assembler	typeref:typename:bool	signature:() const
+next_tok_is_ident_ish	assembler_class.hpp	/^	bool next_tok_is_ident_ish() const;$/;"	kind:p	class:flare32::Assembler	typeref:typename:bool	access:private	signature:() const
+next_tok_is_punct	assembler_class.cpp	/^bool Assembler::next_tok_is_punct() const$/;"	kind:f	class:flare32::Assembler	typeref:typename:bool	signature:() const
+next_tok_is_punct	assembler_class.hpp	/^	bool next_tok_is_punct() const;$/;"	kind:p	class:flare32::Assembler	typeref:typename:bool	access:private	signature:() const
+operator () 	assembler_class.cpp	/^int Assembler::operator () ()$/;"	kind:f	class:flare32::Assembler	typeref:typename:int	signature:()
+operator () 	assembler_class.hpp	/^	int operator () ();$/;"	kind:p	class:flare32::Assembler	typeref:typename:int	access:public	signature:()
+operator =	symbol_table_class.hpp	/^	inline Symbol& operator = (Symbol&& to_move) = default;$/;"	kind:p	class:flare32::Symbol	typeref:typename:Symbol &	access:public	signature:(Symbol && to_move)
+operator =	symbol_table_class.hpp	/^	inline Symbol& operator = (const Symbol& to_copy) = default;$/;"	kind:p	class:flare32::Symbol	typeref:typename:Symbol &	access:public	signature:(const Symbol & to_copy)
+parse	assembler_class.cpp	/^void Assembler::parse()$/;"	kind:f	class:flare32::Assembler	typeref:typename:void	signature:()
+parse	assembler_class.hpp	/^	void parse();$/;"	kind:p	class:flare32::Assembler	typeref:typename:void	access:private	signature:()
+reinit	assembler_class.cpp	/^void Assembler::reinit()$/;"	kind:f	class:flare32::Assembler	typeref:typename:void	signature:()
+reinit	assembler_class.hpp	/^	void reinit();$/;"	kind:p	class:flare32::Assembler	typeref:typename:void	access:private	signature:()
+symbol_table_class_hpp	symbol_table_class.hpp	/^#define symbol_table_class_hpp$/;"	kind:d

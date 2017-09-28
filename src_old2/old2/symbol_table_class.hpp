@@ -17,7 +17,6 @@ private:		// variables
 
 	// This is used for labels and stuff
 	s64 __value;
-	bool __initialized;
 
 
 public:		// functions
@@ -25,15 +24,15 @@ public:		// functions
 	{
 	}
 	inline Symbol(const std::string& s_name, PTok s_token, 
-		PInstr s_instr=nullptr, s64 s_value=0, bool s_initialized=false) 
+		PInstr s_instr=nullptr, s64 s_value=0) 
 		: __name(s_name), __token(s_token), __instr(s_instr), 
-		__value(s_value), __initialized(s_initialized)
+		__value(s_value)
 	{
 	}
 	inline Symbol(std::string&& s_name, PTok s_token, 
-		PInstr s_instr=nullptr, s64 s_value=0, bool s_initialized=false)
+		PInstr s_instr=nullptr, s64 s_value=0)
 		: __name(std::move(s_name)), __token(s_token), __instr(s_instr), 
-		__value(s_value), __initialized(s_initialized)
+		__value(s_value)
 	{
 	}
 	inline Symbol(const Symbol& to_copy) = default;
@@ -44,16 +43,14 @@ public:		// functions
 
 	gen_getter_by_con_ref(name)
 	gen_getter_by_con_ref(token)
-	gen_getter_by_con_ref(instr);
+	gen_getter_by_con_ref(instr)
 	gen_getter_by_val(value)
-	gen_getter_by_val(initialized)
 
 	gen_setter_by_con_ref(name)
 	gen_setter_by_rval_ref(name)
 	gen_setter_by_con_ref(token)
-	gen_setter_by_con_ref(instr);
+	gen_setter_by_con_ref(instr)
 	gen_setter_by_val(value)
-	gen_setter_by_val(initialized)
 
 };
 

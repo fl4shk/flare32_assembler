@@ -104,26 +104,12 @@ public:		// functions
 	inline Tok(std::string&& s_str) : __str(std::move(s_str))
 	{
 	}
-	inline Tok(const Tok& to_copy)
-	{
-		*this = to_copy;
-	}
-	inline Tok(Tok&& to_move)
-	{
-		*this = std::move(to_move);
-	}
 
-	inline Tok& operator = (const Tok& to_copy)
-	{
-		__str = to_copy.__str;
-		return *this;
-	}
+	inline Tok(const Tok& to_copy) = default;
+	inline Tok(Tok&& to_move) = default;
+	inline Tok& operator = (const Tok& to_copy) = default;
+	inline Tok& operator = (Tok&& to_move) = default;
 
-	inline Tok& operator = (Tok&& to_move)
-	{
-		__str = std::move(to_move.__str);
-		return *this;
-	}
 
 	inline bool operator == (const Tok& to_cmp) const
 	{

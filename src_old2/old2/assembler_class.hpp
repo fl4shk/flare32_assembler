@@ -38,30 +38,6 @@ public:		// functions
 
 
 private:		// functions
-	gen_getter_by_ref(builtin_sym_tbl)
-	gen_getter_by_ref(user_sym_tbl)
-
-	gen_getter_by_val(line_num)
-	gen_getter_by_val(next_char)
-	gen_getter_by_val(next_builtin_tok)
-	gen_getter_by_val(next_tok)
-	gen_getter_by_con_ref(next_sym_str)
-	gen_getter_by_val(next_num)
-	gen_getter_by_val(changed)
-	gen_getter_by_val(input_filename)
-	gen_getter_by_val(infile)
-
-
-	gen_setter_by_val(line_num)
-	gen_setter_by_val(next_char)
-	gen_setter_by_val(next_builtin_tok)
-	gen_setter_by_val(next_tok)
-	gen_setter_by_con_ref(next_sym_str)
-	gen_setter_by_val(next_num)
-	gen_setter_by_val(changed)
-	gen_setter_by_val(input_filename)
-	gen_setter_by_val(infile)
-
 	void reinit();
 	void fill_builtin_sym_tbl();
 
@@ -110,22 +86,48 @@ private:		// functions
 		exit(1);
 	}
 
-
 	void need(PTok tok);
 
 	void advance();
+
 	void lex();
 
-	void line();
+	void parse();
+
 
 
 	s64 handle_term();
 	s64 handle_factor();
 	s64 handle_expr();
 
-
 	bool next_tok_is_punct() const;
 	bool next_tok_is_ident_ish() const;
+
+
+
+	gen_getter_by_ref(builtin_sym_tbl)
+	gen_getter_by_ref(user_sym_tbl)
+
+	gen_getter_by_val(line_num)
+	gen_getter_by_val(next_char)
+	gen_getter_by_val(next_builtin_tok)
+	gen_getter_by_val(next_tok)
+	gen_getter_by_con_ref(next_sym_str)
+	gen_getter_by_val(next_num)
+	gen_getter_by_val(changed)
+	gen_getter_by_val(input_filename)
+	gen_getter_by_val(infile)
+
+
+	gen_setter_by_val(line_num)
+	gen_setter_by_val(next_char)
+	gen_setter_by_val(next_builtin_tok)
+	gen_setter_by_val(next_tok)
+	gen_setter_by_con_ref(next_sym_str)
+	gen_setter_by_val(next_num);
+	gen_setter_by_val(changed)
+	gen_setter_by_val(input_filename)
+	gen_setter_by_val(infile)
 
 
 };

@@ -1,0 +1,13 @@
+syn keyword CTagsMember __next_num __user_sym_tbl __instr __name __token __next_builtin_tok __line_num __input_filename __next_tok __builtin_sym_tbl __infile __changed __next_char __next_sym_str __value __table
+syn keyword CTagsFunction handle_factor lex need at parse handle_expr __expected_tokens_innards err_suffix next_tok_is_punct err advance handle_term expected next_tok_is_ident_ish expected_tokens gen_getter_by_ref reinit fill_builtin_sym_tbl
+syn keyword CTagsDefinedName symbol_table_class_hpp assembler_class_hpp
+syn keyword CTagsClass Symbol Assembler SymbolTable
+syn keyword CTagsNamespace flare32
+
+syn match CTagsFunction /\<contains\>/
+" Matches for file assembler_class.cpp:
+if (has_key(b:TagHighlightPrivate, "NormalisedPath") && b:TagHighlightPrivate["NormalisedPath"] == "assembler_class.cpp") || TagHighlight#Option#GetOption("IgnoreFileScope")
+	syn keyword CTagsDefinedName VALUE VARNAME
+	syn keyword CTagsNamespace flare32
+	
+endif
