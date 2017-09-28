@@ -29,153 +29,148 @@
 	// i:  2-bit immediate value
 
 
-#define LIST_OF_INSTR_G2_LDST_RA_RB_RC_SIMM12__COLLECTION_0(ENC_GROUP, \
-	ARGS, VARNAME, VALUE) \
+#define LIST_OF_INSTR_G2_LDST_RA_RB_RC_SIMM12__COLLECTION_0(INSTR_STUFF) \
 /* Load 32-bit value from address (rB + rC + (sign-extended imm)) into 
 rA. */ \
-ENC_GROUP(2) ARGS(ldst_ra_rb_rc_simm12) VARNAME(Ldr) VALUE("ldr") \
+INSTR_STUFF(2, ldst_ra_rb_rc_simm12, Ldr, "ldr") \
 \
 /* Load zero-extended 16-bit value from address (rB + rC + (sign-extended
 imm)) into rA. */ \
 /* This zero-extends the value. */ \
-ENC_GROUP(2) ARGS(ldst_ra_rb_rc_simm12) VARNAME(Ldh) VALUE("ldh") \
+INSTR_STUFF(2, ldst_ra_rb_rc_simm12, Ldh, "ldh") \
 \
 /* Load sign-extended 16-bit value from address (rB + rC + (sign-extended
 imm)) into rA. */ \
 /* This sign-extends the value. */ \
-ENC_GROUP(2) ARGS(ldst_ra_rb_rc_simm12) VARNAME(Ldsh) VALUE("ldsh") \
+INSTR_STUFF(2, ldst_ra_rb_rc_simm12, Ldsh, "ldsh") \
 \
 /* Load zero-extended 8-bit value from address (rB + rC + (sign-extended
  imm)) into rA. */ \
 /* This zero-extends the value. */ \
-ENC_GROUP(2) ARGS(ldst_ra_rb_rc_simm12) VARNAME(Ldb) VALUE("ldb") \
+INSTR_STUFF(2, ldst_ra_rb_rc_simm12, Ldb, "ldb") \
 \
 \
 \
 /* Load sign-extended 8-bit value from address (rB + rC + (sign-extended
 imm)) into rA. */ \
 /* This sign-extends the value. */ \
-ENC_GROUP(2) ARGS(ldst_ra_rb_rc_simm12) VARNAME(Ldsb) VALUE("ldsb") \
+INSTR_STUFF(2, ldst_ra_rb_rc_simm12, Ldsb, "ldsb") \
 \
 /* Store 32-bit value in rA to address (rB + rC + (sign-extended 
 imm)). */ \
-ENC_GROUP(2) ARGS(ldst_ra_rb_rc_simm12) VARNAME(Str) VALUE("str") \
+INSTR_STUFF(2, ldst_ra_rb_rc_simm12, Str, "str") \
 \
 /* Store low 16 bits of rA to address (rB + rC + (sign-extended imm)). */ \
-ENC_GROUP(2) ARGS(ldst_ra_rb_rc_simm12) VARNAME(Sth) VALUE("sth") \
+INSTR_STUFF(2, ldst_ra_rb_rc_simm12, Sth, "sth") \
 \
 /* Store low 8 bits of rA to address (rB + rC + (sign-extended imm)). */ \
-ENC_GROUP(2) ARGS(ldst_ra_rb_rc_simm12) VARNAME(Stb) VALUE("stb")
+INSTR_STUFF(2, ldst_ra_rb_rc_simm12, Stb, "stb")
 
 
-#define LIST_OF_INSTR_G2_RA_RB_RC__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, \
-	VALUE) \
+#define LIST_OF_INSTR_G2_RA_RB_RC__COLLECTION_0(INSTR_STUFF) \
 /* rA = rB + rC */ \
 /* This instruction can affect N, V, Z, and C flags. */ \
-ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Add) VALUE("add") \
+INSTR_STUFF(2, ra_rb_rc, Add, "add") \
 \
 /* rA = rB + rC + carry_flag */ \
 /* Add with carry */ \
 /* This instruction can affect N, V, Z, and C flags. */ \
-ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Adc) VALUE("adc") \
+INSTR_STUFF(2, ra_rb_rc, Adc, "adc") \
 \
 /* rA = rB - rC */ \
 /* This instruction can affect N, V, Z, and C flags. */ \
-ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Sub) VALUE("sub") \
+INSTR_STUFF(2, ra_rb_rc, Sub, "sub") \
 \
 /* rA = rB + (~rC) + carry_flag */ \
 /* Subtract with borrow (6502 style) */ \
 /* This instruction can affect N, V, Z, and C flags. */ \
-ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Sbc) VALUE("sbc") \
+INSTR_STUFF(2, ra_rb_rc, Sbc, "sbc") \
 \
 \
 \
 /* rA = rC - rB */ \
 /* This instruction can affect N, V, Z, and C flags. */ \
-ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Rsb) VALUE("rsb") \
+INSTR_STUFF(2, ra_rb_rc, Rsb, "rsb") \
 \
 /* rA = rB * rC */ \
-ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Mul) VALUE("mul") \
+INSTR_STUFF(2, ra_rb_rc, Mul, "mul") \
 \
 /* rA = rB & rC */ \
 /* This instruction can affect the N and Z flags. */ \
-ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(And) VALUE("and") \
+INSTR_STUFF(2, ra_rb_rc, And, "and") \
 \
 /* rA = rB | rC */ \
 /* This instruction can affect the N and Z flags. */ \
-ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Or) VALUE("or") \
+INSTR_STUFF(2, ra_rb_rc, Or, "or") \
 \
 \
 \
 /* rA = rB ^ rC */ \
 /* This instruction can affect the N and Z flags. */ \
-ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Xor) VALUE("xor") \
+INSTR_STUFF(2, ra_rb_rc, Xor, "xor") \
 \
 /* Logical shift left */ \
 /* rA = rB << rC */ \
-ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Lsl) VALUE("lsl") \
+INSTR_STUFF(2, ra_rb_rc, Lsl, "lsl") \
 \
 /* Logical shift right */ \
-ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Lsr) VALUE("lsr") \
+INSTR_STUFF(2, ra_rb_rc, Lsr, "lsr") \
 \
 /* Arithmetic shift right */ \
-ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Asr) VALUE("asr") \
+INSTR_STUFF(2, ra_rb_rc, Asr, "asr") \
 \
 \
 \
 /* Rotate rC left by rC bits, then store result in rA. */ \
-ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Rol) VALUE("rol") \
+INSTR_STUFF(2, ra_rb_rc, Rol, "rol") \
 \
 /* Rotate rC right by rC bits, then store result in rA. */ \
-ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Ror) VALUE("ror") \
+INSTR_STUFF(2, ra_rb_rc, Ror, "ror") \
 \
 /* Fused multiply-add */ \
 /* rA = rA + (rB * rC) */ \
-ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Fma) VALUE("fma") \
+INSTR_STUFF(2, ra_rb_rc, Fma, "fma") \
 \
 /* Copy rC to rA and to rB */ \
 /* If rA is the same register as rB, then the  */ \
 /* register will only be written once. */ \
-ENC_GROUP(2) ARGS(ra_rb_rc) VARNAME(Cpyp) VALUE("cpyp")
+INSTR_STUFF(2, ra_rb_rc, Cpyp, "cpyp")
 
 
-#define LIST_OF_INSTR_G2_LDST_BLOCK_1_TO_4__COLLECTION_0(ENC_GROUP, ARGS, \
-	VARNAME, VALUE) \
+#define LIST_OF_INSTR_G2_LDST_BLOCK_1_TO_4__COLLECTION_0(INSTR_STUFF) \
 /* STore Multiple, Decrement Before */ \
 /* Note that this instruction takes multiple forms */ \
-ENC_GROUP(2) ARGS(ldst_block_1_to_4) VARNAME(Stmdb) VALUE("stmdb") \
+INSTR_STUFF(2, ldst_block_1_to_4, Stmdb, "stmdb") \
 \
 \
 /* LoaD Multiple, Increment After */ \
 /* Note that this instruction takes multiple forms */ \
-ENC_GROUP(2) ARGS(ldst_block_1_to_4) VARNAME(Ldmia) VALUE("ldmia") \
+INSTR_STUFF(2, ldst_block_1_to_4, Ldmia, "ldmia") \
 \
 \
 /* STore Multiple, Increment After */ \
 /* Note that this instruction takes multiple forms */ \
-ENC_GROUP(2) ARGS(ldst_block_1_to_4) VARNAME(Stmia) VALUE("stmia")
+INSTR_STUFF(2, ldst_block_1_to_4, Stmia, "stmia")
 
 
 
-#define LIST_OF_INSTR_G2_NO_ARGS__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, \
-	VALUE) \
+#define LIST_OF_INSTR_G2_NO_ARGS__COLLECTION_0(INSTR_STUFF) \
 /* ENable Interrupts */ \
-ENC_GROUP(2) ARGS(no_args) VARNAME(Eni) VALUE("eni") \
+INSTR_STUFF(2, no_args, Eni, "eni") \
 \
 \
 \
 /* DIsable Interrupts */ \
-ENC_GROUP(2) ARGS(no_args) VARNAME(Dii) VALUE("dii") \
+INSTR_STUFF(2, no_args, Dii, "dii") \
 \
 /* Set the PC to interrupt RETurn address and enable Interrupts */ \
-ENC_GROUP(2) ARGS(no_args) VARNAME(Reti) VALUE("reti")
+INSTR_STUFF(2, no_args, Reti, "reti")
 
 
-#define LIST_OF_INSTR_G2_IRA__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, \
-	VALUE) \
+#define LIST_OF_INSTR_G2_IRA__COLLECTION_0(INSTR_STUFF) \
 /* Set the PC to the Interrupt Return Address, but DON'T enable */ \
 /* interrupts */ \
-ENC_GROUP(2) ARGS(ira) VARNAME(Jump) VALUE("jump")
+INSTR_STUFF(2, ira, Jump, "jump")
 
 /* Reserved for future expansion. */ \
 
@@ -316,13 +311,11 @@ ENC_GROUP(2) ARGS(ira) VARNAME(Jump) VALUE("jump")
 // Note that this instruction takes multiple forms
 	// Syntax:  push rA
 
-#define LIST_OF_GROUP_2_INSTRUCTIONS(ENC_GROUP, ARGS, VARNAME, VALUE) \
-LIST_OF_INSTR_G2_LDST_RA_RB_RC_SIMM12__COLLECTION_0(ENC_GROUP, ARGS, \
-	VARNAME, VALUE) \
-LIST_OF_INSTR_G2_RA_RB_RC__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, VALUE) \
-LIST_OF_INSTR_G2_LDST_BLOCK_1_TO_4__COLLECTION_0(ENC_GROUP, ARGS, \
-	VARNAME, VALUE) \
-LIST_OF_INSTR_G2_NO_ARGS__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, VALUE) \
-LIST_OF_INSTR_G2_IRA__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, VALUE)
+#define LIST_OF_GROUP_2_INSTRUCTIONS(INSTR_STUFF) \
+LIST_OF_INSTR_G2_LDST_RA_RB_RC_SIMM12__COLLECTION_0(INSTR_STUFF) \
+LIST_OF_INSTR_G2_RA_RB_RC__COLLECTION_0(INSTR_STUFF) \
+LIST_OF_INSTR_G2_LDST_BLOCK_1_TO_4__COLLECTION_0(INSTR_STUFF) \
+LIST_OF_INSTR_G2_NO_ARGS__COLLECTION_0(INSTR_STUFF) \
+LIST_OF_INSTR_G2_IRA__COLLECTION_0(INSTR_STUFF)
 
 #endif		// group_2_instructions_hpp

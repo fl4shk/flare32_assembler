@@ -33,103 +33,97 @@
 	// i:  2-bit immediate value
 
 
-#define LIST_OF_INSTR_G3_LDST_RA_RB_IMM32__COLLECTION_0(ENC_GROUP, ARGS, \
-	VARNAME, VALUE) \
+#define LIST_OF_INSTR_G3_LDST_RA_RB_IMM32__COLLECTION_0(INSTR_STUFF) \
 /* Load 32-bit value from address (absolute_addr + rB) into rA. */ \
-ENC_GROUP(3) ARGS(ldst_ra_rb_imm32) VARNAME(Ldra) VALUE("ldra") \
+INSTR_STUFF(3, ldst_ra_rb_imm32, Ldra, "ldra") \
 \
 /* Load zero-extended 16-bit value from address (absolute_addr + rB) into \
 rA. */ \
 /* This zero-extends the value. */ \
-ENC_GROUP(3) ARGS(ldst_ra_rb_imm32) VARNAME(Ldha) VALUE("ldha") \
+INSTR_STUFF(3, ldst_ra_rb_imm32, Ldha, "ldha") \
 \
 /* Load sign-extended 16-bit value from address (absolute_addr + rB) into \
 rA. */ \
 /* This sign-extends the value. */ \
-ENC_GROUP(3) ARGS(ldst_ra_rb_imm32) VARNAME(Ldsha) VALUE("ldsha") \
+INSTR_STUFF(3, ldst_ra_rb_imm32, Ldsha, "ldsha") \
 \
 /* Load zero-extended 8-bit value from address (absolute_addr + rB) into \
 rA. */ \
 /* This zero-extends the value. */ \
-ENC_GROUP(3) ARGS(ldst_ra_rb_imm32) VARNAME(Ldba) VALUE("ldba") \
+INSTR_STUFF(3, ldst_ra_rb_imm32, Ldba, "ldba") \
 \
 \
 \
 /* Load sign-extended 8-bit value from address (absolute_addr + rB) into \
 rA. */ \
 /* This sign-extends the value. */ \
-ENC_GROUP(3) ARGS(ldst_ra_rb_imm32) VARNAME(Ldsba) VALUE("ldsba") \
+INSTR_STUFF(3, ldst_ra_rb_imm32, Ldsba, "ldsba") \
 \
 /* Store 32-bit value in rA to address (absolute_addr + rB). */ \
-ENC_GROUP(3) ARGS(ldst_ra_rb_imm32) VARNAME(Stra) VALUE("stra") \
+INSTR_STUFF(3, ldst_ra_rb_imm32, Stra, "stra") \
 \
 /* Store low 16 bits of rA to address (absolute_addr + rB). */ \
-ENC_GROUP(3) ARGS(ldst_ra_rb_imm32) VARNAME(Stha) VALUE("stha") \
+INSTR_STUFF(3, ldst_ra_rb_imm32, Stha, "stha") \
 \
 /* Store low 8 bits of rA to address (absolute_addr + rB). */ \
-ENC_GROUP(3) ARGS(ldst_ra_rb_imm32) VARNAME(Stba) VALUE("stba") \
+INSTR_STUFF(3, ldst_ra_rb_imm32, Stba, "stba") \
 
 
 
-#define LIST_OF_INSTR_G3_RA_RB_IMM32__COLLECTION_0(ENC_GROUP, ARGS, \
-	VARNAME, VALUE) \
+#define LIST_OF_INSTR_G3_RA_RB_IMM32__COLLECTION_0(INSTR_STUFF) \
 /* Set pc to destination address in (rA + rB + absolute_addr). */ \
-ENC_GROUP(3) ARGS(ra_rb_imm32) VARNAME(Jumpa) VALUE("jumpa") \
+INSTR_STUFF(3, ra_rb_imm32, Jumpa, "jumpa") \
 \
 /* Subroutine call using (rA + rB + absolute_addr) as destination  \
 address. */ \
 /* The return address is stored in the link register (lr). */ \
-ENC_GROUP(3) ARGS(ra_rb_imm32) VARNAME(Calla) VALUE("calla") \
+INSTR_STUFF(3, ra_rb_imm32, Calla, "calla") \
 \
 /* rA = 32-bit immediate, rB = same 32-bit immediate */ \
 /* If rA is the same register as rB, then the  */ \
 /* register will only be written once. */ \
-ENC_GROUP(3) ARGS(ra_rb_imm32) VARNAME(Cpypi) VALUE("cpypi") \
+INSTR_STUFF(3, ra_rb_imm32, Cpypi, "cpypi") \
 
 
 
-#define LIST_OF_INSTR_G3_LDST_BLOCK_5_TO_8__COLLECTION_0(ENC_GROUP, ARGS, \
-	VARNAME, VALUE) \
+#define LIST_OF_INSTR_G3_LDST_BLOCK_5_TO_8__COLLECTION_0(INSTR_STUFF) \
 /* STore Multiple, Decrement Before */ \
 /* Note that this instruction takes multiple forms */ \
 	/* Syntax:  stmdb rX, {rA, rB, rC, rD, rE} */ \
-ENC_GROUP(3) ARGS(ldst_block_5_to_8) VARNAME(Stmdb) VALUE("stmdb") \
+INSTR_STUFF(3, ldst_block_5_to_8, Stmdb, "stmdb") \
 \
 \
 \
 /* LoaD Multiple, Increment After */ \
 /* Note that this instruction takes multiple forms */ \
 	/* Syntax:  ldmia rX, {rA, rB, rC, rD, rE} */ \
-ENC_GROUP(3) ARGS(ldst_block_5_to_8) VARNAME(Ldmia) VALUE("ldmia") \
+INSTR_STUFF(3, ldst_block_5_to_8, Ldmia, "ldmia") \
 \
 \
 /* STore Multiple, Increment After */ \
 /* Note that this instruction takes multiple forms */ \
 	/* Syntax:  stmia rX, {rA, rB, rC, rD, rE} */ \
-ENC_GROUP(3) ARGS(ldst_block_5_to_8) VARNAME(Stmia) VALUE("stmia") \
+INSTR_STUFF(3, ldst_block_5_to_8, Stmia, "stmia") \
 
 
-#define LIST_OF_INSTR_G3_FLAGS__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, \
-	VALUE) \
+#define LIST_OF_INSTR_G3_FLAGS__COLLECTION_0(INSTR_STUFF) \
 /* Push flags as 8-bit value onto the stack (high 4 bits of pushed */ \
 /* value are set to zero before the push) */ \
-ENC_GROUP(3) ARGS(flags) VARNAME(Push) VALUE("push") \
+INSTR_STUFF(3, flags, Push, "push") \
 \
 /* Pop 8-bit value from the stack and store low 4 bits to flags */ \
-ENC_GROUP(3) ARGS(flags) VARNAME(Pop) VALUE("pop")
+INSTR_STUFF(3, flags, Pop, "pop")
 
 
 
-#define LIST_OF_INSTR_G3_RA_FLAGS__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, \
-	VALUE) \
+#define LIST_OF_INSTR_G3_RA_FLAGS__COLLECTION_0(INSTR_STUFF) \
 /* Clear rA, then CoPY FRom Flags to rA */ \
-ENC_GROUP(3) ARGS(ra_flags) VARNAME(Cpy) VALUE("cpy")
+INSTR_STUFF(3, ra_flags, Cpy, "cpy")
 
-#define LIST_OF_INSTR_G3_FLAGS_RA__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, \
-	VALUE) \
+#define LIST_OF_INSTR_G3_FLAGS_RA__COLLECTION_0(INSTR_STUFF) \
 /* Copy to flags from rA */ \
 /* This instruction can affect N, V, Z, and C flags. */ \
-ENC_GROUP(3) ARGS(flags_ra) VARNAME(Cpy) VALUE("cpy")
+INSTR_STUFF(3, flags_ra, Cpy, "cpy")
 
 
 /* Reserved for future expansion. */
@@ -199,16 +193,13 @@ ENC_GROUP(3) ARGS(flags_ra) VARNAME(Cpy) VALUE("cpy")
 // Note that this instruction takes multiple forms
 	// Syntax:  push rA, rB, rC, rD, rE
 
-#define LIST_OF_GROUP_3_INSTRUCTIONS(ENC_GROUP, ARGS, VARNAME, VALUE) \
-LIST_OF_INSTR_G3_LDST_RA_RB_IMM32__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, \
-	VALUE) \
-LIST_OF_INSTR_G3_RA_RB_IMM32__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, \
-	VALUE) \
-LIST_OF_INSTR_G3_LDST_BLOCK_5_TO_8__COLLECTION_0(ENC_GROUP, ARGS, \
-	VARNAME, VALUE) \
-LIST_OF_INSTR_G3_FLAGS__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, VALUE) \
-LIST_OF_INSTR_G3_RA_FLAGS__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, VALUE) \
-LIST_OF_INSTR_G3_FLAGS_RA__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, VALUE)
+#define LIST_OF_GROUP_3_INSTRUCTIONS(INSTR_STUFF) \
+LIST_OF_INSTR_G3_LDST_RA_RB_IMM32__COLLECTION_0(INSTR_STUFF) \
+LIST_OF_INSTR_G3_RA_RB_IMM32__COLLECTION_0(INSTR_STUFF) \
+LIST_OF_INSTR_G3_LDST_BLOCK_5_TO_8__COLLECTION_0(INSTR_STUFF) \
+LIST_OF_INSTR_G3_FLAGS__COLLECTION_0(INSTR_STUFF) \
+LIST_OF_INSTR_G3_RA_FLAGS__COLLECTION_0(INSTR_STUFF) \
+LIST_OF_INSTR_G3_FLAGS_RA__COLLECTION_0(INSTR_STUFF)
 
 
 #endif		// group_3_instructions_hpp

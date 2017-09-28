@@ -15,170 +15,166 @@
 
 
 
-#define LIST_OF_INSTR_G1_RA_RB_UIMM16__COLLECTION_0(ENC_GROUP, ARGS, \
-	VARNAME, VALUE) \
+#define LIST_OF_INSTR_G1_RA_RB_UIMM16__COLLECTION_0(INSTR_STUFF) \
 \
 /* rA = rB + (zero-extended imm) */ \
 /* This instruction can affect N, V, Z, and C flags. */ \
-ENC_GROUP(1) ARGS(ra_rb_uimm16) VARNAME(Addi) VALUE("addi") \
+INSTR_STUFF(1, ra_rb_uimm16, Addi, "addi") \
 \
 /* rA = rB + (zero-extended imm) + carry_flag */ \
 /* Add with carry */ \
 /* This instruction can affect N, V, Z, and C flags. */ \
-ENC_GROUP(1) ARGS(ra_rb_uimm16) VARNAME(Adci) VALUE("adci") \
+INSTR_STUFF(1, ra_rb_uimm16, Adci, "adci") \
 \
 /* rA = rB - (zero-extended imm) */ \
 /* This instruction can affect N, V, Z, and C flags. */ \
-ENC_GROUP(1) ARGS(ra_rb_uimm16) VARNAME(Subi) VALUE("subi") \
+INSTR_STUFF(1, ra_rb_uimm16, Subi, "subi") \
 \
 /* rA = rB + (~(zero-extended imm)) + carry_flag */ \
 /* Subtract with borrow (6502 style) */ \
 /* This instruction can affect N, V, Z, and C flags. */ \
-ENC_GROUP(1) ARGS(ra_rb_uimm16) VARNAME(Sbci) VALUE("sbci") \
+INSTR_STUFF(1, ra_rb_uimm16, Sbci, "sbci") \
 \
 \
 \
 /* rA = (zero-extended imm) - rB */ \
 /* This instruction can affect N, V, Z, and C flags. */ \
-ENC_GROUP(1) ARGS(ra_rb_uimm16) VARNAME(Rsbi) VALUE("rsbi") \
+INSTR_STUFF(1, ra_rb_uimm16, Rsbi, "rsbi") \
 \
 /* rA = rB * (zero-extended imm) */ \
-ENC_GROUP(1) ARGS(ra_rb_uimm16) VARNAME(Muli) VALUE("muli") \
+INSTR_STUFF(1, ra_rb_uimm16, Muli, "muli") \
 \
 /* rA = rB & (zero-extended imm) */ \
 /* This instruction can affect the N and Z flags. */ \
-ENC_GROUP(1) ARGS(ra_rb_uimm16) VARNAME(Andi) VALUE("andi") \
+INSTR_STUFF(1, ra_rb_uimm16, Andi, "andi") \
 \
 /* rA = rB | (zero-extended imm) */ \
 /* This instruction can affect the N and Z flags. */ \
-ENC_GROUP(1) ARGS(ra_rb_uimm16) VARNAME(Ori) VALUE("ori") \
+INSTR_STUFF(1, ra_rb_uimm16, Ori, "ori") \
 \
 \
 \
 /* rA = rB ^ (zero-extended imm) */ \
 /* This instruction can affect the N and Z flags. */ \
-ENC_GROUP(1) ARGS(ra_rb_uimm16) VARNAME(Xori) VALUE("xori") \
+INSTR_STUFF(1, ra_rb_uimm16, Xori, "xori") \
 \
 /* Logical shift left */ \
 /* rA = rB << (zero-extended imm) */ \
-ENC_GROUP(1) ARGS(ra_rb_uimm16) VARNAME(Lsli) VALUE("lsli") \
+INSTR_STUFF(1, ra_rb_uimm16, Lsli, "lsli") \
 \
 /* Logical shift right */ \
-ENC_GROUP(1) ARGS(ra_rb_uimm16) VARNAME(Lsri) VALUE("lsri") \
+INSTR_STUFF(1, ra_rb_uimm16, Lsri, "lsri") \
 \
 /* Arithmetic shift right */ \
-ENC_GROUP(1) ARGS(ra_rb_uimm16) VARNAME(Asri) VALUE("asri") \
+INSTR_STUFF(1, ra_rb_uimm16, Asri, "asri") \
 \
 \
 \
 /* Rotate  left by (zero-extended imm) bits, then store result in rA. */ \
-ENC_GROUP(1) ARGS(ra_rb_uimm16) VARNAME(Roli) VALUE("roli") \
+INSTR_STUFF(1, ra_rb_uimm16, Roli, "roli") \
 \
 /* Rotate  right by (zero-extended imm) bits, then store result in rA. */ \
-ENC_GROUP(1) ARGS(ra_rb_uimm16) VARNAME(Rori) VALUE("rori")
+INSTR_STUFF(1, ra_rb_uimm16, Rori, "rori")
 
-#define LIST_OF_INSTR_G1_SIMM16__COLLECTION_0(ENC_GROUP, ARGS, \
-	VARNAME, VALUE) \
+#define LIST_OF_INSTR_G1_SIMM16__COLLECTION_0(INSTR_STUFF) \
 /* Branch always,  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-ENC_GROUP(1) ARGS(simm16) VARNAME(Bra) VALUE("bra") \
+INSTR_STUFF(1, simm16, Bra, "bra") \
 \
 /* Branch never (effectively a NOP), */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-ENC_GROUP(1) ARGS(simm16) VARNAME(Bnv) VALUE("bnv") \
+INSTR_STUFF(1, simm16, Bnv, "bnv") \
 \
 \
 \
 /* Branch when Z == 0,  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-ENC_GROUP(1) ARGS(simm16) VARNAME(Bne) VALUE("bne") \
+INSTR_STUFF(1, simm16, Bne, "bne") \
 \
 /* Branch when Z == 1,  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-ENC_GROUP(1) ARGS(simm16) VARNAME(Beq) VALUE("beq") \
+INSTR_STUFF(1, simm16, Beq, "beq") \
 \
 /* Branch when C == 0 [unsigned less than],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-ENC_GROUP(1) ARGS(simm16) VARNAME(Bcc) VALUE("bcc") \
+INSTR_STUFF(1, simm16, Bcc, "bcc") \
 \
 /* Branch when C == 1 [unsigned greater than or equal],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-ENC_GROUP(1) ARGS(simm16) VARNAME(Bcs) VALUE("bcs") \
+INSTR_STUFF(1, simm16, Bcs, "bcs") \
 \
 \
 \
 /* Branch when (C == 0 or Z == 1) [unsigned less than or equal],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-ENC_GROUP(1) ARGS(simm16) VARNAME(Bls) VALUE("bls") \
+INSTR_STUFF(1, simm16, Bls, "bls") \
 \
 /* Branch when (C == 1 and Z == 0) [unsigned greater than],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-ENC_GROUP(1) ARGS(simm16) VARNAME(Bhi) VALUE("bhi") \
+INSTR_STUFF(1, simm16, Bhi, "bhi") \
 \
 /* Branch when N == 0,  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-ENC_GROUP(1) ARGS(simm16) VARNAME(Bpl) VALUE("bpl") \
+INSTR_STUFF(1, simm16, Bpl, "bpl") \
 \
 /* Branch when N == 1,  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-ENC_GROUP(1) ARGS(simm16) VARNAME(Bmi) VALUE("bmi") \
+INSTR_STUFF(1, simm16, Bmi, "bmi") \
 \
 \
 \
 /* Branch when V == 0,  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-ENC_GROUP(1) ARGS(simm16) VARNAME(Bvc) VALUE("bvc") \
+INSTR_STUFF(1, simm16, Bvc, "bvc") \
 \
 /* Branch when V == 1,  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-ENC_GROUP(1) ARGS(simm16) VARNAME(Bvs) VALUE("bvs") \
+INSTR_STUFF(1, simm16, Bvs, "bvs") \
 \
 /* Branch when N == V [signed greater than or equal],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-ENC_GROUP(1) ARGS(simm16) VARNAME(Bge) VALUE("bge") \
+INSTR_STUFF(1, simm16, Bge, "bge") \
 \
 /* Branch when N != V [signed less than],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-ENC_GROUP(1) ARGS(simm16) VARNAME(Blt) VALUE("blt") \
+INSTR_STUFF(1, simm16, Blt, "blt") \
 \
 \
 \
 /* Branch when (N == V and Z == 0) [signed greater than],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-ENC_GROUP(1) ARGS(simm16) VARNAME(Bgt) VALUE("bgt") \
+INSTR_STUFF(1, simm16, Bgt, "bgt") \
 \
 /* Branch when (N != V or Z == 1) [signed less than or equal],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-ENC_GROUP(1) ARGS(simm16) VARNAME(Ble) VALUE("ble")
+INSTR_STUFF(1, simm16, Ble, "ble")
 
 
-#define LIST_OF_INSTR_G1_RA_RB_SIMM16__COLLECTION_0(ENC_GROUP, ARGS, \
-	VARNAME, VALUE) \
+#define LIST_OF_INSTR_G1_RA_RB_SIMM16__COLLECTION_0(INSTR_STUFF) \
 /* rA = rB ^ (sign-extended imm) */ \
 /* This instruction can affect the N and Z flags. */ \
-ENC_GROUP(1) ARGS(ra_rb_simm16) VARNAME(Xorsi) VALUE("xorsi")
+INSTR_STUFF(1, ra_rb_simm16, Xorsi, "xorsi")
 
-#define LIST_OF_INSTR_G1_RA_UIMM16__COLLECTION_0(ENC_GROUP, ARGS, \
-	VARNAME, VALUE) \
+#define LIST_OF_INSTR_G1_RA_UIMM16__COLLECTION_0(INSTR_STUFF) \
 /* rA bits {31, 30, 29, ..., 18, 17, 16} = 16-bit unsigned immediate  \
 value */ \
-ENC_GROUP(1) ARGS(ra_uimm16) VARNAME(Lui) VALUE("lui")
+INSTR_STUFF(1, ra_uimm16, Lui, "lui")
 
 
 
@@ -224,12 +220,10 @@ ENC_GROUP(1) ARGS(ra_uimm16) VARNAME(Lui) VALUE("lui")
 //// This instruction can affect the N and Z flags.
 //PSEUDO_INSTR_RB_IMM(tsti,imm)
 
-#define LIST_OF_GROUP_1_INSTRUCTIONS(ENC_GROUP, ARGS, VARNAME, VALUE) \
-LIST_OF_INSTR_G1_RA_RB_UIMM16__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, \
-	VALUE) \
-LIST_OF_INSTR_G1_SIMM16__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, VALUE) \
-LIST_OF_INSTR_G1_RA_RB_SIMM16__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, \
-	VALUE) \
-LIST_OF_INSTR_G1_RA_UIMM16__COLLECTION_0(ENC_GROUP, ARGS, VARNAME, VALUE) \
+#define LIST_OF_GROUP_1_INSTRUCTIONS(INSTR_STUFF) \
+LIST_OF_INSTR_G1_RA_RB_UIMM16__COLLECTION_0(INSTR_STUFF) \
+LIST_OF_INSTR_G1_SIMM16__COLLECTION_0(INSTR_STUFF) \
+LIST_OF_INSTR_G1_RA_RB_SIMM16__COLLECTION_0(INSTR_STUFF) \
+LIST_OF_INSTR_G1_RA_UIMM16__COLLECTION_0(INSTR_STUFF) \
 
 #endif		// group_1_instructions_hpp

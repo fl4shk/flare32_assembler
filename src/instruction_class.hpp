@@ -81,13 +81,19 @@ class Instruction
 private:		// variables
 	std::string __str;
 	bool __affects_flags;
+	InstrArgs __args;
+
+	#define INSTR_STUFF(x) 
+
+	#undef ENC_GROUP
 
 
 public:		// constants
-	
-	gen_getter_by_con_ref(str);
-	gen_getter_by_val(affects_flags);
-	
+
+	gen_getter_by_con_ref(str)
+	gen_getter_by_val(affects_flags)
+	gen_getter_by_val(args)
+
 };
 
 
