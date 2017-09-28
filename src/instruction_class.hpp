@@ -81,7 +81,6 @@ enum class InstrArgs
 
 
 
-
 class Instruction;
 typedef const Instruction* PInstr;
 
