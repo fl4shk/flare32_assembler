@@ -68,13 +68,13 @@ public:		// functions
 		return (__table.count(some_name) == 1);
 	}
 
-	inline void insert(const Symbol& to_insert)
+	inline void insert_or_assign(const Symbol& to_insert_or_assign)
 	{
-		at(to_insert.name()) = to_insert;
+		at(to_insert_or_assign.name()) = to_insert_or_assign;
 	}
-	inline void insert(Symbol&& to_insert)
+	inline void insert_or_assign(Symbol&& to_insert_or_assign)
 	{
-		at(to_insert.name()) = std::move(to_insert);
+		at(to_insert_or_assign.name()) = std::move(to_insert_or_assign);
 	}
 
 

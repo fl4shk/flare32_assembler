@@ -28,7 +28,8 @@ private:		// variables
 	std::string __next_sym_str;
 	s64 __next_num = -1;
 
-	bool __changed = false;
+	//bool __changed = false;
+	s32 __pass = 0;
 
 	char* __input_filename = nullptr;
 	std::FILE* __infile = nullptr;
@@ -51,7 +52,8 @@ private:		// functions
 	gen_getter_and_setter_by_val(next_tok)
 	gen_getter_and_setter_by_con_ref(next_sym_str)
 	gen_getter_and_setter_by_val(next_num)
-	gen_getter_and_setter_by_val(changed)
+	//gen_getter_and_setter_by_val(changed)
+	gen_getter_and_setter_by_val(pass)
 	gen_getter_and_setter_by_val(input_filename)
 	gen_getter_and_setter_by_val(infile)
 

@@ -18,7 +18,23 @@ Assembler::Assembler(char* s_input_filename)
 
 int Assembler::operator () ()
 {
-	do
+	//do
+	//{
+	//	reinit();
+
+	//	advance();
+	//	lex();
+
+	//	while (next_tok() != &Tok::Eof)
+	//	{
+	//		line();
+	//	}
+
+	//} while (changed());
+
+
+	// Two passes
+	for (set_pass(0); pass() < 2; set_pass(pass() + 1))
 	{
 		reinit();
 
@@ -29,8 +45,7 @@ int Assembler::operator () ()
 		{
 			line();
 		}
-
-	} while (changed());
+	}
 
 	return 0;
 }
@@ -45,35 +60,47 @@ void Assembler::reinit()
 	set_next_tok(nullptr);
 	set_next_sym_str("");
 	set_next_num(-1);
-	set_changed(false);
+	//set_changed(false);
 }
 
 void Assembler::fill_builtin_sym_tbl()
 {
 	// General-purpose registers
-	builtin_sym_tbl().insert(Symbol("r0", &Tok::Reg, 0));
-	builtin_sym_tbl().insert(Symbol("r1", &Tok::Reg, 1));
-	builtin_sym_tbl().insert(Symbol("r2", &Tok::Reg, 2));
-	builtin_sym_tbl().insert(Symbol("r3", &Tok::Reg, 3));
-	builtin_sym_tbl().insert(Symbol("r4", &Tok::Reg, 4));
-	builtin_sym_tbl().insert(Symbol("r5", &Tok::Reg, 5));
-	builtin_sym_tbl().insert(Symbol("r6", &Tok::Reg, 6));
-	builtin_sym_tbl().insert(Symbol("r7", &Tok::Reg, 7));
-	builtin_sym_tbl().insert(Symbol("r8", &Tok::Reg, 8));
-	builtin_sym_tbl().insert(Symbol("r9", &Tok::Reg, 9));
-	builtin_sym_tbl().insert(Symbol("r10", &Tok::Reg, 10));
-	builtin_sym_tbl().insert(Symbol("r11", &Tok::Reg, 11));
-	builtin_sym_tbl().insert(Symbol("r12", &Tok::Reg, 12));
-	builtin_sym_tbl().insert(Symbol("r13", &Tok::Reg, 13));
-	builtin_sym_tbl().insert(Symbol("r14", &Tok::Reg, 14));
-	builtin_sym_tbl().insert(Symbol("r15", &Tok::Reg, 15));
-	builtin_sym_tbl().insert(Symbol("lr", &Tok::Reg, 14));
-	builtin_sym_tbl().insert(Symbol("sp", &Tok::Reg, 15));
+	builtin_sym_tbl().insert_or_assign(Symbol("r0", &Tok::Reg, 0));
+	builtin_sym_tbl().insert_or_assign(Symbol("r1", &Tok::Reg, 1));
+	builtin_sym_tbl().insert_or_assign(Symbol("r2", &Tok::Reg, 2));
+	builtin_sym_tbl().insert_or_assign(Symbol("r3", &Tok::Reg, 3));
+	builtin_sym_tbl().insert_or_assign(Symbol("r4", &Tok::Reg, 4));
+	builtin_sym_tbl().insert_or_assign(Symbol("r5", &Tok::Reg, 5));
+	builtin_sym_tbl().insert_or_assign(Symbol("r6", &Tok::Reg, 6));
+	builtin_sym_tbl().insert_or_assign(Symbol("r7", &Tok::Reg, 7));
+	builtin_sym_tbl().insert_or_assign(Symbol("r8", &Tok::Reg, 8));
+	builtin_sym_tbl().insert_or_assign(Symbol("r9", &Tok::Reg, 9));
+	builtin_sym_tbl().insert_or_assign(Symbol("r10", &Tok::Reg, 10));
+	builtin_sym_tbl().insert_or_assign(Symbol("r11", &Tok::Reg, 11));
+	builtin_sym_tbl().insert_or_assign(Symbol("r12", &Tok::Reg, 12));
+	builtin_sym_tbl().insert_or_assign(Symbol("r13", &Tok::Reg, 13));
+	builtin_sym_tbl().insert_or_assign(Symbol("r14", &Tok::Reg, 14));
+	builtin_sym_tbl().insert_or_assign(Symbol("r15", &Tok::Reg, 15));
+	builtin_sym_tbl().insert_or_assign(Symbol("lr", &Tok::Reg, 14));
+	builtin_sym_tbl().insert_or_assign(Symbol("sp", &Tok::Reg, 15));
 
 	// Special-purpose registers
-	builtin_sym_tbl().insert(Symbol("pc", &Tok::RegPc, 16));
-	builtin_sym_tbl().insert(Symbol("ira", &Tok::RegIra, 17));
-	builtin_sym_tbl().insert(Symbol("flags", &Tok::RegFlags, 17));
+	builtin_sym_tbl().insert_or_assign(Symbol("pc", &Tok::RegPc, -1));
+	builtin_sym_tbl().insert_or_assign(Symbol("ira", &Tok::RegIra, -1));
+	builtin_sym_tbl().insert_or_assign(Symbol("flags", &Tok::RegFlags,
+		-1));
+
+
+	// Instructions
+	for (const auto& outer_iter : __instr_tbl.instr_vec)
+	{
+		for (const auto& instr : *outer_iter)
+		{
+			builtin_sym_tbl().insert_or_assign(Symbol(instr->str(), 
+				&Tok::Instr, -1));
+		}
+	}
 }
 
 
@@ -262,8 +289,8 @@ void Assembler::lex()
 
 void Assembler::line()
 {
-	printout("line():  ", next_tok()->str(), "\n");
-	lex();
+	//printout("line():  ", next_tok()->str(), "\n");
+	//lex();
 }
 
 
