@@ -48,6 +48,9 @@ LIST_OF_MULTI_CHAR_OPERATOR_TOKESN(VARNAME, VALUE)
 /* "Instruction", "Register", "Identifier" */ \
 VARNAME(Instr) VALUE("Instruction") \
 VARNAME(Reg) VALUE("Register") \
+VARNAME(RegPc) VALUE("PC") \
+VARNAME(RegIra) VALUE("IRA") \
+VARNAME(RegFlags) VALUE("Flags") \
 VARNAME(Ident) VALUE("Identifier")
 
 #define LIST_OF_EXTRA_TOKENS(VARNAME, VALUE) \
@@ -56,7 +59,8 @@ VARNAME(NatNum) VALUE("NaturalNumber") \
 \
 LIST_OF_IDENT_ISH_TOKENS(VARNAME, VALUE) \
 \
-/* "EOF" */ \
+/* "Newline", "EOF" */ \
+VARNAME(Newline) VALUE("newline") \
 VARNAME(Eof) VALUE("EOF")
 
 

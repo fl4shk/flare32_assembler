@@ -13,9 +13,8 @@ class Symbol
 private:		// variables
 	std::string __name;
 	PTok __token;
-	PInstr __instr;
 
-	// This is used for labels and stuff
+	// These are used for user symbols such as labels
 	s64 __value;
 	bool __initialized;
 
@@ -24,16 +23,16 @@ public:		// functions
 	inline Symbol()
 	{
 	}
-	inline Symbol(const std::string& s_name, PTok s_token, 
-		PInstr s_instr=nullptr, s64 s_value=0, bool s_initialized=false) 
-		: __name(s_name), __token(s_token), __instr(s_instr), 
-		__value(s_value), __initialized(s_initialized)
+	inline Symbol(const std::string& s_name, PTok s_token, s64 s_value=0, 
+		bool s_initialized=false) 
+		: __name(s_name), __token(s_token), __value(s_value), 
+		__initialized(s_initialized)
 	{
 	}
-	inline Symbol(std::string&& s_name, PTok s_token, 
-		PInstr s_instr=nullptr, s64 s_value=0, bool s_initialized=false)
-		: __name(std::move(s_name)), __token(s_token), __instr(s_instr), 
-		__value(s_value), __initialized(s_initialized)
+	inline Symbol(std::string&& s_name, PTok s_token, s64 s_value=0, 
+		bool s_initialized=false)
+		: __name(std::move(s_name)), __token(s_token), __value(s_value), 
+		__initialized(s_initialized)
 	{
 	}
 	inline Symbol(const Symbol& to_copy) = default;
@@ -45,7 +44,6 @@ public:		// functions
 	gen_getter_and_setter_by_con_ref(name)
 	gen_setter_by_rval_ref(name)
 	gen_getter_and_setter_by_con_ref(token)
-	gen_getter_and_setter_by_con_ref(instr)
 	gen_getter_and_setter_by_val(value)
 	gen_getter_and_setter_by_val(initialized)
 
@@ -75,6 +73,15 @@ public:		// functions
 	inline bool contains(const std::string& some_name) const
 	{
 		return (__table.count(some_name) == 1);
+	}
+
+	inline void insert(const Symbol& to_insert)
+	{
+		at(to_insert.name()) = to_insert;
+	}
+	inline void insert(Symbol&& to_insert)
+	{
+		at(to_insert.name()) = std::move(to_insert);
 	}
 
 

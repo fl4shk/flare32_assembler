@@ -17,11 +17,12 @@ private:		// classes
 
 private:		// variables
 	SymbolTable __builtin_sym_tbl, __user_sym_tbl;
+	InstructionTable __instr_tbl;
 
 	size_t __line_num = 1;
 
 	int __next_char = ' ';
-	PTok __next_tok = nullptr, __next_user_tok = nullptr;
+	PTok __next_tok = nullptr;
 	std::string __next_sym_str;
 	s64 __next_num = -1;
 
@@ -40,11 +41,11 @@ public:		// functions
 private:		// functions
 	gen_getter_by_ref(builtin_sym_tbl)
 	gen_getter_by_ref(user_sym_tbl)
+	gen_getter_by_ref(instr_tbl)
 
 	gen_getter_and_setter_by_val(line_num)
 	gen_getter_and_setter_by_val(next_char)
 	gen_getter_and_setter_by_val(next_tok)
-	gen_getter_and_setter_by_val(next_user_tok)
 	gen_getter_and_setter_by_con_ref(next_sym_str)
 	gen_getter_and_setter_by_val(next_num)
 	gen_getter_and_setter_by_val(changed)
@@ -112,9 +113,17 @@ private:		// functions
 	s64 handle_factor();
 	s64 handle_expr();
 
+	bool tok_is_punct(PTok some_tok) const;
+	bool tok_is_ident_ish(PTok some_tok) const;
 
-	bool next_tok_is_punct() const;
-	bool next_tok_is_ident_ish() const;
+	inline bool next_tok_is_punct() const
+	{
+		return tok_is_punct(next_tok());
+	}
+	inline bool next_tok_is_ident_ish() const
+	{
+		return tok_is_ident_ish(next_tok());
+	}
 
 
 };

@@ -43,7 +43,6 @@ void Assembler::reinit()
 	set_line_num(1);
 	set_next_char(' ');
 	set_next_tok(nullptr);
-	set_next_user_tok(nullptr);
 	set_next_sym_str("");
 	set_next_num(-1);
 	set_changed(false);
@@ -51,6 +50,30 @@ void Assembler::reinit()
 
 void Assembler::fill_builtin_sym_tbl()
 {
+	// General-purpose registers
+	builtin_sym_tbl().insert(Symbol("r0", &Tok::Reg, 0, true));
+	builtin_sym_tbl().insert(Symbol("r1", &Tok::Reg, 1, true));
+	builtin_sym_tbl().insert(Symbol("r2", &Tok::Reg, 2, true));
+	builtin_sym_tbl().insert(Symbol("r3", &Tok::Reg, 3, true));
+	builtin_sym_tbl().insert(Symbol("r4", &Tok::Reg, 4, true));
+	builtin_sym_tbl().insert(Symbol("r5", &Tok::Reg, 5, true));
+	builtin_sym_tbl().insert(Symbol("r6", &Tok::Reg, 6, true));
+	builtin_sym_tbl().insert(Symbol("r7", &Tok::Reg, 7, true));
+	builtin_sym_tbl().insert(Symbol("r8", &Tok::Reg, 8, true));
+	builtin_sym_tbl().insert(Symbol("r9", &Tok::Reg, 9, true));
+	builtin_sym_tbl().insert(Symbol("r10", &Tok::Reg, 10, true));
+	builtin_sym_tbl().insert(Symbol("r11", &Tok::Reg, 11, true));
+	builtin_sym_tbl().insert(Symbol("r12", &Tok::Reg, 12, true));
+	builtin_sym_tbl().insert(Symbol("r13", &Tok::Reg, 13, true));
+	builtin_sym_tbl().insert(Symbol("r14", &Tok::Reg, 14, true));
+	builtin_sym_tbl().insert(Symbol("r15", &Tok::Reg, 15, true));
+	builtin_sym_tbl().insert(Symbol("lr", &Tok::Reg, 14, true));
+	builtin_sym_tbl().insert(Symbol("sp", &Tok::Reg, 15, true));
+
+	// Special-purpose registers
+	builtin_sym_tbl().insert(Symbol("pc", &Tok::RegPc, 16, true));
+	builtin_sym_tbl().insert(Symbol("ira", &Tok::RegIra, 17, true));
+	builtin_sym_tbl().insert(Symbol("flags", &Tok::RegFlags, 17, true));
 }
 
 
@@ -88,9 +111,16 @@ void Assembler::advance()
 
 void Assembler::lex()
 {
+	//while (isspace(next_char()) && (next_char() != '\n'))
 	while (isspace(next_char()) && (next_char() != '\n'))
 	{
 		advance();
+	}
+
+	if (next_char() == '\n')
+	{
+		set_next_tok(&Tok::Newline);
+		return;
 	}
 
 	if (next_char() == EOF)
@@ -119,6 +149,7 @@ void Assembler::lex()
 	LIST_OF_SINGLE_CHAR_OPERATOR_TOKENS(VARNAME, VALUE)
 
 	#undef VARNAME
+	#undef VALUE
 
 	// Find an identifier
 	if (isalpha(next_char()) || (next_char() == '_'))
@@ -146,7 +177,6 @@ void Assembler::lex()
 
 			user_sym_tbl().at(next_str) = to_insert;
 		}
-		set_next_user_tok(user_sym_tbl().at(next_str).token());
 
 		if (builtin_sym_tbl().contains(next_str))
 		{
@@ -191,7 +221,6 @@ void Assembler::lex()
 		set_next_tok(&Tok::NatNum);
 
 		return;
-
 	}
 
 	// BitShL
@@ -229,13 +258,12 @@ void Assembler::lex()
 
 		return;
 	}
-
-
 }
 
 void Assembler::line()
 {
 	printout("line():  ", next_tok()->str(), "\n");
+	lex();
 }
 
 
@@ -359,40 +387,39 @@ s64 Assembler::handle_factor()
 
 
 
-bool Assembler::next_tok_is_punct() const
+bool Assembler::tok_is_punct(PTok some_tok) const
 {
-	if (next_tok() == nullptr)
+	if (some_tok == nullptr)
 	{
 	}
 	
-	#define VARNAME(some_tok) \
-		else if (next_tok() == &Tok::some_tok) \
+	#define VARNAME(other_tok) \
+		else if (some_tok == &Tok::other_tok) \
 		{ \
 			return true; \
 		}
-	#define VALUE(some_str) 
+	#define VALUE(other_str) 
 	
 	LIST_OF_PUNCT_TOKENS(VARNAME, VALUE)
 
 	#undef VARNAME
 	#undef VALUE
 
-
 	return false;
 }
 
-bool Assembler::next_tok_is_ident_ish() const
+bool Assembler::tok_is_ident_ish(PTok some_tok) const
 {
-	if (next_tok() == nullptr)
+	if (some_tok == nullptr)
 	{
 	}
 
-	#define VARNAME(some_tok) \
-		else if (next_tok() == &Tok::some_tok) \
+	#define VARNAME(other_tok) \
+		else if (some_tok == &Tok::other_tok) \
 		{ \
 			return true; \
 		}
-	#define VALUE(some_str) 
+	#define VALUE(other_str) 
 	
 	LIST_OF_IDENT_ISH_TOKENS(VARNAME, VALUE)
 
