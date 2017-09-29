@@ -42,8 +42,8 @@ void Assembler::reinit()
 	rewind(infile());
 	set_line_num(1);
 	set_next_char(' ');
-	set_next_builtin_tok(nullptr);
 	set_next_tok(nullptr);
+	set_next_user_tok(nullptr);
 	set_next_sym_str("");
 	set_next_num(-1);
 	set_changed(false);
@@ -88,7 +88,7 @@ void Assembler::advance()
 
 void Assembler::lex()
 {
-	while (isspace(next_char()))
+	while (isspace(next_char()) && (next_char() != '\n'))
 	{
 		advance();
 	}
@@ -98,6 +98,139 @@ void Assembler::lex()
 		set_next_tok(&Tok::Blank);
 		return;
 	}
+
+	std::string next_str;
+	next_str += next_char();
+
+	if (next_str == "")
+	{
+	}
+
+	#define VARNAME(some_tok) \
+		else if (next_str == Tok::some_tok.str()) \
+		{ \
+			set_next_tok(&Tok::some_tok); \
+			advance(); \
+			return; \
+		}
+	#define VALUE(some_str)
+
+	LIST_OF_PUNCT_TOKENS(VARNAME, VALUE)
+	LIST_OF_SINGLE_CHAR_OPERATOR_TOKENS(VARNAME, VALUE)
+
+	#undef VARNAME
+
+	// Find an identifier
+	if (isalpha(next_char()) || (next_char() == '_'))
+	{
+		//printout("lex():  An ident?\n");
+		next_str = "";
+		next_str += next_char();
+		advance();
+
+		while (isalnum(next_char()) || (next_char() == '_'))
+		{
+			next_str += next_char();
+			advance();
+		}
+
+		//printout("lex():  next_str, next_char():  ", next_str, ", ",
+		//	(char)next_char(), "\n");
+
+		// If we haven't seen a user symbol like this before...
+		if (!user_sym_tbl().contains(next_str))
+		{
+			// ...Then create a new symbol
+			//printout("Creating a new symbol....\n");
+			Symbol to_insert(next_str, &Tok::Ident, 0);
+
+			user_sym_tbl().at(next_str) = to_insert;
+		}
+		set_next_user_tok(user_sym_tbl().at(next_str).token());
+
+		if (builtin_sym_tbl().contains(next_str))
+		{
+			const Symbol& temp = builtin_sym_tbl().at(next_str);
+			set_next_tok(temp.token());
+		}
+		else
+		{
+			set_next_tok(&Tok::Ident);
+		}
+
+		set_next_sym_str(next_str);
+
+		return;
+	}
+
+	// The constant 0
+	if (next_char() == '0')
+	{
+		set_next_num(0);
+		set_next_tok(&Tok::NatNum);
+
+		advance();
+
+		if (isdigit(next_char()))
+		{
+			expected("Natural number that does not start with 0!");
+		}
+	}
+
+	// Find a constant natural number
+	if (isdigit(next_char()))
+	{
+		set_next_num(0);
+
+		do
+		{
+			set_next_num((next_num() * 10) + (next_char() - '0'));
+			advance();
+		} while (isdigit(next_char()));
+
+		set_next_tok(&Tok::NatNum);
+
+		return;
+
+	}
+
+	// BitShL
+	if (next_char() == '<')
+	{
+		advance();
+
+		if (next_char() == '<')
+		{
+			advance();
+			set_next_tok(&Tok::BitShL);
+		}
+		else
+		{
+			expected("\"<<\" but got \"", next_str, "\"!");
+		}
+
+		return;
+	}
+
+	// BitShR
+	if (next_char() == '>')
+	{
+		advance();
+
+		if (next_char() == '>')
+		{
+			advance();
+			set_next_tok(&Tok::BitShR);
+		}
+		else
+		{
+			expected("\">>\" but got \"", next_str, "\"!");
+		}
+
+		return;
+	}
+
+
 }
 
 void Assembler::line()

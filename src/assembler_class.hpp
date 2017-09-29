@@ -21,7 +21,7 @@ private:		// variables
 	size_t __line_num = 1;
 
 	int __next_char = ' ';
-	PTok __next_builtin_tok = nullptr, __next_tok = nullptr;
+	PTok __next_tok = nullptr, __next_user_tok = nullptr;
 	std::string __next_sym_str;
 	s64 __next_num = -1;
 
@@ -43,8 +43,8 @@ private:		// functions
 
 	gen_getter_and_setter_by_val(line_num)
 	gen_getter_and_setter_by_val(next_char)
-	gen_getter_and_setter_by_val(next_builtin_tok)
 	gen_getter_and_setter_by_val(next_tok)
+	gen_getter_and_setter_by_val(next_user_tok)
 	gen_getter_and_setter_by_con_ref(next_sym_str)
 	gen_getter_and_setter_by_val(next_num)
 	gen_getter_and_setter_by_val(changed)

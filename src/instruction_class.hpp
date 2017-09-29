@@ -9,7 +9,12 @@
 #include "group_2_instructions.hpp"
 #include "group_3_instructions.hpp"
 
-
+// Non-pseudo instructions
+#define LIST_OF_INSTRUCTIONS(INSTR_STUFF) \
+	LIST_OF_GROUP_0_INSTRUCTIONS(INSTR_STUFF) \
+	LIST_OF_GROUP_1_INSTRUCTIONS(INSTR_STUFF) \
+	LIST_OF_GROUP_2_INSTRUCTIONS(INSTR_STUFF) \
+	LIST_OF_GROUP_3_INSTRUCTIONS(INSTR_STUFF)
 
 namespace flare32
 {
@@ -83,12 +88,42 @@ private:		// variables
 	bool __affects_flags;
 	InstrArgs __args;
 
-	#define INSTR_STUFF(x) 
 
-	#undef ENC_GROUP
+	#define INSTR_STUFF(enc_group, args, varname, value) \
+	varname##_##args##_##enc_group,
+	static const Instruction LIST_OF_INSTRUCTIONS(INSTR_STUFF)
+	#undef INSTR_STUFF
 
+	#define INSTR_STUFF(enc_group, args, varname, value) \
+	varname##_##args##_##enc_group##_affects_flags,
+	LIST_OF_INSTRUCTIONS(INSTR_STUFF) Dummy;
+	#undef INSTR_STUFF
+
+	static const std::vector<PInstr> instr_g0_vec, instr_g1_vec,
+		instr_g2_vec, instr_g3_vec;
+
+	static const std::vector<PInstr> instr_vec;
 
 public:		// constants
+	inline Instruction() : Instruction("", 0, InstrArgs::no_args)
+	{
+	}
+	inline Instruction(const std::string& s_str, bool s_affects_flags,
+		InstrArgs s_args) : __str(s_str), __affects_flags(s_affects_flags),
+		__args(s_args)
+	{
+	}
+	inline Instruction(std::string&& s_str, bool s_affects_flags,
+		InstrArgs s_args) : __str(std::move(s_str)), 
+		__affects_flags(s_affects_flags), __args(s_args)
+	{
+	}
+
+	inline Instruction(const Instruction& to_copy) = default;
+	inline Instruction(Instruction&& to_move) = default;
+
+	inline Instruction& operator = (const Instruction& to_copy) = default;
+	inline Instruction& operator = (Instruction&& to_move) = default;
 
 	gen_getter_by_con_ref(str)
 	gen_getter_by_val(affects_flags)
