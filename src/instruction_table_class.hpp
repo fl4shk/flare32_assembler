@@ -90,29 +90,6 @@ private:		// variables
 	s32 __enc_group;
 
 
-public:		// static constant variables
-	#define INSTR_STUFF(enc_group, args, varname, value) \
-	varname##_##args##_##enc_group,
-
-	#define INSTR_STUFF_AFFECTS_FLAGS(enc_group, args, varname, value) \
-	varname##_##args##_##enc_group##_affects_flags,
-
-	static const Instruction 
-		LIST_OF_INSTRUCTIONS(INSTR_STUFF)
-
-		LIST_OF_INSTRUCTIONS(INSTR_STUFF_AFFECTS_FLAGS)
-
-		Dummy;
-
-	#undef INSTR_STUFF
-	#undef INSTR_STUFF_AFFECTS_FLAGS
-
-	static const std::vector<PInstr> instr_g0_vec, instr_g1_vec,
-		instr_g2_vec, instr_g3_vec;
-
-	//static const std::vector<PInstr> instr_vec;
-	static const std::vector<const std::vector<PInstr>*> instr_vec;
-
 public:		// constants
 	inline Instruction() : Instruction("", 0, InstrArgs::no_args, -1)
 	{
@@ -140,6 +117,51 @@ public:		// constants
 	gen_getter_by_val(affects_flags)
 	gen_getter_by_val(args)
 	gen_getter_by_val(enc_group)
+
+};
+
+class InstructionTable
+{
+private:		// variables
+	std::map<std::string, std::vector<PInstr>> __table;
+
+public:		// static constant variables
+	#define INSTR_STUFF(enc_group, args, varname, value) \
+	varname##_##args##_##enc_group,
+
+	#define INSTR_STUFF_AFFECTS_FLAGS(enc_group, args, varname, value) \
+	varname##_##args##_##enc_group##_affects_flags,
+
+	static const Instruction 
+		LIST_OF_INSTRUCTIONS(INSTR_STUFF)
+
+		LIST_OF_INSTRUCTIONS(INSTR_STUFF_AFFECTS_FLAGS)
+
+		Dummy;
+
+	#undef INSTR_STUFF
+	#undef INSTR_STUFF_AFFECTS_FLAGS
+
+	static const std::vector<PInstr> instr_g0_vec, instr_g1_vec,
+		instr_g2_vec, instr_g3_vec;
+
+	//static const std::vector<PInstr> instr_vec;
+	static const std::vector<const std::vector<PInstr>*> instr_vec;
+
+public:		// functions
+	InstructionTable();
+
+	inline const std::vector<PInstr>& at
+		(const std::string& some_name) const
+	{
+		return __table.at(some_name);
+	}
+
+	inline bool contains(const std::string& some_name) const
+	{
+		return (__table.count(some_name) == 1);
+	}
+
 
 };
 

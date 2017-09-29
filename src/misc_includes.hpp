@@ -2,6 +2,7 @@
 #define misc_includes_hpp
 
 #include <map>
+#include <set>
 
 #include "liborangepower_src/misc_includes.hpp"
 #include "liborangepower_src/misc_defines.hpp"
