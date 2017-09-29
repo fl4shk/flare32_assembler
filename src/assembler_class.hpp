@@ -44,8 +44,11 @@ private:		// variables
 	SymbolTable __builtin_sym_tbl, __user_sym_tbl;
 	InstructionTable __instr_tbl;
 
-	// Where are we in the file?
+
+	// Where are we in the generated binary?
 	size_t __addr = 0;
+
+	// Where are we in the file?
 	size_t __line_num = 1;
 
 	int __next_char = ' ';
@@ -137,6 +140,7 @@ private:		// functions
 	void lex();
 
 	void line();
+	void finish_line(const std::vector<ParseNode>& some_parse_vec);
 
 
 	s64 handle_term();

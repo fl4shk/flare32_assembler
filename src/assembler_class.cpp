@@ -18,21 +18,6 @@ Assembler::Assembler(char* s_input_filename)
 
 int Assembler::operator () ()
 {
-	//do
-	//{
-	//	reinit();
-
-	//	advance();
-	//	lex();
-
-	//	while (next_tok() != &Tok::Eof)
-	//	{
-	//		line();
-	//	}
-
-	//} while (changed());
-
-
 	// Two passes
 	for (set_pass(0); pass() < 2; set_pass(pass() + 1))
 	{
@@ -57,12 +42,12 @@ int Assembler::operator () ()
 void Assembler::reinit()
 {
 	rewind(infile());
+	set_addr(0);
 	set_line_num(1);
 	set_next_char(' ');
 	set_next_tok(nullptr);
 	set_next_sym_str("");
 	set_next_num(-1);
-	//set_changed(false);
 }
 
 void Assembler::fill_builtin_sym_tbl()
@@ -298,7 +283,7 @@ void Assembler::line()
 
 	// Why the crap did I **not** do something like this the first time.
 	// It makes things easier to build a parse "tree" for the current line.
-	std::vector<ParseNode> parse_vec;
+	std::vector<ParseNode> parse_vec, after_label_parse_vec;
 
 	while ((next_tok() != &Tok::Newline) && (next_tok() != &Tok::Eof))
 	{
@@ -307,15 +292,55 @@ void Assembler::line()
 		lex();
 	}
 
-	for (const auto& node : parse_vec)
+	//for (const auto& node : parse_vec)
+	//{
+	//	printout(node.next_tok->str(), "\t\t");
+	//}
+	//printout("\n");
+
+
+	bool found_label = false;
+
+	// Check for a label
+	if (parse_vec.size() >= 2)
 	{
-		printout(node.next_tok->str(), "\t\t");
+		if (tok_is_ident_ish(parse_vec.at(0).next_tok) 
+			&& parse_vec.at(1).next_tok == &Tok::Colon)
+		{
+			found_label = true;
+
+			// Update the value of the label in the user symbol table
+			user_sym_tbl().at(parse_vec.at(0).next_sym_str).set_value
+				(addr());
+		}
 	}
-	printout("\n");
+
+	if (!found_label)
+	{
+		for (size_t i=0; i<parse_vec.size(); ++i)
+		{
+			after_label_parse_vec.push_back(parse_vec.at(i));
+		}
+	}
+	else
+	{
+		for (size_t i=2; i<parse_vec.size(); ++i)
+		{
+			after_label_parse_vec.push_back(parse_vec.at(i));
+		}
+	}
+
+	finish_line(after_label_parse_vec);
 
 
 	lex();
 
+}
+
+
+void Assembler::finish_line
+	(const std::vector<Assembler::ParseNode>& some_parse_vec)
+{
 }
 
 
