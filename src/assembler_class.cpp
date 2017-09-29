@@ -292,8 +292,30 @@ void Assembler::lex()
 
 void Assembler::line()
 {
-	printout("line():  ", next_tok()->str(), "\n");
+	//printout("line():  ", next_tok()->str(), "\n");
+	//lex();
+
+
+	// Why the crap did I **not** do something like this the first time.
+	// It makes things easier to build a parse "tree" for the current line.
+	std::vector<ParseNode> parse_vec;
+
+	while (next_tok() != &Tok::Newline)
+	{
+		parse_vec.push_back(ParseNode(next_tok(), next_sym_str(),
+			next_num()));
+		lex();
+	}
+
+	for (const auto& node : parse_vec)
+	{
+		printout(node.next_tok->str(), "\t\t");
+	}
+	printout("\n");
+
+
 	lex();
+
 }
 
 
