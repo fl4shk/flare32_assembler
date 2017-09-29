@@ -87,9 +87,10 @@ private:		// variables
 	std::string __str;
 	bool __affects_flags;
 	InstrArgs __args;
-	u32 __enc_group;
+	s32 __enc_group;
 
 
+public:		// static constant variables
 	#define INSTR_STUFF(enc_group, args, varname, value) \
 	varname##_##args##_##enc_group,
 
@@ -106,7 +107,6 @@ private:		// variables
 	#undef INSTR_STUFF
 	#undef INSTR_STUFF_AFFECTS_FLAGS
 
-public:		// static constant variables
 	static const std::vector<PInstr> instr_g0_vec, instr_g1_vec,
 		instr_g2_vec, instr_g3_vec;
 
@@ -114,17 +114,19 @@ public:		// static constant variables
 	static const std::vector<const std::vector<PInstr>*> instr_vec;
 
 public:		// constants
-	inline Instruction() : Instruction("", 0, InstrArgs::no_args)
+	inline Instruction() : Instruction("", 0, InstrArgs::no_args, -1)
 	{
 	}
 	inline Instruction(const std::string& s_str, bool s_affects_flags,
-		InstrArgs s_args) : __str(s_str), __affects_flags(s_affects_flags),
-		__args(s_args)
+		InstrArgs s_args, s32 s_enc_group) : __str(s_str), 
+		__affects_flags(s_affects_flags), __args(s_args),
+		__enc_group(s_enc_group)
 	{
 	}
 	inline Instruction(std::string&& s_str, bool s_affects_flags,
-		InstrArgs s_args) : __str(std::move(s_str)), 
-		__affects_flags(s_affects_flags), __args(s_args)
+		InstrArgs s_args, s32 s_enc_group) : __str(std::move(s_str)), 
+		__affects_flags(s_affects_flags), __args(s_args),
+		__enc_group(s_enc_group)
 	{
 	}
 
@@ -137,6 +139,7 @@ public:		// constants
 	gen_getter_by_con_ref(str)
 	gen_getter_by_val(affects_flags)
 	gen_getter_by_val(args)
+	gen_getter_by_val(enc_group)
 
 };
 
