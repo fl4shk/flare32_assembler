@@ -3,7 +3,7 @@
 
 #include "misc_includes.hpp"
 #include "tokens_and_stuff.hpp"
-#include "instruction_class.hpp"
+#include "instructions_and_stuff.hpp"
 
 namespace flare32
 {

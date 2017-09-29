@@ -1,5 +1,5 @@
-#ifndef instruction_class_hpp
-#define instruction_class_hpp
+#ifndef instructions_and_stuff_hpp
+#define instructions_and_stuff_hpp
 
 #include "misc_includes.hpp"
 
@@ -146,4 +146,4 @@ public:		// constants
 
 }
 
-#endif		// instruction_class_hpp
+#endif		// instructions_and_stuff_hpp
