@@ -17,6 +17,7 @@ VARNAME(RBracket) VALUE("]") \
 VARNAME(Equals) VALUE("=") \
 VARNAME(Semicolon) VALUE(";") \
 VARNAME(Comma) VALUE(",") \
+VARNAME(Colon) VALUE(":")
 
 
 #define LIST_OF_SINGLE_CHAR_OPERATOR_TOKENS(VARNAME, VALUE) \

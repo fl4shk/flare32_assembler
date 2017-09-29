@@ -300,7 +300,7 @@ void Assembler::line()
 	// It makes things easier to build a parse "tree" for the current line.
 	std::vector<ParseNode> parse_vec;
 
-	while (next_tok() != &Tok::Newline)
+	while ((next_tok() != &Tok::Newline) && (next_tok() != &Tok::Eof))
 	{
 		parse_vec.push_back(ParseNode(next_tok(), next_sym_str(),
 			next_num()));
