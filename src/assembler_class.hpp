@@ -134,7 +134,8 @@ private:		// functions
 	}
 
 
-	void need(PTok tok);
+	void need(const std::vector<ParseNode>& some_parse_vec, size_t& index, 
+		PTok tok);
 
 	void advance();
 	void lex();
@@ -143,9 +144,12 @@ private:		// functions
 	void finish_line(const std::vector<ParseNode>& some_parse_vec);
 
 
-	s64 handle_term();
-	s64 handle_factor();
-	s64 handle_expr();
+	s64 handle_term(const std::vector<ParseNode>& some_parse_vec, 
+		size_t& index);
+	s64 handle_factor(const std::vector<ParseNode>& some_parse_vec, 
+		size_t& index);
+	s64 handle_expr(const std::vector<ParseNode>& some_parse_vec, 
+		size_t& index);
 
 	bool tok_is_punct(PTok some_tok) const;
 	bool tok_is_ident_ish(PTok some_tok) const;

@@ -91,11 +91,14 @@ void Assembler::fill_builtin_sym_tbl()
 }
 
 
-void Assembler::need(PTok tok)
+void Assembler::need(const std::vector<ParseNode>& some_parse_vec, 
+	size_t& index, PTok tok)
 {
-	if (next_tok() == tok)
+	//if (next_tok() == tok)
+	if (some_parse_vec.at(index).next_tok == tok)
 	{
-		lex();
+		//lex();
+		++index;
 	}
 	else
 	{
@@ -277,12 +280,6 @@ void Assembler::lex()
 
 void Assembler::line()
 {
-	//printout("line():  ", next_tok()->str(), "\n");
-	//lex();
-
-
-	// Why the crap did I **not** do something like this the first time.
-	// It makes things easier to build a parse "tree" for the current line.
 	std::vector<ParseNode> parse_vec, after_label_parse_vec;
 
 	while ((next_tok() != &Tok::Newline) && (next_tok() != &Tok::Eof))
@@ -309,7 +306,8 @@ void Assembler::line()
 		{
 			found_label = true;
 
-			// Update the value of the label in the user symbol table
+			// Update the value of the label in the user symbol table.
+			// This happens regardless of what pass we're on.
 			user_sym_tbl().at(parse_vec.at(0).next_sym_str).set_value
 				(addr());
 		}
@@ -331,92 +329,112 @@ void Assembler::line()
 	}
 
 	finish_line(after_label_parse_vec);
-
-
 	lex();
-
 }
 
 
 void Assembler::finish_line
 	(const std::vector<Assembler::ParseNode>& some_parse_vec)
 {
+	//for (const auto& node : some_parse_vec)
+	//{
+	//	printout(node.next_tok->str(), "\t\t");
+	//}
+	//printout("\n");
+
+	if (some_parse_vec.at(0).next_tok != &Tok::Instr)
+	{
+		expected_tokens(&Tok::Instr);
+	}
+
+
 }
 
 
 
-s64 Assembler::handle_expr()
+s64 Assembler::handle_expr(const std::vector<ParseNode>& some_parse_vec, 
+	size_t& index)
 {
-	const auto old_next_tok = next_tok();
+	//const auto old_next_tok = next_tok();
+	const auto old_next_tok = some_parse_vec.at(index).next_tok;
 
 	s64 ret;
 
 	if ((old_next_tok == &Tok::Plus) || (old_next_tok == &Tok::Minus))
 	{
-		lex();
+		//lex();
+		++index;
 
 		if (old_next_tok == &Tok::Plus)
 		{
-			ret = handle_term();
+			ret = handle_term(some_parse_vec, index);
 		}
 		else // if (old_next_tok == &Tok::Minus)
 		{
-			ret = -handle_term();
+			ret = -handle_term(some_parse_vec, index);
 		}
 	}
 	else
 	{
-		ret = handle_term();
+		ret = handle_term(some_parse_vec, index);
 	}
 
-	if ((next_tok() == &Tok::Plus) || (next_tok() == &Tok::Minus))
+	//if ((next_tok() == &Tok::Plus) || (next_tok() == &Tok::Minus))
+	if ((some_parse_vec.at(index).next_tok == &Tok::Plus)
+		|| (some_parse_vec.at(index).next_tok == &Tok::Minus))
 	{
-		ret += handle_expr();
+		ret += handle_expr(some_parse_vec, index);
 	}
 
 	return ret;
 
 }
 
-s64 Assembler::handle_term()
+s64 Assembler::handle_term(const std::vector<ParseNode>& some_parse_vec, 
+	size_t& index)
 {
-	s64 ret = handle_factor();
+	s64 ret = handle_factor(some_parse_vec, index);
 
-	while ((next_tok() == &Tok::Mult) || (next_tok() == &Tok::Div)
-		|| (next_tok() == &Tok::BitAnd) || (next_tok() == &Tok::BitOr)
-		|| (next_tok() == &Tok::BitXor) || (next_tok() == &Tok::BitShL) 
-		|| (next_tok() == &Tok::BitShR))
+	const auto some_next_tok = some_parse_vec.at(index).next_tok;
+
+	while ((some_next_tok == &Tok::Mult) || (some_next_tok == &Tok::Div)
+		|| (some_next_tok == &Tok::BitAnd) 
+		|| (some_next_tok == &Tok::BitOr)
+		|| (some_next_tok == &Tok::BitXor) 
+		|| (some_next_tok == &Tok::BitShL) 
+		|| (some_next_tok == &Tok::BitShR))
 	{
-		const auto old_next_tok = next_tok();
-		lex();
+		const auto old_next_tok = some_next_tok;
+		//lex();
+		++index;
 
 		if (old_next_tok == &Tok::Mult)
 		{
-			ret *= handle_factor();
+			ret *= handle_factor(some_parse_vec, index);
 		}
 		else if (old_next_tok == &Tok::Div)
 		{
-			ret /= handle_factor();
+			ret /= handle_factor(some_parse_vec, index);
 		}
 		else if (old_next_tok == &Tok::BitAnd)
 		{
-			ret &= handle_factor();
+			ret &= handle_factor(some_parse_vec, index);
 		}
 		else if (old_next_tok == &Tok::BitOr)
 		{
-			ret |= handle_factor();
+			ret |= handle_factor(some_parse_vec, index);
 		}
 		else if (old_next_tok == &Tok::BitXor)
 		{
-			ret ^= handle_factor();
+			ret ^= handle_factor(some_parse_vec, index);
 		}
 		else if (old_next_tok == &Tok::BitShL)
 		{
-			ret <<= handle_factor();
+			ret <<= handle_factor(some_parse_vec, index);
 		}
 		else if (old_next_tok == &Tok::BitShR)
 		{
-			ret >>= handle_factor();
+			ret >>= handle_factor(some_parse_vec, index);
 		}
 	}
 
@@ -424,39 +442,47 @@ s64 Assembler::handle_term()
 	return ret;
 }
 
-s64 Assembler::handle_factor()
+s64 Assembler::handle_factor(const std::vector<ParseNode>& some_parse_vec, 
+	size_t& index)
 {
-	if (next_tok() == &Tok::NatNum)
+	//if (next_tok() == &Tok::NatNum)
+	if (some_parse_vec.at(index).next_tok == &Tok::NatNum)
 	{
-		s64 ret = next_num();
-		lex();
+		//s64 ret = next_num();
+		s64 ret = some_parse_vec.at(index).next_num;
+		//lex();
+		++index;
 		return ret;
 	}
 	//else if (next_tok() == &Tok::Ident)
-	else if (next_tok_is_ident_ish())
+	//else if (next_tok_is_ident_ish())
+	else if (tok_is_ident_ish(some_parse_vec.at(index).next_tok))
 	{
 		// This works because handle_factor() should only be called when
 		// we're not asking for a user symbol
-		const Symbol& sym = user_sym_tbl().at(next_sym_str());
+		const Symbol& sym = user_sym_tbl().at(some_parse_vec.at(index)
+			.next_sym_str);
 		s64 ret = sym.value();
-		lex();
+		//lex();
+		++index;
 		return ret;
 	}
 
 	s64 ret;
 
-	if (next_tok() != &Tok::LParen)
+	//if (next_tok() != &Tok::LParen)
+	if (some_parse_vec.at(index).next_tok != &Tok::LParen)
 	{
 		//expected("token of type \"", Tok::NatNum.str(), "\" or \"", 
 		//	Tok::Ident.str(), "\" or \"", Tok::LParen.str(), "\"!");
 		expected_tokens(&Tok::NatNum, &Tok::Ident, &Tok::LParen);
 	}
 
-	need(&Tok::LParen);
+	need(some_parse_vec, index, &Tok::LParen);
 
-	ret = handle_expr();
+	ret = handle_expr(some_parse_vec, index);
 
-	need(&Tok::RParen);
+	need(some_parse_vec, index, &Tok::RParen);
 
 	return ret;
 }
