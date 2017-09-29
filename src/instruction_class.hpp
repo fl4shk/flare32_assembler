@@ -106,10 +106,12 @@ private:		// variables
 	#undef INSTR_STUFF
 	#undef INSTR_STUFF_AFFECTS_FLAGS
 
+public:		// static constant variables
 	static const std::vector<PInstr> instr_g0_vec, instr_g1_vec,
 		instr_g2_vec, instr_g3_vec;
 
-	static const std::vector<PInstr> instr_vec;
+	//static const std::vector<PInstr> instr_vec;
+	static const std::vector<const std::vector<PInstr>*> instr_vec;
 
 public:		// constants
 	inline Instruction() : Instruction("", 0, InstrArgs::no_args)

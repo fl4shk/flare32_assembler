@@ -54,15 +54,23 @@ const std::vector<PInstr> Instruction::instr_g3_vec
 });
 
 
-const std::vector<PInstr> Instruction::instr_vec
-({
-	LIST_OF_INSTRUCTIONS(INSTR_STUFF)
-
-	LIST_OF_INSTRUCTIONS(INSTR_STUFF_AFFECTS_FLAGS)
-});
+//const std::vector<PInstr> Instruction::instr_vec
+//({
+//	LIST_OF_INSTRUCTIONS(INSTR_STUFF)
+//
+//	LIST_OF_INSTRUCTIONS(INSTR_STUFF_AFFECTS_FLAGS)
+//});
 
 
 #undef INSTR_STUFF
 #undef INSTR_STUFF_AFFECTS_FLAGS
+
+const std::vector<const std::vector<PInstr>*> Instruction::instr_vec
+({
+	&Instruction::instr_g0_vec,
+	&Instruction::instr_g1_vec,
+	&Instruction::instr_g2_vec,
+	&Instruction::instr_g3_vec
+});
 
 }

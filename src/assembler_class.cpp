@@ -25,7 +25,7 @@ int Assembler::operator () ()
 		advance();
 		lex();
 
-		while (next_tok() != &Tok::Blank)
+		while (next_tok() != &Tok::Eof)
 		{
 			line();
 		}
@@ -71,7 +71,7 @@ void Assembler::advance()
 {
 	if (next_char() == EOF)
 	{
-		set_next_tok(&Tok::Blank);
+		set_next_tok(&Tok::Eof);
 		return;
 	}
 
@@ -95,7 +95,7 @@ void Assembler::lex()
 
 	if (next_char() == EOF)
 	{
-		set_next_tok(&Tok::Blank);
+		set_next_tok(&Tok::Eof);
 		return;
 	}
 
