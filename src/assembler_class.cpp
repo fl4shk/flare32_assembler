@@ -51,29 +51,29 @@ void Assembler::reinit()
 void Assembler::fill_builtin_sym_tbl()
 {
 	// General-purpose registers
-	builtin_sym_tbl().insert(Symbol("r0", &Tok::Reg, 0, true));
-	builtin_sym_tbl().insert(Symbol("r1", &Tok::Reg, 1, true));
-	builtin_sym_tbl().insert(Symbol("r2", &Tok::Reg, 2, true));
-	builtin_sym_tbl().insert(Symbol("r3", &Tok::Reg, 3, true));
-	builtin_sym_tbl().insert(Symbol("r4", &Tok::Reg, 4, true));
-	builtin_sym_tbl().insert(Symbol("r5", &Tok::Reg, 5, true));
-	builtin_sym_tbl().insert(Symbol("r6", &Tok::Reg, 6, true));
-	builtin_sym_tbl().insert(Symbol("r7", &Tok::Reg, 7, true));
-	builtin_sym_tbl().insert(Symbol("r8", &Tok::Reg, 8, true));
-	builtin_sym_tbl().insert(Symbol("r9", &Tok::Reg, 9, true));
-	builtin_sym_tbl().insert(Symbol("r10", &Tok::Reg, 10, true));
-	builtin_sym_tbl().insert(Symbol("r11", &Tok::Reg, 11, true));
-	builtin_sym_tbl().insert(Symbol("r12", &Tok::Reg, 12, true));
-	builtin_sym_tbl().insert(Symbol("r13", &Tok::Reg, 13, true));
-	builtin_sym_tbl().insert(Symbol("r14", &Tok::Reg, 14, true));
-	builtin_sym_tbl().insert(Symbol("r15", &Tok::Reg, 15, true));
-	builtin_sym_tbl().insert(Symbol("lr", &Tok::Reg, 14, true));
-	builtin_sym_tbl().insert(Symbol("sp", &Tok::Reg, 15, true));
+	builtin_sym_tbl().insert(Symbol("r0", &Tok::Reg, 0));
+	builtin_sym_tbl().insert(Symbol("r1", &Tok::Reg, 1));
+	builtin_sym_tbl().insert(Symbol("r2", &Tok::Reg, 2));
+	builtin_sym_tbl().insert(Symbol("r3", &Tok::Reg, 3));
+	builtin_sym_tbl().insert(Symbol("r4", &Tok::Reg, 4));
+	builtin_sym_tbl().insert(Symbol("r5", &Tok::Reg, 5));
+	builtin_sym_tbl().insert(Symbol("r6", &Tok::Reg, 6));
+	builtin_sym_tbl().insert(Symbol("r7", &Tok::Reg, 7));
+	builtin_sym_tbl().insert(Symbol("r8", &Tok::Reg, 8));
+	builtin_sym_tbl().insert(Symbol("r9", &Tok::Reg, 9));
+	builtin_sym_tbl().insert(Symbol("r10", &Tok::Reg, 10));
+	builtin_sym_tbl().insert(Symbol("r11", &Tok::Reg, 11));
+	builtin_sym_tbl().insert(Symbol("r12", &Tok::Reg, 12));
+	builtin_sym_tbl().insert(Symbol("r13", &Tok::Reg, 13));
+	builtin_sym_tbl().insert(Symbol("r14", &Tok::Reg, 14));
+	builtin_sym_tbl().insert(Symbol("r15", &Tok::Reg, 15));
+	builtin_sym_tbl().insert(Symbol("lr", &Tok::Reg, 14));
+	builtin_sym_tbl().insert(Symbol("sp", &Tok::Reg, 15));
 
 	// Special-purpose registers
-	builtin_sym_tbl().insert(Symbol("pc", &Tok::RegPc, 16, true));
-	builtin_sym_tbl().insert(Symbol("ira", &Tok::RegIra, 17, true));
-	builtin_sym_tbl().insert(Symbol("flags", &Tok::RegFlags, 17, true));
+	builtin_sym_tbl().insert(Symbol("pc", &Tok::RegPc, 16));
+	builtin_sym_tbl().insert(Symbol("ira", &Tok::RegIra, 17));
+	builtin_sym_tbl().insert(Symbol("flags", &Tok::RegFlags, 17));
 }
 
 
@@ -358,6 +358,8 @@ s64 Assembler::handle_factor()
 	//else if (next_tok() == &Tok::Ident)
 	else if (next_tok_is_ident_ish())
 	{
+		// This works because handle_factor() should only be called when
+		// we're not asking for a user symbol
 		const Symbol& sym = user_sym_tbl().at(next_sym_str());
 		s64 ret = sym.value();
 		lex();

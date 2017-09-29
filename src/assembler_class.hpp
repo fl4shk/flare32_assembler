@@ -19,6 +19,8 @@ private:		// variables
 	SymbolTable __builtin_sym_tbl, __user_sym_tbl;
 	InstructionTable __instr_tbl;
 
+	// Where are we in the file?
+	size_t __addr = 0;
 	size_t __line_num = 1;
 
 	int __next_char = ' ';
@@ -43,6 +45,7 @@ private:		// functions
 	gen_getter_by_ref(user_sym_tbl)
 	gen_getter_by_ref(instr_tbl)
 
+	gen_getter_and_setter_by_val(addr)
 	gen_getter_and_setter_by_val(line_num)
 	gen_getter_and_setter_by_val(next_char)
 	gen_getter_and_setter_by_val(next_tok)
