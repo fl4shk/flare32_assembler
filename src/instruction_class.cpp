@@ -5,14 +5,18 @@ namespace flare32
 
 #define INSTR_STUFF(enc_group, args, varname, value) \
 Instruction::varname##_##args##_##enc_group(value, 0, InstrArgs::args),
-const Instruction LIST_OF_INSTRUCTIONS(INSTR_STUFF)
-#undef INSTR_STUFF
-
-#define INSTR_STUFF(enc_group, args, varname, value) \
+#define INSTR_STUFF_AFFECTS_FLAGS(enc_group, args, varname, value) \
 Instruction::varname##_##args##_##enc_group##_affects_flags(value ".f", \
 	1, InstrArgs::args),
-LIST_OF_INSTRUCTIONS(INSTR_STUFF) Instruction::Dummy;
+
+
+const Instruction 
+	LIST_OF_INSTRUCTIONS(INSTR_STUFF)
+	LIST_OF_INSTRUCTIONS(INSTR_STUFF_AFFECTS_FLAGS) 
+	Instruction::Dummy;
+
 #undef INSTR_STUFF
+#undef INSTR_STUFF_AFFECTS_FLAGS
 
 
 #define INSTR_STUFF(enc_group, args, varname, value) \

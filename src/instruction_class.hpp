@@ -87,17 +87,24 @@ private:		// variables
 	std::string __str;
 	bool __affects_flags;
 	InstrArgs __args;
+	u32 __enc_group;
 
 
 	#define INSTR_STUFF(enc_group, args, varname, value) \
 	varname##_##args##_##enc_group,
-	static const Instruction LIST_OF_INSTRUCTIONS(INSTR_STUFF)
-	#undef INSTR_STUFF
 
-	#define INSTR_STUFF(enc_group, args, varname, value) \
+	#define INSTR_STUFF_AFFECTS_FLAGS(enc_group, args, varname, value) \
 	varname##_##args##_##enc_group##_affects_flags,
-	LIST_OF_INSTRUCTIONS(INSTR_STUFF) Dummy;
+
+	static const Instruction 
+		LIST_OF_INSTRUCTIONS(INSTR_STUFF)
+
+		LIST_OF_INSTRUCTIONS(INSTR_STUFF_AFFECTS_FLAGS)
+
+		Dummy;
+
 	#undef INSTR_STUFF
+	#undef INSTR_STUFF_AFFECTS_FLAGS
 
 	static const std::vector<PInstr> instr_g0_vec, instr_g1_vec,
 		instr_g2_vec, instr_g3_vec;
