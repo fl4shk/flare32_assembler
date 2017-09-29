@@ -45,6 +45,8 @@ int Assembler::operator () ()
 		{
 			line();
 		}
+
+		printout("\n\n");
 	}
 
 	return 0;
@@ -147,6 +149,7 @@ void Assembler::lex()
 	if (next_char() == '\n')
 	{
 		set_next_tok(&Tok::Newline);
+		advance();
 		return;
 	}
 
@@ -289,8 +292,8 @@ void Assembler::lex()
 
 void Assembler::line()
 {
-	//printout("line():  ", next_tok()->str(), "\n");
-	//lex();
+	printout("line():  ", next_tok()->str(), "\n");
+	lex();
 }
 
 
