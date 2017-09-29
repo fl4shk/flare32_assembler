@@ -1,4 +1,4 @@
-#include "instructions_and_stuff.hpp"
+#include "instruction_table_class.hpp"
 
 namespace flare32
 {
