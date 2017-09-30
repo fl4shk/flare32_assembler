@@ -2135,10 +2135,14 @@ void Assembler::gen8(s32 v)
 {
 	if (pass() == 1)
 	{
+		if (last_addr() != addr())
+		{
+			printf("@%08x\n", static_cast<u32>(addr()));
+		}
 		printf("%02x\n", (static_cast<u32>(v) & 0xff));
 	}
 
-	set_addr(addr() + 1);
+	set_last_addr(set_addr(addr() + 1));
 }
 void Assembler::gen16(s32 v)
 {

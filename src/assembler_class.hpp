@@ -46,7 +46,7 @@ private:		// variables
 
 
 	// Where are we in the generated binary?
-	size_t __addr = 0;
+	size_t __addr = 0, __last_addr = -1;
 
 	// Where are we in the file?
 	size_t __line_num = 0;
@@ -75,6 +75,7 @@ private:		// functions
 	gen_getter_by_ref(instr_tbl)
 
 	gen_getter_and_setter_by_val(addr)
+	gen_getter_and_setter_by_val(last_addr)
 	gen_getter_and_setter_by_val(line_num)
 	gen_getter_and_setter_by_val(next_char)
 	gen_getter_and_setter_by_val(next_tok)
