@@ -347,39 +347,49 @@ void Assembler::finish_line
 		return;
 	}
 
-	if (some_parse_vec.at(0).next_tok != &Tok::Instr)
+	
 	{
-		expected_tokens(&Tok::Instr);
+	size_t index = 0;
+	const auto temp = handle_expr(some_parse_vec, index);
+
+	printout(temp, "\n");
+
+	set_addr(addr() + 4);
 	}
 
-	const auto& instr_vec = __instr_tbl.at(some_parse_vec.at(0)
-		.next_sym_str);
+	//if (some_parse_vec.at(0).next_tok != &Tok::Instr)
+	//{
+	//	expected_tokens(&Tok::Instr);
+	//}
+
+	//const auto& instr_vec = __instr_tbl.at(some_parse_vec.at(0)
+	//	.next_sym_str);
 
 
 
-	bool complete = false;
+	//bool complete = false;
 
 
-	PInstr instr = nullptr;
+	//PInstr instr = nullptr;
 
-	for (const auto& other_instr : instr_vec)
-	{
-		instr = other_instr;
-		if (parse_instr(instr, some_parse_vec, true))
-		{
-			complete = true;
-			break;
-		}
-	}
+	//for (const auto& other_instr : instr_vec)
+	//{
+	//	instr = other_instr;
+	//	if (parse_instr(instr, some_parse_vec, true))
+	//	{
+	//		complete = true;
+	//		break;
+	//	}
+	//}
 
-	if (complete)
-	{
-		parse_instr(instr, some_parse_vec, false);
-	}
-	else // if (!complete)
-	{
-		err("Invalid instruction arguments");
-	}
+	//if (complete)
+	//{
+	//	parse_instr(instr, some_parse_vec, false);
+	//}
+	//else // if (!complete)
+	//{
+	//	err("Invalid instruction arguments");
+	//}
 
 }
 
@@ -479,84 +489,101 @@ bool Assembler::parse_instr(PInstr instr,
 			return __parse_instr_ra_pc(some_parse_vec, 
 				just_test);
 	}
+
+	return false;
 }
 
 bool Assembler::__parse_instr_no_args
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 bool Assembler::__parse_instr_uimm16
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 bool Assembler::__parse_instr_simm16
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 bool Assembler::__parse_instr_imm32
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 
 bool Assembler::__parse_instr_ra
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 bool Assembler::__parse_instr_ra_uimm16
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 bool Assembler::__parse_instr_ra_rb
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 bool Assembler::__parse_instr_ra_rb_uimm16
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 bool Assembler::__parse_instr_ra_rb_simm16
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 bool Assembler::__parse_instr_ra_rb_rc
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 bool Assembler::__parse_instr_ra_rb_rc_simm12
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 
 bool Assembler::__parse_instr_ldst_ra_rb
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 bool Assembler::__parse_instr_ldst_ra_rb_rc_simm12
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 bool Assembler::__parse_instr_ldst_ra_rb_rc
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 bool Assembler::__parse_instr_ldst_ra_rb_simm12
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 
 
@@ -564,11 +591,13 @@ bool Assembler::__parse_instr_ldst_ra_rb_imm32
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 bool Assembler::__parse_instr_ra_rb_imm32
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 
 
@@ -577,49 +606,58 @@ bool Assembler::__parse_instr_ldst_block_1_to_4
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 bool Assembler::__parse_instr_ldst_block_5_to_8
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 
 bool Assembler::__parse_instr_ira
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 bool Assembler::__parse_instr_ra_ira
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 bool Assembler::__parse_instr_ira_ra
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 
 bool Assembler::__parse_instr_ra_flags
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 bool Assembler::__parse_instr_flags
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 bool Assembler::__parse_instr_flags_ra
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 
 bool Assembler::__parse_instr_ra_pc
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	bool just_test)
 {
+	return true;
 }
 
 
@@ -627,35 +665,100 @@ bool Assembler::__parse_instr_ra_pc
 s64 Assembler::handle_expr(const std::vector<ParseNode>& some_parse_vec, 
 	size_t& index)
 {
-	//const auto old_next_tok = next_tok();
-	const auto old_next_tok = some_parse_vec.at(index).next_tok;
+	////const auto old_next_tok = next_tok();
+	//const auto old_next_tok = some_parse_vec.at(index).next_tok;
 
-	s64 ret;
+	//s64 ret;
 
-	if ((old_next_tok == &Tok::Plus) || (old_next_tok == &Tok::Minus))
+	//if ((old_next_tok == &Tok::Plus) || (old_next_tok == &Tok::Minus))
+	//{
+	//	//lex();
+	//	++index;
+
+	//	if (old_next_tok == &Tok::Plus)
+	//	{
+	//		ret = handle_term(some_parse_vec, index);
+	//	}
+	//	else // if (old_next_tok == &Tok::Minus)
+	//	{
+	//		ret = -handle_term(some_parse_vec, index);
+	//	}
+	//}
+	//else
+	//{
+	//	ret = handle_term(some_parse_vec, index);
+	//}
+
+	//if (index >= some_parse_vec.size())
+	//{
+	//	return ret;
+	//}
+
+	////if ((next_tok() == &Tok::Plus) || (next_tok() == &Tok::Minus))
+	//if ((some_parse_vec.at(index).next_tok == &Tok::Plus)
+	//	|| (some_parse_vec.at(index).next_tok == &Tok::Minus))
+	//{
+	//	ret += handle_expr(some_parse_vec, index);
+	//}
+
+	//return ret;
+
+
+
+
+	s64 ret = 0;
+
+	if (some_parse_vec.at(index).next_tok == &Tok::Minus)
 	{
 		//lex();
 		++index;
-
-		if (old_next_tok == &Tok::Plus)
-		{
-			ret = handle_term(some_parse_vec, index);
-		}
-		else // if (old_next_tok == &Tok::Minus)
-		{
-			ret = -handle_term(some_parse_vec, index);
-		}
+	}
+	else if (some_parse_vec.at(index).next_tok == &Tok::Plus)
+	{
+		//lex();
+		++index;
+	}
+	else if (tok_is_ident_ish(some_parse_vec.at(index).next_tok)
+		|| (some_parse_vec.at(index).next_tok == &Tok::NatNum))
+	{
 	}
 	else
 	{
-		ret = handle_term(some_parse_vec, index);
+		printout("expr():  3, Eek!\n");
+		return 9001;
 	}
 
-	//if ((next_tok() == &Tok::Plus) || (next_tok() == &Tok::Minus))
-	if ((some_parse_vec.at(index).next_tok == &Tok::Plus)
+
+	ret = handle_term(some_parse_vec, index);
+
+	if (index >= some_parse_vec.size())
+	{
+		return ret;
+	}
+
+	while ((some_parse_vec.at(index).next_tok == &Tok::Plus) 
 		|| (some_parse_vec.at(index).next_tok == &Tok::Minus))
 	{
-		ret += handle_expr(some_parse_vec, index);
+		//const bool minus = (next_tok == Tok::Minus);
+		const bool minus = (some_parse_vec.at(index).next_tok 
+			== &Tok::Minus);
+
+		//lex();
+		++index;
+
+		if (minus)
+		{
+			ret -= handle_term(some_parse_vec, index);
+		}
+		else
+		{
+			ret += handle_term(some_parse_vec, index);
+		}
+
+		if (index >= some_parse_vec.size())
+		{
+			return ret;
+		}
 	}
 
 	return ret;
@@ -667,16 +770,22 @@ s64 Assembler::handle_term(const std::vector<ParseNode>& some_parse_vec,
 {
 	s64 ret = handle_factor(some_parse_vec, index);
 
-	const auto some_next_tok = some_parse_vec.at(index).next_tok;
-
-	while ((some_next_tok == &Tok::Mult) || (some_next_tok == &Tok::Div)
-		|| (some_next_tok == &Tok::BitAnd) 
-		|| (some_next_tok == &Tok::BitOr)
-		|| (some_next_tok == &Tok::BitXor) 
-		|| (some_next_tok == &Tok::BitShL) 
-		|| (some_next_tok == &Tok::BitShR))
+	if (index >= some_parse_vec.size())
 	{
-		const auto old_next_tok = some_next_tok;
+		return ret;
+	}
+
+	//const auto some_next_tok = some_parse_vec.at(index).next_tok;
+
+	while ((some_parse_vec.at(index).next_tok == &Tok::Mult) 
+		|| (some_parse_vec.at(index).next_tok == &Tok::Div)
+		|| (some_parse_vec.at(index).next_tok == &Tok::BitAnd) 
+		|| (some_parse_vec.at(index).next_tok == &Tok::BitOr)
+		|| (some_parse_vec.at(index).next_tok == &Tok::BitXor) 
+		|| (some_parse_vec.at(index).next_tok == &Tok::BitShL) 
+		|| (some_parse_vec.at(index).next_tok == &Tok::BitShR))
+	{
+		const auto old_next_tok = some_parse_vec.at(index).next_tok;
 		//lex();
 		++index;
 
@@ -708,10 +817,18 @@ s64 Assembler::handle_term(const std::vector<ParseNode>& some_parse_vec,
 		{
 			ret >>= handle_factor(some_parse_vec, index);
 		}
+
+
+		if (index >= some_parse_vec.size())
+		{
+			return ret;
+		}
 	}
 
 
 	return ret;
+
+
 }
 
 s64 Assembler::handle_factor(const std::vector<ParseNode>& some_parse_vec, 
