@@ -1630,24 +1630,119 @@ void Assembler::__encode_high_hword(u16& high_hword,
 	__encode_affects_flags(high_hword, instr);
 	__encode_opcode(high_hword, instr);
 
-	// Encode rA
-	if (regs.size() >= 1)
+	switch (instr->args())
 	{
-		clear_and_set_bits_with_range(high_hword, 
-			builtin_sym_tbl().at(regs.at(0)).value(), 7, 4);
+		case InstrArgs::ldst_block_1_to_4:
+		case InstrArgs::ldst_block_5_to_8:
+			// Encode rA
+			if (regs.size() >= 2)
+			{
+				clear_and_set_bits_with_range(high_hword, 
+					builtin_sym_tbl().at(regs.at(1)).value(), 7, 4);
+			}
+
+			// Encode rB
+			if (regs.size() >= 3)
+			{
+				clear_and_set_bits_with_range(high_hword, 
+					builtin_sym_tbl().at(regs.at(2)).value(), 3, 0);
+			}
+			
+			break;
+
+		default:
+			// Encode rA
+			if (regs.size() >= 1)
+			{
+				clear_and_set_bits_with_range(high_hword, 
+					builtin_sym_tbl().at(regs.at(0)).value(), 7, 4);
+			}
+
+			// Encode rB
+			if (regs.size() >= 2)
+			{
+				clear_and_set_bits_with_range(high_hword, 
+					builtin_sym_tbl().at(regs.at(1)).value(), 3, 0);
+			}
+			break;
 	}
 
-	if (regs.size() >= 2)
-	{
-		clear_and_set_bits_with_range(high_hword, 
-			builtin_sym_tbl().at(regs.at(1)).value(), 3, 0);
-	}
 }
 
 
 void Assembler::__encode_low(u16& g1g2_low, u32& g3_low, 
 	const std::vector<std::string>& regs, s64 expr_result, PInstr instr)
 {
+	auto handle_enc_group_2 = [&]() -> void
+	{
+		// Non-block moves version
+		if (instr->args() != InstrArgs::ldst_block_1_to_4)
+		{
+			if (regs.size() == 3)
+			{
+				clear_and_set_bits_with_range(g1g2_low, 
+					builtin_sym_tbl().at(regs.at(2)).value(), 15, 12);
+			}
+			else if (regs.size() > 3)
+			{
+				err("__encode_low()::handle_enc_group_2() non else:  ",
+					"Eek!\n");
+			}
+			clear_and_set_bits_with_range(g1g2_low, expr_result, 11, 0);
+		}
+
+		// Block moves version
+		else
+		{
+			clear_and_set_bits_with_range(g1g2_low, regs.size() - 2, 1, 0);
+
+			clear_and_set_bits_with_range(g1g2_low, 
+				builtin_sym_tbl().at(regs.at(0)).value(), 7, 4);
+
+			//if (regs.size() >= 3)
+			//{
+			//		
+			//		
+			//}
+			if (regs.size() >= 4)
+			{
+				clear_and_set_bits_with_range(g1g2_low, 
+					builtin_sym_tbl().at(regs.at(3)).value(), 15, 12);
+			}
+			if (regs.size() >= 5)
+			{
+				clear_and_set_bits_with_range(g1g2_low,
+					builtin_sym_tbl().at(regs.at(4)).value(), 11, 8);
+			}
+
+			if ((regs.size() < 2) || (regs.size() > 5))
+			{
+				err("__encode_low()::handle_enc_group_2() else:  Eek!\n");
+			}
+		}
+	};
+
+	auto handle_enc_group_3 = [&]() -> void
+	{
+	};
+
+	switch (instr->enc_group())
+	{
+		case 0:
+			break;
+
+		case 1:
+			g1g2_low = expr_result;
+			break;
+
+		case 2:
+			handle_enc_group_2();
+			break;
+
+		case 3:
+			handle_enc_group_3();
+			break;
+	}
 }
 
 void Assembler::encode_and_gen
