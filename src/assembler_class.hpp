@@ -253,6 +253,33 @@ private:		// functions
 	void encode_and_gen(const std::vector<std::string>& regs, 
 		s64 expr_result, PInstr instr);
 
+
+
+	bool __check_tokens_innards
+		(const std::vector<ParseNode>& some_parse_vec, size_t index, 
+		PTok tok) const
+	{
+		return (some_parse_vec.at(index).next_tok == tok);
+	}
+
+	inline bool check_tokens(const std::vector<ParseNode>& some_parse_vec,
+		size_t& index) const
+	{
+		return true;
+	}
+
+	template<typename... RemArgTypes>
+	bool check_tokens(const std::vector<ParseNode>& some_parse_vec,
+		size_t& index, PTok tok, RemArgTypes&&... rem_args) const
+	{
+		if (__check_tokens_innards(some_parse_vec, index++, tok))
+		{
+			return check_tokens(some_parse_vec, index, rem_args...);
+		}
+
+		return false;
+	}
+
 	void gen8(s32 v);
 	void gen16(s32 v);
 	void gen32(s32 v);

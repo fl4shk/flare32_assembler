@@ -500,14 +500,17 @@ bool Assembler::__parse_instr_no_args
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	PInstr instr)
 {
+	std::vector<std::string> regs;
+	//size_t index = 1;
+	s64 expr_result = 0;
+
 	// op
 	if (some_parse_vec.size() != 1)
 	{
 		return false;
 	}
 
-	std::vector<std::string> regs;
-	encode_and_gen(regs, 0, instr);
+	encode_and_gen(regs, expr_result, instr);
 
 	return true;
 }
@@ -515,15 +518,17 @@ bool Assembler::__parse_instr_uimm16
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	std::vector<std::string> regs;
+	size_t index = 1;
+	s64 expr_result = 0;
+
 	// op expr
 	if (some_parse_vec.size() < 2)
 	{
 		return false;
 	}
 
-	std::vector<std::string> regs;
-	size_t index = 1;
-	s64 expr_result = handle_expr(some_parse_vec, index);
+	expr_result = handle_expr(some_parse_vec, index);
 
 	encode_and_gen(regs, expr_result, instr);
 
@@ -533,15 +538,17 @@ bool Assembler::__parse_instr_simm16
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	std::vector<std::string> regs;
+	size_t index = 1;
+	s64 expr_result = 0;
+
 	// op expr
 	if (some_parse_vec.size() < 2)
 	{
 		return false;
 	}
 
-	std::vector<std::string> regs;
-	size_t index = 1;
-	s64 expr_result = handle_expr(some_parse_vec, index);
+	expr_result = handle_expr(some_parse_vec, index);
 
 	encode_and_gen(regs, expr_result, instr);
 
@@ -551,15 +558,17 @@ bool Assembler::__parse_instr_imm32
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	std::vector<std::string> regs;
+	size_t index = 1;
+	s64 expr_result = 0;
+
 	// op expr
 	if (some_parse_vec.size() < 2)
 	{
 		return false;
 	}
 
-	std::vector<std::string> regs;
-	size_t index = 1;
-	s64 expr_result = handle_expr(some_parse_vec, index);
+	expr_result = handle_expr(some_parse_vec, index);
 
 	encode_and_gen(regs, expr_result, instr);
 
@@ -570,6 +579,11 @@ bool Assembler::__parse_instr_ra
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	std::vector<std::string> regs;
+	//size_t index = 1;
+	s64 expr_result = 0;
+
+
 	// op rA
 	if (some_parse_vec.size() != 2)
 	{
@@ -581,11 +595,9 @@ bool Assembler::__parse_instr_ra
 		return false;
 	}
 
-	std::vector<std::string> regs;
-
 	regs.push_back(spvat(1).next_sym_str);
 
-	encode_and_gen(regs, 0, instr);
+	encode_and_gen(regs, expr_result, instr);
 
 	return true;
 }
@@ -593,6 +605,10 @@ bool Assembler::__parse_instr_ra_uimm16
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	std::vector<std::string> regs;
+	size_t index = 1;
+	s64 expr_result = 0;
+
 	// op rA , expr
 	if (some_parse_vec.size() < 4)
 	{
@@ -600,16 +616,13 @@ bool Assembler::__parse_instr_ra_uimm16
 	}
 
 
-	size_t index = 1;
-
 	if ((spvat(index++).next_tok != &Tok::Reg)
 		|| (spvat(index++).next_tok != &Tok::Comma))
 	{
 		return false;
 	}
 
-	std::vector<std::string> regs;
-	s64 expr_result = handle_expr(some_parse_vec, index);
+	expr_result = handle_expr(some_parse_vec, index);
 
 	regs.push_back(spvat(1).next_sym_str);
 
@@ -621,12 +634,28 @@ bool Assembler::__parse_instr_ra_rb
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	std::vector<std::string> regs;
+	size_t index = 1;
+	s64 expr_result = 0;
+
 	// op rA , rB
 	if (some_parse_vec.size() != 4)
 	{
 		return false;
 	}
+
+	if (!check_tokens(some_parse_vec, index, &Tok::Reg, &Tok::Comma, 
+		&Tok::Reg))
+	{
+		return false;
+	}
+
+
+	regs.push_back(spvat(1).next_sym_str);
+	regs.push_back(spvat(3).next_sym_str);
+
 	
+	encode_and_gen(regs, expr_result, instr);
 
 	return true;
 }
@@ -634,11 +663,29 @@ bool Assembler::__parse_instr_ra_rb_uimm16
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	std::vector<std::string> regs;
+	size_t index = 1;
+	s64 expr_result = 0;
+
 	// op rA , rB , expr
 	if (some_parse_vec.size() < 6)
 	{
 		return false;
 	}
+
+
+	if (!check_tokens(some_parse_vec, index, &Tok::Reg, &Tok::Comma,
+		&Tok::Reg, &Tok::Comma))
+	{
+		return false;
+	}
+
+	regs.push_back(spvat(1).next_sym_str);
+	regs.push_back(spvat(3).next_sym_str);
+
+	expr_result = handle_expr(some_parse_vec, index);
+
+	encode_and_gen(regs, expr_result, instr);
 
 	return true;
 }
@@ -646,12 +693,28 @@ bool Assembler::__parse_instr_ra_rb_simm16
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	std::vector<std::string> regs;
+	size_t index = 1;
+	s64 expr_result = 0;
+
 	// op rA , rB , expr
 	if (some_parse_vec.size() < 6)
 	{
 		return false;
 	}
 
+	if (!check_tokens(some_parse_vec, index, &Tok::Reg, &Tok::Comma,
+		&Tok::Reg, &Tok::Comma))
+	{
+		return false;
+	}
+
+	regs.push_back(spvat(1).next_sym_str);
+	regs.push_back(spvat(3).next_sym_str);
+
+	expr_result = handle_expr(some_parse_vec, index);
+
+	encode_and_gen(regs, expr_result, instr);
 
 	return true;
 }
@@ -659,11 +722,27 @@ bool Assembler::__parse_instr_ra_rb_rc
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	std::vector<std::string> regs;
+	size_t index = 1;
+	s64 expr_result = 0;
+
 	// op rA , rB , rC
 	if (some_parse_vec.size() != 6)
 	{
 		return false;
 	}
+
+	if (!check_tokens(some_parse_vec, index, &Tok::Reg, &Tok::Comma,
+		&Tok::Reg, &Tok::Comma, &Tok::Reg))
+	{
+		return false;
+	}
+
+	regs.push_back(spvat(1).next_sym_str);
+	regs.push_back(spvat(3).next_sym_str);
+	regs.push_back(spvat(5).next_sym_str);
+
+	encode_and_gen(regs, expr_result, instr);
 
 	return true;
 }
@@ -671,11 +750,31 @@ bool Assembler::__parse_instr_ra_rb_rc_simm12
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	std::vector<std::string> regs;
+	size_t index = 1;
+	s64 expr_result = 0;
+
 	// op rA , rB , rC , expr
 	if (some_parse_vec.size() < 8)
 	{
 		return false;
 	}
+
+	if (!check_tokens(some_parse_vec, index, &Tok::Reg, &Tok::Comma,
+		&Tok::Reg, &Tok::Comma, &Tok::Reg, &Tok::Comma))
+	{
+		return false;
+	}
+
+	regs.push_back(spvat(1).next_sym_str);
+	regs.push_back(spvat(3).next_sym_str);
+	regs.push_back(spvat(5).next_sym_str);
+
+
+	expr_result = handle_expr(some_parse_vec, index);
+
+
+	encode_and_gen(regs, expr_result, instr);
 
 	return true;
 }
@@ -684,11 +783,27 @@ bool Assembler::__parse_instr_ldst_ra_rb
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	std::vector<std::string> regs;
+	size_t index = 1;
+	s64 expr_result = 0;
+
 	// op rA , [ rB ]
 	if (some_parse_vec.size() != 6)
 	{
 		return false;
 	}
+
+
+	if (!check_tokens(some_parse_vec, index, &Tok::Reg, &Tok::Comma,
+		&Tok::LBracket, &Tok::Reg, &Tok::RBracket))
+	{
+		return false;
+	}
+
+	regs.push_back(spvat(1).next_sym_str);
+	regs.push_back(spvat(4).next_sym_str);
+
+	encode_and_gen(regs, expr_result, instr);
 
 	return true;
 }
@@ -696,6 +811,10 @@ bool Assembler::__parse_instr_ldst_ra_rb_rc_simm12
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	std::vector<std::string> regs;
+	size_t index = 1;
+	s64 expr_result = 0;
+
 	// op rA , [ rB , rC , expr ]
 	if ((some_parse_vec.size() < 10)
 		|| (some_parse_vec.back().next_tok != &Tok::LBracket))
@@ -703,12 +822,31 @@ bool Assembler::__parse_instr_ldst_ra_rb_rc_simm12
 		return false;
 	}
 
+	if (!check_tokens(some_parse_vec, index, &Tok::Reg, &Tok::Comma,
+		&Tok::LBracket, // [
+		&Tok::Reg, &Tok::Comma, // rB ,
+		&Tok::Reg, &Tok::Comma)) // rC ,
+	{
+		return false;
+	}
+
+	regs.push_back(spvat(1).next_sym_str);
+	regs.push_back(spvat(4).next_sym_str);
+	regs.push_back(spvat(6).next_sym_str);
+
+	expr_result = handle_expr(some_parse_vec, index);
+
+	encode_and_gen(regs, expr_result, instr);
+
 	return true;
 }
 bool Assembler::__parse_instr_ldst_ra_rb_rc
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	std::vector<std::string> regs;
+	size_t index = 1;
+
 	// op rA , [ rB , rC ]
 	if (some_parse_vec.size() != 8)
 	{
@@ -722,6 +860,9 @@ bool Assembler::__parse_instr_ldst_ra_rb_simm12
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	std::vector<std::string> regs;
+	size_t index = 1;
+
 	// op rA , [ rB , expr ]
 	if ((some_parse_vec.size() < 8)
 		|| (some_parse_vec.back().next_tok != &Tok::LBracket))
@@ -738,6 +879,9 @@ bool Assembler::__parse_instr_ldst_ra_rb_imm32
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	std::vector<std::string> regs;
+	size_t index = 1;
+
 	// op rA , [ rB , expr ]
 	if ((some_parse_vec.size() < 8)
 		|| (some_parse_vec.back().next_tok != &Tok::LBracket))
@@ -751,6 +895,9 @@ bool Assembler::__parse_instr_ra_rb_imm32
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	std::vector<std::string> regs;
+	size_t index = 1;
+
 	// op rA , rB , expr
 	if (some_parse_vec.size() < 6)
 	{
@@ -766,8 +913,8 @@ bool Assembler::__parse_instr_ldst_block_1_to_4
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
-	size_t index = 1;
 	std::vector<std::string> regs;
+	size_t index = 1;
 
 	// op rA , { rB }
 	if (some_parse_vec.size() == 6)
@@ -895,8 +1042,8 @@ bool Assembler::__parse_instr_ldst_block_5_to_8
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
-	size_t index = 1;
 	std::vector<std::string> regs;
+	size_t index = 1;
 
 	// op rA , { rB , rC , rD , rE , rF }
 	if (some_parse_vec.size() == 14)
@@ -1096,6 +1243,9 @@ bool Assembler::__parse_instr_ldst_block_5_to_8
 	{
 		return false;
 	}
+
+	encode_and_gen(regs, 0, instr);
+
 	return true;
 }
 
@@ -1103,18 +1253,33 @@ bool Assembler::__parse_instr_ira
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	std::vector<std::string> regs;
+	size_t index = 1;
+
+	// op ira
+	if (some_parse_vec.size() != 2)
+	{
+		return false;
+	}
+
 	return true;
 }
 bool Assembler::__parse_instr_ra_ira
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	std::vector<std::string> regs;
+	size_t index = 1;
+
 	return true;
 }
 bool Assembler::__parse_instr_ira_ra
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	std::vector<std::string> regs;
+	size_t index = 1;
+
 	return true;
 }
 
@@ -1122,18 +1287,27 @@ bool Assembler::__parse_instr_ra_flags
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	std::vector<std::string> regs;
+	size_t index = 1;
+
 	return true;
 }
 bool Assembler::__parse_instr_flags
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	std::vector<std::string> regs;
+	size_t index = 1;
+
 	return true;
 }
 bool Assembler::__parse_instr_flags_ra
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	std::vector<std::string> regs;
+	size_t index = 1;
+
 	return true;
 }
 
@@ -1141,6 +1315,9 @@ bool Assembler::__parse_instr_ra_pc
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	std::vector<std::string> regs;
+	size_t index = 1;
+
 	return true;
 }
 
