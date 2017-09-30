@@ -289,7 +289,6 @@ void Assembler::lex()
 		return;
 	}
 
-	set_line_num(line_num() + 1);
 	set_next_tok(&Tok::Bad);
 }
 
@@ -307,6 +306,7 @@ void Assembler::line()
 
 	if (next_tok() == &Tok::Bad)
 	{
+		set_line_num(line_num() + 1);
 		err("Invalid syntax");
 	}
 
