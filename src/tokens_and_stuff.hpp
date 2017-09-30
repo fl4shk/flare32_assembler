@@ -83,6 +83,8 @@ VARNAME(Bad) VALUE("Bad")
 VARNAME(DotOrg) VALUE(".org") \
 VARNAME(DotB) VALUE(".db") \
 VARNAME(DotW) VALUE(".dw") \
+VARNAME(DotDefine) VALUE(".define") \
+VARNAME(DotDefn) VALUE(".defn") \
 
 
 

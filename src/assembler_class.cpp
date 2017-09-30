@@ -405,9 +405,15 @@ void Assembler::line()
 
 	size_t index = 1;
 
+	{
+	auto eek = [&]() -> void
+	{
+		err("invalid syntax for ", parse_vec.front().next_sym_str);
+	};
 	// Check for assembler directives
 	if (parse_vec.front().next_tok == &Tok::DotOrg)
 	{
+		// .org expr
 		set_addr(handle_expr(parse_vec, index));
 
 		if (index != parse_vec.size())
@@ -419,6 +425,9 @@ void Assembler::line()
 	}
 	else if (parse_vec.front().next_tok == &Tok::DotB)
 	{
+		// .db expr
+		// .db expr, expr2
+		// .db expr, expr2, ...
 		for (;;)
 		{
 			gen8(handle_expr(parse_vec, index));
@@ -431,7 +440,7 @@ void Assembler::line()
 			
 			if (parse_vec.at(index).next_tok != &Tok::Comma)
 			{
-				err("invalid syntax for .db");
+				eek();
 			}
 
 			++index;
@@ -441,6 +450,9 @@ void Assembler::line()
 	}
 	else if (parse_vec.front().next_tok == &Tok::DotW)
 	{
+		// .dw expr
+		// .dw expr, expr2
+		// .dw expr, expr2, ...
 		for (;;)
 		{
 			gen32(handle_expr(parse_vec, index));
@@ -453,13 +465,38 @@ void Assembler::line()
 			
 			if (parse_vec.at(index).next_tok != &Tok::Comma)
 			{
-				err("invalid syntax for .dw");
+				eek();
 			}
 
 			++index;
 		}
 
 		return;
+	}
+
+	else if ((parse_vec.front().next_tok == &Tok::DotDefine)
+		|| (parse_vec.front().next_tok == &Tok::DotDefn))
+	{
+		// .define ident expr
+		if (parse_vec.size() < 3)
+		{
+			eek();
+		}
+
+		if (!tok_is_ident_ish(parse_vec.at(1).next_tok))
+		{
+			eek();
+		}
+
+		index = 2;
+
+		s64 expr_result = handle_expr(parse_vec, index);
+
+		user_sym_tbl().at(parse_vec.at(1).next_sym_str).set_value
+			(expr_result);
+
+		return;
+	}
 	}
 
 

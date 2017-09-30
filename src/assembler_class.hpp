@@ -227,14 +227,14 @@ private:		// functions
 	bool tok_is_punct(PTok some_tok) const;
 	bool tok_is_ident_ish(PTok some_tok) const;
 
-	inline bool next_tok_is_punct() const
-	{
-		return tok_is_punct(next_tok());
-	}
-	inline bool next_tok_is_ident_ish() const
-	{
-		return tok_is_ident_ish(next_tok());
-	}
+	//inline bool next_tok_is_punct() const
+	//{
+	//	return tok_is_punct(next_tok());
+	//}
+	//inline bool next_tok_is_ident_ish() const
+	//{
+	//	return tok_is_ident_ish(next_tok());
+	//}
 
 	// Code generator stuff
 	inline void __encode_instr_group(u16& high_hword, PInstr instr) const
