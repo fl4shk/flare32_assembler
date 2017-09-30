@@ -4,6 +4,10 @@
 #include "misc_includes.hpp"
 
 
+#define LIST_OF_COMMENT_TOKENS(VARNAME, VALUE) \
+VARNAME(Semicolon) VALUE(";") \
+VARNAME(At) VALUE("@") \
+
 #define LIST_OF_PUNCT_TOKENS(VARNAME, VALUE) \
 /* "(", ")" */ \
 VARNAME(LParen) VALUE("(") \
@@ -19,9 +23,11 @@ VARNAME(RBrace) VALUE("}") \
 \
 /* "=", ";", "," */ \
 VARNAME(Equals) VALUE("=") \
-VARNAME(Semicolon) VALUE(";") \
+LIST_OF_COMMENT_TOKENS(VARNAME, VALUE) \
 VARNAME(Comma) VALUE(",") \
 VARNAME(Colon) VALUE(":")
+
+
 
 
 #define LIST_OF_SINGLE_CHAR_OPERATOR_TOKENS(VARNAME, VALUE) \

@@ -313,12 +313,17 @@ void Assembler::line()
 		}
 	}
 
+	
+	#define VARNAME(stuff) (parse_vec.at(i).next_tok == &Tok::stuff) ||
+	#define VALUE(stuff)
+
 	if (!found_label)
 	{
 		for (size_t i=0; i<parse_vec.size(); ++i)
 		{
 			// Ignore comments
-			if (parse_vec.at(i).next_tok == &Tok::Semicolon)
+			//if (parse_vec.at(i).next_tok == &Tok::Semicolon)
+			if (LIST_OF_COMMENT_TOKENS(VARNAME, VALUE) false)
 			{
 				break;
 			}
@@ -330,13 +335,16 @@ void Assembler::line()
 		for (size_t i=2; i<parse_vec.size(); ++i)
 		{
 			// Ignore comments
-			if (parse_vec.at(i).next_tok == &Tok::Semicolon)
+			//if (parse_vec.at(i).next_tok == &Tok::Semicolon)
+			if (LIST_OF_COMMENT_TOKENS(VARNAME, VALUE) false)
 			{
 				break;
 			}
 			second_parse_vec.push_back(parse_vec.at(i));
 		}
 	}
+	#undef VARNAME
+	#undef VALUE
 
 	finish_line(second_parse_vec);
 	lex();
@@ -959,6 +967,7 @@ bool Assembler::__parse_instr_ra_rb_imm32
 
 	regs.push_back(spvat(1).next_sym_str);
 	regs.push_back(spvat(3).next_sym_str);
+
 
 	expr_result = handle_expr(some_parse_vec, index);
 
@@ -1896,7 +1905,7 @@ void Assembler::__encode_low(u16& g1g2_low, u32& g3_low,
 			//	err("__encode_low()::handle_enc_group_3() non else:  ",
 			//		"Eek!\n");
 			//}
-			clear_and_set_bits_with_range(g3_low, expr_result, 31, 0);
+			g3_low = expr_result;
 		}
 
 		// Block moves version
