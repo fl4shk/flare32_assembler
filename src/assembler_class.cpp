@@ -817,7 +817,7 @@ bool Assembler::__parse_instr_ldst_ra_rb_rc_simm12
 
 	// op rA , [ rB , rC , expr ]
 	if ((some_parse_vec.size() < 10)
-		|| (some_parse_vec.back().next_tok != &Tok::LBracket))
+		|| (some_parse_vec.back().next_tok != &Tok::RBracket))
 	{
 		return false;
 	}
@@ -849,11 +849,27 @@ bool Assembler::__parse_instr_ldst_ra_rb_rc
 	s64 expr_result = 0;
 
 	// op rA , [ rB , rC ]
-	if (some_parse_vec.size() != 8)
+	if ((some_parse_vec.size() != 8)
+		|| (some_parse_vec.back().next_tok != &Tok::RBracket))
 	{
 		return false;
 	}
 
+
+	if (!check_tokens(some_parse_vec, index, &Tok::Reg, &Tok::Comma,
+		&Tok::LBracket, // [
+		&Tok::Reg, &Tok::Comma, // rB ,
+		&Tok::Reg, // rC
+		&Tok::RBracket))  // ]
+	{
+		return false;
+	}
+
+	regs.push_back(spvat(1).next_sym_str);
+	regs.push_back(spvat(4).next_sym_str);
+	regs.push_back(spvat(6).next_sym_str);
+
+	encode_and_gen(regs, expr_result, instr);
 
 	return true;
 }
@@ -867,11 +883,24 @@ bool Assembler::__parse_instr_ldst_ra_rb_simm12
 
 	// op rA , [ rB , expr ]
 	if ((some_parse_vec.size() < 8)
-		|| (some_parse_vec.back().next_tok != &Tok::LBracket))
+		|| (some_parse_vec.back().next_tok != &Tok::RBracket))
 	{
 		return false;
 	}
 
+	if (!check_tokens(some_parse_vec, index, &Tok::Reg, &Tok::Comma,
+		&Tok::LBracket, // [
+		&Tok::Reg, &Tok::Comma)) // rB ,
+	{
+		return false;
+	}
+
+	regs.push_back(spvat(1).next_sym_str);
+	regs.push_back(spvat(4).next_sym_str);
+
+	expr_result = handle_expr(some_parse_vec, index);
+
+	encode_and_gen(regs, expr_result, instr);
 
 	return true;
 }
@@ -887,10 +916,24 @@ bool Assembler::__parse_instr_ldst_ra_rb_imm32
 
 	// op rA , [ rB , expr ]
 	if ((some_parse_vec.size() < 8)
-		|| (some_parse_vec.back().next_tok != &Tok::LBracket))
+		|| (some_parse_vec.back().next_tok != &Tok::RBracket))
 	{
 		return false;
 	}
+
+	if (!check_tokens(some_parse_vec, index, &Tok::Reg, &Tok::Comma,
+		&Tok::LBracket, // [
+		&Tok::Reg, &Tok::Comma)) // rB ,
+	{
+		return false;
+	}
+
+	regs.push_back(spvat(1).next_sym_str);
+	regs.push_back(spvat(4).next_sym_str);
+
+	expr_result = handle_expr(some_parse_vec, index);
+
+	encode_and_gen(regs, expr_result, instr);
 
 	return true;
 }
