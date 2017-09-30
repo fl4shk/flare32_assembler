@@ -1591,14 +1591,16 @@ s64 Assembler::handle_expr(const std::vector<ParseNode>& some_parse_vec,
 		ret = handle_term(some_parse_vec, index);
 	}
 	else if (tok_is_ident_ish(some_parse_vec.at(index).next_tok)
-		|| (some_parse_vec.at(index).next_tok == &Tok::NatNum))
+		|| (some_parse_vec.at(index).next_tok == &Tok::NatNum)
+		|| (some_parse_vec.at(index).next_tok == &Tok::LParen))
 	{
 		ret = handle_term(some_parse_vec, index);
 	}
 	else
 	{
-		printout("expr():  3, Eek!\n");
-		return 9001;
+		//err("expr():  3, Eek!\n");
+		//return 9001;
+		err("Invalid expression");
 	}
 
 
