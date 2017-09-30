@@ -1883,6 +1883,76 @@ void Assembler::__encode_low(u16& g1g2_low, u32& g3_low,
 
 	auto handle_enc_group_3 = [&]() -> void
 	{
+		// Non-block moves version
+		if (instr->args() != InstrArgs::ldst_block_5_to_8)
+		{
+			//if (regs.size() == 3)
+			//{
+			//	clear_and_set_bits_with_range(g3_low, 
+			//		builtin_sym_tbl().at(regs.at(2)).value(), 15, 12);
+			//}
+			//else if (regs.size() > 3)
+			//{
+			//	err("__encode_low()::handle_enc_group_3() non else:  ",
+			//		"Eek!\n");
+			//}
+			clear_and_set_bits_with_range(g3_low, expr_result, 31, 0);
+		}
+
+		// Block moves version
+		else
+		{
+			clear_and_set_bits_with_range(g3_low, regs.size() - 6, 1, 0);
+
+			clear_and_set_bits_with_range(g3_low, 
+				builtin_sym_tbl().at(regs.at(0)).value(), 7, 4);
+
+			//if (regs.size() >= 3)
+			//{
+			//		
+			//		
+			//}
+
+			//if (regs.size() >= 4)
+			{
+				clear_and_set_bits_with_range(g3_low, 
+					builtin_sym_tbl().at(regs.at(3)).value(), 31, 28);
+			}
+			//if (regs.size() >= 5)
+			{
+				clear_and_set_bits_with_range(g3_low,
+					builtin_sym_tbl().at(regs.at(4)).value(), 27, 24);
+			}
+			if (regs.size() >= 6)
+			{
+				clear_and_set_bits_with_range(g3_low,
+					builtin_sym_tbl().at(regs.at(5)).value(), 23, 20);
+			}
+			if (regs.size() >= 7)
+			{
+				clear_and_set_bits_with_range(g3_low,
+					builtin_sym_tbl().at(regs.at(6)).value(), 19, 16);
+			}
+			if (regs.size() >= 8)
+			{
+				clear_and_set_bits_with_range(g3_low,
+					builtin_sym_tbl().at(regs.at(7)).value(), 15, 12);
+			}
+			if (regs.size() >= 9)
+			{
+				clear_and_set_bits_with_range(g3_low,
+					builtin_sym_tbl().at(regs.at(8)).value(), 11, 8);
+			}
+
+			//clear_and_set_bits_with_range(g3_low,
+			//	builtin_sym_tbl().at(regs.at()));
+
+			if ((regs.size() < 6) || (regs.size() > 9))
+			{
+				err("__encode_low()::handle_enc_group_3() else:  Eek!\n");
+			}
+		}
+
 	};
 
 	switch (instr->enc_group())
