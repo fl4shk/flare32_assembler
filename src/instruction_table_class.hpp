@@ -40,6 +40,8 @@ enum class InstrArgs
 	ldst_ra_rb_rc,
 	ldst_ra_rb_simm12,
 
+	branch,
+
 
 	ldst_ra_rb_imm32,
 	ra_rb_imm32,

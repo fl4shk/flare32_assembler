@@ -480,6 +480,10 @@ bool Assembler::parse_instr(PInstr instr,
 			return __parse_instr_ldst_ra_rb_simm12(some_parse_vec, 
 				instr);
 
+		case InstrArgs::branch:
+			return __parse_instr_branch(some_parse_vec,
+				instr);
+
 
 		case InstrArgs::ldst_ra_rb_imm32:
 			return __parse_instr_ldst_ra_rb_imm32(some_parse_vec, 
@@ -528,8 +532,7 @@ bool Assembler::parse_instr(PInstr instr,
 #define spvat(x) some_parse_vec.at(x)
 
 bool Assembler::__parse_instr_no_args
-	(const std::vector<Assembler::ParseNode>& some_parse_vec,
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	//size_t index = 1;
@@ -546,8 +549,7 @@ bool Assembler::__parse_instr_no_args
 	return true;
 }
 bool Assembler::__parse_instr_uimm16
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -566,8 +568,7 @@ bool Assembler::__parse_instr_uimm16
 	return true;
 }
 bool Assembler::__parse_instr_simm16
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -586,8 +587,7 @@ bool Assembler::__parse_instr_simm16
 	return true;
 }
 bool Assembler::__parse_instr_imm32
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -607,8 +607,7 @@ bool Assembler::__parse_instr_imm32
 }
 
 bool Assembler::__parse_instr_ra
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	//size_t index = 1;
@@ -633,8 +632,7 @@ bool Assembler::__parse_instr_ra
 	return true;
 }
 bool Assembler::__parse_instr_ra_uimm16
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -662,8 +660,7 @@ bool Assembler::__parse_instr_ra_uimm16
 	return true;
 }
 bool Assembler::__parse_instr_ra_rb
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -691,8 +688,7 @@ bool Assembler::__parse_instr_ra_rb
 	return true;
 }
 bool Assembler::__parse_instr_ra_rb_uimm16
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -721,8 +717,7 @@ bool Assembler::__parse_instr_ra_rb_uimm16
 	return true;
 }
 bool Assembler::__parse_instr_ra_rb_simm16
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -750,8 +745,7 @@ bool Assembler::__parse_instr_ra_rb_simm16
 	return true;
 }
 bool Assembler::__parse_instr_ra_rb_rc
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -778,8 +772,7 @@ bool Assembler::__parse_instr_ra_rb_rc
 	return true;
 }
 bool Assembler::__parse_instr_ra_rb_rc_simm12
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -811,8 +804,7 @@ bool Assembler::__parse_instr_ra_rb_rc_simm12
 }
 
 bool Assembler::__parse_instr_ldst_ra_rb
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -839,8 +831,7 @@ bool Assembler::__parse_instr_ldst_ra_rb
 	return true;
 }
 bool Assembler::__parse_instr_ldst_ra_rb_rc_simm12
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -872,8 +863,7 @@ bool Assembler::__parse_instr_ldst_ra_rb_rc_simm12
 	return true;
 }
 bool Assembler::__parse_instr_ldst_ra_rb_rc
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -905,8 +895,7 @@ bool Assembler::__parse_instr_ldst_ra_rb_rc
 	return true;
 }
 bool Assembler::__parse_instr_ldst_ra_rb_simm12
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -937,9 +926,46 @@ bool Assembler::__parse_instr_ldst_ra_rb_simm12
 }
 
 
+bool Assembler::__parse_instr_branch
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+{
+	std::vector<std::string> regs;
+	size_t index = 1;
+	s64 expr_result = 0;
+
+	// op expr
+	if (some_parse_vec.size() < 2)
+	{
+		return false;
+	}
+
+	expr_result = handle_expr(some_parse_vec, index) - addr();
+
+	switch (instr->enc_group())
+	{
+		case 0:
+			expr_result -= 2;
+			break;
+
+		case 1:
+		case 2:
+			expr_result -= 4;
+			break;
+
+		case 3:
+			expr_result -= 6;
+			break;
+	}
+
+
+	encode_and_gen(regs, expr_result, instr);
+
+	return true;
+}
+
+
 bool Assembler::__parse_instr_ldst_ra_rb_imm32
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -969,8 +995,7 @@ bool Assembler::__parse_instr_ldst_ra_rb_imm32
 	return true;
 }
 bool Assembler::__parse_instr_ra_rb_imm32
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1002,8 +1027,7 @@ bool Assembler::__parse_instr_ra_rb_imm32
 
 // Block moves (ldmia, stmia, stmdb) with number of {} args
 bool Assembler::__parse_instr_ldst_block_1_to_4
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1134,8 +1158,7 @@ bool Assembler::__parse_instr_ldst_block_1_to_4
 	return true;
 }
 bool Assembler::__parse_instr_ldst_block_5_to_8
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1346,8 +1369,7 @@ bool Assembler::__parse_instr_ldst_block_5_to_8
 }
 
 bool Assembler::__parse_instr_ira
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1369,8 +1391,7 @@ bool Assembler::__parse_instr_ira
 	return true;
 }
 bool Assembler::__parse_instr_ra_ira
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1396,8 +1417,7 @@ bool Assembler::__parse_instr_ra_ira
 	return true;
 }
 bool Assembler::__parse_instr_ira_ra
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1423,8 +1443,7 @@ bool Assembler::__parse_instr_ira_ra
 }
 
 bool Assembler::__parse_instr_ra_flags
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1450,8 +1469,7 @@ bool Assembler::__parse_instr_ra_flags
 	return true;
 }
 bool Assembler::__parse_instr_flags
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1473,8 +1491,7 @@ bool Assembler::__parse_instr_flags
 	return true;
 }
 bool Assembler::__parse_instr_flags_ra
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1500,8 +1517,7 @@ bool Assembler::__parse_instr_flags_ra
 }
 
 bool Assembler::__parse_instr_ra_pc
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
-	PInstr instr)
+	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;

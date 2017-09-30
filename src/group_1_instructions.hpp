@@ -80,90 +80,90 @@ INSTR_STUFF(1, ra_rb_uimm16, Rori, "rori")
 /* Branch always,  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, simm16, Bra, "bra") \
+INSTR_STUFF(1, branch, Bra, "bra") \
 \
 /* Branch never (effectively a NOP), */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, simm16, Bnv, "bnv") \
+INSTR_STUFF(1, branch, Bnv, "bnv") \
 \
 \
 \
 /* Branch when Z == 0,  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, simm16, Bne, "bne") \
+INSTR_STUFF(1, branch, Bne, "bne") \
 \
 /* Branch when Z == 1,  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, simm16, Beq, "beq") \
+INSTR_STUFF(1, branch, Beq, "beq") \
 \
 /* Branch when C == 0 [unsigned less than],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, simm16, Bcc, "bcc") \
+INSTR_STUFF(1, branch, Bcc, "bcc") \
 \
 /* Branch when C == 1 [unsigned greater than or equal],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, simm16, Bcs, "bcs") \
+INSTR_STUFF(1, branch, Bcs, "bcs") \
 \
 \
 \
 /* Branch when (C == 0 or Z == 1) [unsigned less than or equal],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, simm16, Bls, "bls") \
+INSTR_STUFF(1, branch, Bls, "bls") \
 \
 /* Branch when (C == 1 and Z == 0) [unsigned greater than],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, simm16, Bhi, "bhi") \
+INSTR_STUFF(1, branch, Bhi, "bhi") \
 \
 /* Branch when N == 0,  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, simm16, Bpl, "bpl") \
+INSTR_STUFF(1, branch, Bpl, "bpl") \
 \
 /* Branch when N == 1,  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, simm16, Bmi, "bmi") \
+INSTR_STUFF(1, branch, Bmi, "bmi") \
 \
 \
 \
 /* Branch when V == 0,  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, simm16, Bvc, "bvc") \
+INSTR_STUFF(1, branch, Bvc, "bvc") \
 \
 /* Branch when V == 1,  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, simm16, Bvs, "bvs") \
+INSTR_STUFF(1, branch, Bvs, "bvs") \
 \
 /* Branch when N == V [signed greater than or equal],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, simm16, Bge, "bge") \
+INSTR_STUFF(1, branch, Bge, "bge") \
 \
 /* Branch when N != V [signed less than],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, simm16, Blt, "blt") \
+INSTR_STUFF(1, branch, Blt, "blt") \
 \
 \
 \
 /* Branch when (N == V and Z == 0) [signed greater than],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, simm16, Bgt, "bgt") \
+INSTR_STUFF(1, branch, Bgt, "bgt") \
 \
 /* Branch when (N != V or Z == 1) [signed less than or equal],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, simm16, Ble, "ble")
+INSTR_STUFF(1, branch, Ble, "ble")
 
 
 #define LIST_OF_INSTR_G1_RA_RB_SIMM16__COLLECTION_0(INSTR_STUFF) \

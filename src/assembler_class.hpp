@@ -182,6 +182,10 @@ private:		// functions
 		(const std::vector<ParseNode>& some_parse_vec, PInstr instr);
 
 
+	bool __parse_instr_branch
+		(const std::vector<ParseNode>& some_parse_vec, PInstr instr);
+
+
 	bool __parse_instr_ldst_ra_rb_imm32
 		(const std::vector<ParseNode>& some_parse_vec, PInstr instr);
 	bool __parse_instr_ra_rb_imm32
