@@ -288,17 +288,25 @@ void Assembler::lex()
 
 		return;
 	}
+
+	set_next_tok(&Tok::Bad);
 }
 
 void Assembler::line()
 {
 	std::vector<ParseNode> parse_vec, second_parse_vec;
 
-	while ((next_tok() != &Tok::Newline) && (next_tok() != &Tok::Eof))
+	while ((next_tok() != &Tok::Newline) && (next_tok() != &Tok::Eof)
+		&& (next_tok() != &Tok::Bad))
 	{
 		parse_vec.push_back(ParseNode(next_tok(), next_sym_str(),
 			next_num()));
 		lex();
+	}
+
+	if (next_tok() == &Tok::Bad)
+	{
+		err("Invalid syntax");
 	}
 
 	//for (const auto& node : parse_vec)

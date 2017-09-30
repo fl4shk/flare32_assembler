@@ -70,9 +70,10 @@ VARNAME(NatNum) VALUE("NaturalNumber") \
 \
 LIST_OF_IDENT_ISH_TOKENS(VARNAME, VALUE) \
 \
-/* "Newline", "EOF" */ \
+/* "Newline", "EOF", "Bad" */ \
 VARNAME(Newline) VALUE("newline") \
-VARNAME(Eof) VALUE("EOF")
+VARNAME(Eof) VALUE("EOF") \
+VARNAME(Bad) VALUE("Bad")
 
 
 
