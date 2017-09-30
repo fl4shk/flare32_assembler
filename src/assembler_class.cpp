@@ -253,7 +253,7 @@ void Assembler::lex()
 		return;
 	}
 
-	// The constant 0... or a hexadecimal number!
+	// The constant 0... or a hexadecimal or binary number!
 	if (next_char() == '0')
 	{
 		set_next_num(0);
@@ -292,6 +292,24 @@ void Assembler::lex()
 				{
 					set_next_num((next_num() * 16) + (next_char() - '0'));
 				}
+
+				advance();
+			}
+		}
+
+		// Binary number
+		if (next_char() == 'b')
+		{
+			advance();
+
+			if ((next_char() != '0') && (next_char() != '1'))
+			{
+				expected("Binary number");
+			}
+
+			while ((next_char() == '0') || (next_char() == '1'))
+			{
+				set_next_num((next_num() * 2) + (next_char() - '0'));
 
 				advance();
 			}
