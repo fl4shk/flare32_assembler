@@ -1580,15 +1580,20 @@ s64 Assembler::handle_expr(const std::vector<ParseNode>& some_parse_vec,
 	{
 		//lex();
 		++index;
+
+		ret = -handle_term(some_parse_vec, index);
 	}
 	else if (some_parse_vec.at(index).next_tok == &Tok::Plus)
 	{
 		//lex();
 		++index;
+
+		ret = handle_term(some_parse_vec, index);
 	}
 	else if (tok_is_ident_ish(some_parse_vec.at(index).next_tok)
 		|| (some_parse_vec.at(index).next_tok == &Tok::NatNum))
 	{
+		ret = handle_term(some_parse_vec, index);
 	}
 	else
 	{
@@ -1597,7 +1602,6 @@ s64 Assembler::handle_expr(const std::vector<ParseNode>& some_parse_vec,
 	}
 
 
-	ret = handle_term(some_parse_vec, index);
 
 	if (index >= some_parse_vec.size())
 	{
