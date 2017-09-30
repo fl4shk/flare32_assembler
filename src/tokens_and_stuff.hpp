@@ -9,6 +9,9 @@ VARNAME(Semicolon) VALUE(";") \
 VARNAME(At) VALUE("@") \
 
 #define LIST_OF_PUNCT_TOKENS(VARNAME, VALUE) \
+/* "." */ \
+VARNAME(Period) VALUE(".") \
+\
 /* "(", ")" */ \
 VARNAME(LParen) VALUE("(") \
 VARNAME(RParen) VALUE(")") \
@@ -21,11 +24,11 @@ VARNAME(RBracket) VALUE("]") \
 VARNAME(LBrace) VALUE("{") \
 VARNAME(RBrace) VALUE("}") \
 \
-/* "=", ";", "," */ \
+/* "=", ";", ",", etc. */ \
 VARNAME(Equals) VALUE("=") \
 LIST_OF_COMMENT_TOKENS(VARNAME, VALUE) \
 VARNAME(Comma) VALUE(",") \
-VARNAME(Colon) VALUE(":")
+VARNAME(Colon) VALUE(":") \
 
 
 
@@ -76,12 +79,16 @@ VARNAME(Eof) VALUE("EOF") \
 VARNAME(Bad) VALUE("Bad")
 
 
+#define LIST_OF_DIRECTIVE_TOKENS(VARNAME, VALUE) \
+/* ".org" */ \
+VARNAME(DotOrg) VALUE(".org")
 
 
 #define LIST_OF_TOKENS(VARNAME, VALUE) \
 LIST_OF_PUNCT_TOKENS(VARNAME, VALUE) \
 LIST_OF_OPERATOR_TOKENS(VARNAME, VALUE) \
-LIST_OF_EXTRA_TOKENS(VARNAME, VALUE)
+LIST_OF_EXTRA_TOKENS(VARNAME, VALUE) \
+LIST_OF_DIRECTIVE_TOKENS(VARNAME, VALUE)
 
 
 namespace flare32

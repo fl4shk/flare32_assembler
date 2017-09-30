@@ -150,6 +150,37 @@ void Assembler::lex()
 	std::string next_str;
 	next_str += next_char();
 
+
+	// Find assembler directives
+	#define VALUE(some_str)
+
+	if (next_char() == '.')
+	{
+		advance();
+		while (isalnum(next_char()) || next_char() == '_')
+		{
+			next_str += next_char();
+			advance();
+		}
+
+		if (next_str == "")
+		{
+		}
+
+		#define VARNAME(some_tok) \
+			else if (next_str == Tok::some_tok.str()) \
+			{ \
+				set_next_tok(&Tok::some_tok); \
+				advance(); \
+				return; \
+			}
+
+		LIST_OF_DIRECTIVE_TOKENS(VARNAME, VALUE)
+		#undef VARNAME
+	}
+
+
+
 	if (next_str == "")
 	{
 	}
@@ -161,7 +192,6 @@ void Assembler::lex()
 			advance(); \
 			return; \
 		}
-	#define VALUE(some_str)
 
 	LIST_OF_PUNCT_TOKENS(VARNAME, VALUE)
 	LIST_OF_SINGLE_CHAR_OPERATOR_TOKENS(VARNAME, VALUE)
@@ -312,11 +342,32 @@ void Assembler::line()
 		err("Invalid syntax");
 	}
 
+	if (parse_vec.size() == 0)
+	{
+		lex();
+		return;
+	}
+
 	//for (const auto& node : parse_vec)
 	//{
 	//	printout(node.next_tok->str(), "\t\t");
 	//}
 	//printout("\n");
+
+	size_t index = 1;
+
+	// Check for assembler directives
+	if (parse_vec.front().next_tok == &Tok::DotOrg)
+	{
+		set_addr(handle_expr(parse_vec, index));
+
+		if (index != parse_vec.size())
+		{
+			err("extra characters on line");
+		}
+
+		return;
+	}
 
 
 	bool found_label = false;
@@ -1614,6 +1665,10 @@ s64 Assembler::handle_expr(const std::vector<ParseNode>& some_parse_vec,
 		|| (some_parse_vec.at(index).next_tok == &Tok::LParen))
 	{
 		ret = handle_term(some_parse_vec, index);
+	}
+	else if (some_parse_vec.at(index).next_tok == &Tok::Period)
+	{
+		ret = addr();
 	}
 	else
 	{
