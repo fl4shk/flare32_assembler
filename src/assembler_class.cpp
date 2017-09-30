@@ -951,6 +951,19 @@ bool Assembler::__parse_instr_ra_rb_imm32
 		return false;
 	}
 
+	if (!check_tokens(some_parse_vec, index, &Tok::Reg, &Tok::Comma,
+		&Tok::Reg, &Tok::Comma))
+	{
+		return false;
+	}
+
+	regs.push_back(spvat(1).next_sym_str);
+	regs.push_back(spvat(3).next_sym_str);
+
+	expr_result = handle_expr(some_parse_vec, index);
+
+	encode_and_gen(regs, expr_result, instr);
+
 	return true;
 }
 
@@ -1295,7 +1308,7 @@ bool Assembler::__parse_instr_ldst_block_5_to_8
 		return false;
 	}
 
-	encode_and_gen(regs, 0, instr);
+	encode_and_gen(regs, expr_result, instr);
 
 	return true;
 }
@@ -1314,6 +1327,13 @@ bool Assembler::__parse_instr_ira
 		return false;
 	}
 
+	if (!check_tokens(some_parse_vec, index, &Tok::RegIra))
+	{
+		return false;
+	}
+
+	encode_and_gen(regs, expr_result, instr);
+
 	return true;
 }
 bool Assembler::__parse_instr_ra_ira
@@ -1324,6 +1344,23 @@ bool Assembler::__parse_instr_ra_ira
 	size_t index = 1;
 	s64 expr_result = 0;
 
+
+	// op rA , ira
+	if (some_parse_vec.size() != 4)
+	{
+		return false;
+	}
+
+	if (!check_tokens(some_parse_vec, index, &Tok::Reg, &Tok::Comma,
+		&Tok::RegIra))
+	{
+		return false;
+	}
+
+	regs.push_back(spvat(1).next_sym_str);
+
+	encode_and_gen(regs, expr_result, instr);
+
 	return true;
 }
 bool Assembler::__parse_instr_ira_ra
@@ -1333,6 +1370,22 @@ bool Assembler::__parse_instr_ira_ra
 	std::vector<std::string> regs;
 	size_t index = 1;
 	s64 expr_result = 0;
+
+	// op ira , rA
+	if (some_parse_vec.size() != 4)
+	{
+		return false;
+	}
+
+	if (!check_tokens(some_parse_vec, index, &Tok::RegIra, &Tok::Comma,
+		&Tok::Reg))
+	{
+		return false;
+	}
+
+	regs.push_back(spvat(3).next_sym_str);
+
+	encode_and_gen(regs, expr_result, instr);
 
 	return true;
 }
@@ -1345,6 +1398,23 @@ bool Assembler::__parse_instr_ra_flags
 	size_t index = 1;
 	s64 expr_result = 0;
 
+
+	// op rA , flags
+	if (some_parse_vec.size() != 4)
+	{
+		return false;
+	}
+
+	if (!check_tokens(some_parse_vec, index, &Tok::Reg, &Tok::Comma,
+		&Tok::RegFlags))
+	{
+		return false;
+	}
+
+	regs.push_back(spvat(1).next_sym_str);
+
+	encode_and_gen(regs, expr_result, instr);
+
 	return true;
 }
 bool Assembler::__parse_instr_flags
@@ -1354,6 +1424,19 @@ bool Assembler::__parse_instr_flags
 	std::vector<std::string> regs;
 	size_t index = 1;
 	s64 expr_result = 0;
+
+	// op flags
+	if (some_parse_vec.size() != 2)
+	{
+		return false;
+	}
+
+	if (!check_tokens(some_parse_vec, index, &Tok::RegFlags))
+	{
+		return false;
+	}
+
+	encode_and_gen(regs, expr_result, instr);
 
 	return true;
 }
@@ -1365,6 +1448,22 @@ bool Assembler::__parse_instr_flags_ra
 	size_t index = 1;
 	s64 expr_result = 0;
 
+	// op flags , rA
+	if (some_parse_vec.size() != 4)
+	{
+		return false;
+	}
+
+	if (!check_tokens(some_parse_vec, index, &Tok::RegFlags, &Tok::Comma,
+		&Tok::Reg))
+	{
+		return false;
+	}
+
+	regs.push_back(spvat(3).next_sym_str);
+
+	encode_and_gen(regs, expr_result, instr);
+
 	return true;
 }
 
@@ -1375,6 +1474,23 @@ bool Assembler::__parse_instr_ra_pc
 	std::vector<std::string> regs;
 	size_t index = 1;
 	s64 expr_result = 0;
+
+
+	// op rA , pc
+	if (some_parse_vec.size() != 4)
+	{
+		return false;
+	}
+
+	if (!check_tokens(some_parse_vec, index, &Tok::Reg, &Tok::Comma,
+		&Tok::RegPc))
+	{
+		return false;
+	}
+
+	regs.push_back(spvat(1).next_sym_str);
+
+	encode_and_gen(regs, expr_result, instr);
 
 	return true;
 }

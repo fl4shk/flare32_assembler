@@ -30,6 +30,8 @@ small_code_testing_things/*
 */tags
 */types_*.taghl
 *.txt.ignore
+*.s.ignore
+*.asm.ignore
 docs/src
 docs/makefile
 docs/*.gpp.ignore
