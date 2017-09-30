@@ -183,6 +183,18 @@ void Assembler::lex()
 			advance();
 		}
 
+		if (next_char() == '.')
+		{
+			next_str += next_char();
+			advance();
+
+			while (isalnum(next_char()) || (next_char() == '_'))
+			{
+				next_str += next_char();
+				advance();
+			}
+		}
+
 		//printout("lex():  next_str, next_char():  ", next_str, ", ",
 		//	(char)next_char(), "\n");
 
