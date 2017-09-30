@@ -368,6 +368,48 @@ void Assembler::line()
 
 		return;
 	}
+	else if (parse_vec.front().next_tok == &Tok::DotB)
+	{
+		for (;;)
+		{
+			gen8(handle_expr(parse_vec, index));
+
+			if (index >= parse_vec.size())
+			{
+				break;
+			}
+			
+			if (parse_vec.at(index).next_tok != &Tok::Comma)
+			{
+				err("invalid syntax for .db");
+			}
+
+			++index;
+		}
+
+		return;
+	}
+	else if (parse_vec.front().next_tok == &Tok::DotW)
+	{
+		for (;;)
+		{
+			gen32(handle_expr(parse_vec, index));
+
+			if (index >= parse_vec.size())
+			{
+				break;
+			}
+			
+			if (parse_vec.at(index).next_tok != &Tok::Comma)
+			{
+				err("invalid syntax for .dw");
+			}
+
+			++index;
+		}
+
+		return;
+	}
 
 
 	bool found_label = false;

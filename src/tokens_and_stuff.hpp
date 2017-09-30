@@ -80,8 +80,10 @@ VARNAME(Bad) VALUE("Bad")
 
 
 #define LIST_OF_DIRECTIVE_TOKENS(VARNAME, VALUE) \
-/* ".org" */ \
-VARNAME(DotOrg) VALUE(".org")
+VARNAME(DotOrg) VALUE(".org") \
+VARNAME(DotB) VALUE(".db") \
+VARNAME(DotW) VALUE(".dw") \
+
 
 
 #define LIST_OF_TOKENS(VARNAME, VALUE) \
