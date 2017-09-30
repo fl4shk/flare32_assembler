@@ -494,6 +494,8 @@ bool Assembler::parse_instr(PInstr instr,
 	return false;
 }
 
+#define spvat(x) some_parse_vec.at(x)
+
 bool Assembler::__parse_instr_no_args
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	PInstr instr)
@@ -503,18 +505,8 @@ bool Assembler::__parse_instr_no_args
 		return false;
 	}
 
-	if (some_parse_vec.at(0).next_tok != &Tok::Instr)
-	{
-		return false;
-	}
-
-
-	u16 high_hword = 0;
-	u16 g1g2_low = 0;
-	u32 g3_low = 0;
-
-	encode_high_hword(high_hword, instr);
-	gen16(high_hword);
+	std::vector<std::string> regs;
+	encode_and_gen(regs, 0, instr);
 
 	return true;
 }
@@ -522,18 +514,51 @@ bool Assembler::__parse_instr_uimm16
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	if (some_parse_vec.size() < 2)
+	{
+		return false;
+	}
+
+	std::vector<std::string> regs;
+	size_t index = 1;
+	s64 expr_result = handle_expr(some_parse_vec, index);
+
+	encode_and_gen(regs, expr_result, instr);
+
 	return true;
 }
 bool Assembler::__parse_instr_simm16
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	if (some_parse_vec.size() < 2)
+	{
+		return false;
+	}
+
+	std::vector<std::string> regs;
+	size_t index = 1;
+	s64 expr_result = handle_expr(some_parse_vec, index);
+
+	encode_and_gen(regs, expr_result, instr);
+
 	return true;
 }
 bool Assembler::__parse_instr_imm32
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	if (some_parse_vec.size() < 2)
+	{
+		return false;
+	}
+
+	std::vector<std::string> regs;
+	size_t index = 1;
+	s64 expr_result = handle_expr(some_parse_vec, index);
+
+	encode_and_gen(regs, expr_result, instr);
+
 	return true;
 }
 
@@ -541,12 +566,47 @@ bool Assembler::__parse_instr_ra
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	if (some_parse_vec.size() != 2)
+	{
+		return false;
+	}
+
+	if (spvat(1).next_tok != &Tok::Reg)
+	{
+		return false;
+	}
+
+	std::vector<std::string> regs;
+
+	regs.push_back(spvat(1).next_sym_str);
+
+	encode_and_gen(regs, 0, instr);
+
 	return true;
 }
 bool Assembler::__parse_instr_ra_uimm16
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	if (some_parse_vec.size() < 4)
+	{
+		return false;
+	}
+
+	if ((spvat(1).next_tok != &Tok::Reg)
+		|| (spvat(2).next_tok != &Tok::Comma))
+	{
+		return false;
+	}
+
+	std::vector<std::string> regs;
+	size_t index = 3;
+	s64 expr_result = handle_expr(some_parse_vec, index);
+
+	regs.push_back(spvat(1).next_sym_str);
+
+	encode_and_gen(regs, expr_result, instr);
+
 	return true;
 }
 bool Assembler::__parse_instr_ra_rb
@@ -678,6 +738,7 @@ bool Assembler::__parse_instr_ra_pc
 {
 	return true;
 }
+
 
 
 
@@ -958,17 +1019,67 @@ void Assembler::__encode_opcode(u16& high_hword, PInstr instr) const
 			if (instr == other_instr)
 			{
 				clear_and_set_bits_with_range(high_hword, i, 12, 8);
+				return;
 			}
 		}
 	}
 }
 
 
-void Assembler::encode_high_hword(u16& high_hword, PInstr instr) const
+void Assembler::__encode_high_hword(u16& high_hword, 
+	const std::vector<std::string>& regs, s64 expr_result, PInstr instr)
+	const
 {
 	__encode_instr_group(high_hword, instr);
 	__encode_affects_flags(high_hword, instr);
 	__encode_opcode(high_hword, instr);
+}
+
+
+void Assembler::__encode_low(u16& g1g2_low, u32& g3_low, 
+	const std::vector<std::string>& regs, s64 expr_result, PInstr instr)
+	const
+{
+}
+
+void Assembler::encode_and_gen
+	(const std::vector<std::string>& regs, s64 expr_result, 
+	PInstr instr)
+{
+	u16 high_hword = 0;
+	u16 g1g2_low = 0;
+	u32 g3_low = 0;
+
+	__encode_high_hword(high_hword, regs, expr_result, instr);
+	__encode_low(g1g2_low, g3_low, regs, expr_result, instr);
+	gen16(high_hword);
+	__gen_low(g1g2_low, g3_low, instr);
+
+}
+
+
+#undef spvat
+
+
+void Assembler::__gen_low(u16 g1g2_low, u32 g3_low, PInstr instr) 
+{
+	switch (instr->enc_group())
+	{
+		case 0:
+			break;
+
+		case 1:
+			gen16(g1g2_low);
+			break;
+
+		case 2:
+			gen16(g1g2_low);
+			break;
+
+		case 3:
+			gen32(g3_low);
+			break;
+	}
 }
 
 void Assembler::gen8(s32 v)

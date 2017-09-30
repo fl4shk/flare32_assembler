@@ -243,7 +243,15 @@ private:		// functions
 			13, 13);
 	}
 	void __encode_opcode(u16& high_hword, PInstr instr) const;
-	void encode_high_hword(u16& high_hword, PInstr instr) const;
+	void __encode_high_hword(u16& high_hword, 
+		const std::vector<std::string>& regs, s64 expr_result,
+		PInstr instr) const;
+	void __encode_low(u16& g1g2_low, u32& g3_low, 
+		const std::vector<std::string>& regs, s64 expr_result,
+		PInstr instr) const;
+	void __gen_low(u16 g1g2_low, u32 g3_low, PInstr instr);
+	void encode_and_gen(const std::vector<std::string>& regs, 
+		s64 expr_result, PInstr instr);
 
 	void gen8(s32 v);
 	void gen16(s32 v);
