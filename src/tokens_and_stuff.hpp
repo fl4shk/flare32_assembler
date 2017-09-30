@@ -13,6 +13,10 @@ VARNAME(RParen) VALUE(")") \
 VARNAME(LBracket) VALUE("[") \
 VARNAME(RBracket) VALUE("]") \
 \
+/* "{", "}" */ \
+VARNAME(LBrace) VALUE("{") \
+VARNAME(RBrace) VALUE("}") \
+\
 /* "=", ";", "," */ \
 VARNAME(Equals) VALUE("=") \
 VARNAME(Semicolon) VALUE(";") \

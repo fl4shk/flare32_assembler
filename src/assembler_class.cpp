@@ -500,6 +500,7 @@ bool Assembler::__parse_instr_no_args
 	(const std::vector<Assembler::ParseNode>& some_parse_vec,
 	PInstr instr)
 {
+	// op
 	if (some_parse_vec.size() != 1)
 	{
 		return false;
@@ -514,6 +515,7 @@ bool Assembler::__parse_instr_uimm16
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	// op expr
 	if (some_parse_vec.size() < 2)
 	{
 		return false;
@@ -531,6 +533,7 @@ bool Assembler::__parse_instr_simm16
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	// op expr
 	if (some_parse_vec.size() < 2)
 	{
 		return false;
@@ -548,6 +551,7 @@ bool Assembler::__parse_instr_imm32
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	// op expr
 	if (some_parse_vec.size() < 2)
 	{
 		return false;
@@ -566,6 +570,7 @@ bool Assembler::__parse_instr_ra
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	// op rA
 	if (some_parse_vec.size() != 2)
 	{
 		return false;
@@ -588,19 +593,22 @@ bool Assembler::__parse_instr_ra_uimm16
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	// op rA , expr
 	if (some_parse_vec.size() < 4)
 	{
 		return false;
 	}
 
-	if ((spvat(1).next_tok != &Tok::Reg)
-		|| (spvat(2).next_tok != &Tok::Comma))
+
+	size_t index = 1;
+
+	if ((spvat(index++).next_tok != &Tok::Reg)
+		|| (spvat(index++).next_tok != &Tok::Comma))
 	{
 		return false;
 	}
 
 	std::vector<std::string> regs;
-	size_t index = 3;
 	s64 expr_result = handle_expr(some_parse_vec, index);
 
 	regs.push_back(spvat(1).next_sym_str);
@@ -613,30 +621,62 @@ bool Assembler::__parse_instr_ra_rb
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	// op rA , rB
+	if (some_parse_vec.size() != 4)
+	{
+		return false;
+	}
+	
+
 	return true;
 }
 bool Assembler::__parse_instr_ra_rb_uimm16
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	// op rA , rB , expr
+	if (some_parse_vec.size() < 6)
+	{
+		return false;
+	}
+
 	return true;
 }
 bool Assembler::__parse_instr_ra_rb_simm16
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	// op rA , rB , expr
+	if (some_parse_vec.size() < 6)
+	{
+		return false;
+	}
+
+
 	return true;
 }
 bool Assembler::__parse_instr_ra_rb_rc
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	// op rA , rB , rC
+	if (some_parse_vec.size() != 6)
+	{
+		return false;
+	}
+
 	return true;
 }
 bool Assembler::__parse_instr_ra_rb_rc_simm12
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	// op rA , rB , rC , expr
+	if (some_parse_vec.size() < 8)
+	{
+		return false;
+	}
+
 	return true;
 }
 
@@ -644,24 +684,52 @@ bool Assembler::__parse_instr_ldst_ra_rb
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	// op rA , [ rB ]
+	if (some_parse_vec.size() != 6)
+	{
+		return false;
+	}
+
 	return true;
 }
 bool Assembler::__parse_instr_ldst_ra_rb_rc_simm12
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	// op rA , [ rB , rC , expr ]
+	if ((some_parse_vec.size() < 10)
+		|| (some_parse_vec.back().next_tok != &Tok::LBracket))
+	{
+		return false;
+	}
+
 	return true;
 }
 bool Assembler::__parse_instr_ldst_ra_rb_rc
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	// op rA , [ rB , rC ]
+	if (some_parse_vec.size() != 8)
+	{
+		return false;
+	}
+
+
 	return true;
 }
 bool Assembler::__parse_instr_ldst_ra_rb_simm12
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	// op rA , [ rB , expr ]
+	if ((some_parse_vec.size() < 8)
+		|| (some_parse_vec.back().next_tok != &Tok::LBracket))
+	{
+		return false;
+	}
+
+
 	return true;
 }
 
@@ -670,12 +738,25 @@ bool Assembler::__parse_instr_ldst_ra_rb_imm32
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	// op rA , [ rB , expr ]
+	if ((some_parse_vec.size() < 8)
+		|| (some_parse_vec.back().next_tok != &Tok::LBracket))
+	{
+		return false;
+	}
+
 	return true;
 }
 bool Assembler::__parse_instr_ra_rb_imm32
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	// op rA , rB , expr
+	if (some_parse_vec.size() < 6)
+	{
+		return false;
+	}
+
 	return true;
 }
 
@@ -685,12 +766,336 @@ bool Assembler::__parse_instr_ldst_block_1_to_4
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	size_t index = 1;
+	std::vector<std::string> regs;
+
+	// op rA , { rB }
+	if (some_parse_vec.size() == 6)
+	{
+		const auto node1 = spvat(index++);
+		const auto node2 = spvat(index++);
+		const auto node3 = spvat(index++);
+		const auto node4 = spvat(index++);
+		const auto node5 = spvat(index++);
+
+		if ((node1.next_tok != &Tok::Reg)
+			|| (node2.next_tok != &Tok::Comma)
+			|| (node3.next_tok != &Tok::LBrace)
+			|| (node4.next_tok != &Tok::Reg)
+			|| (node5.next_tok != &Tok::RBrace))
+		{
+			return false;
+		}
+
+		regs.push_back(node1.next_sym_str);
+		regs.push_back(node4.next_sym_str);
+	}
+
+	// op rA , { rB , rC }
+	else if (some_parse_vec.size() == 8)
+	{
+		const auto node1 = spvat(index++);
+		const auto node2 = spvat(index++);
+		const auto node3 = spvat(index++);
+		const auto node4 = spvat(index++);
+		const auto node5 = spvat(index++);
+		const auto node6 = spvat(index++);
+		const auto node7 = spvat(index++);
+
+		if ((node1.next_tok != &Tok::Reg)
+			|| (node2.next_tok != &Tok::Comma)
+			|| (node3.next_tok != &Tok::LBrace)
+			|| (node4.next_tok != &Tok::Reg)
+			|| (node5.next_tok != &Tok::Comma)
+			|| (node6.next_tok != &Tok::Reg)
+			|| (node7.next_tok != &Tok::RBrace))
+		{
+			return false;
+		}
+
+		regs.push_back(node1.next_sym_str);
+		regs.push_back(node4.next_sym_str);
+		regs.push_back(node6.next_sym_str);
+	}
+	// op rA , { rB , rC , rD }
+	else if (some_parse_vec.size() == 10)
+	{
+		const auto node1 = spvat(index++);
+		const auto node2 = spvat(index++);
+		const auto node3 = spvat(index++);
+		const auto node4 = spvat(index++);
+		const auto node5 = spvat(index++);
+		const auto node6 = spvat(index++);
+		const auto node7 = spvat(index++);
+		const auto node8 = spvat(index++);
+		const auto node9 = spvat(index++);
+
+		if ((node1.next_tok != &Tok::Reg)
+			|| (node2.next_tok != &Tok::Comma)
+			|| (node3.next_tok != &Tok::LBrace)
+			|| (node4.next_tok != &Tok::Reg)
+			|| (node5.next_tok != &Tok::Comma)
+			|| (node6.next_tok != &Tok::Reg)
+			|| (node7.next_tok != &Tok::Comma)
+			|| (node8.next_tok != &Tok::Reg)
+			|| (node9.next_tok != &Tok::RBrace))
+		{
+			return false;
+		}
+
+		regs.push_back(node1.next_sym_str);
+		regs.push_back(node4.next_sym_str);
+		regs.push_back(node6.next_sym_str);
+		regs.push_back(node8.next_sym_str);
+	}
+	// op rA , { rB , rC , rD , rE }
+	else if (some_parse_vec.size() == 12)
+	{
+		const auto node1 = spvat(index++);
+		const auto node2 = spvat(index++);
+		const auto node3 = spvat(index++);
+		const auto node4 = spvat(index++);
+		const auto node5 = spvat(index++);
+		const auto node6 = spvat(index++);
+		const auto node7 = spvat(index++);
+		const auto node8 = spvat(index++);
+		const auto node9 = spvat(index++);
+		const auto node10 = spvat(index++);
+		const auto node11 = spvat(index++);
+
+		if ((node1.next_tok != &Tok::Reg)
+			|| (node2.next_tok != &Tok::Comma)
+			|| (node3.next_tok != &Tok::LBrace)
+			|| (node4.next_tok != &Tok::Reg)
+			|| (node5.next_tok != &Tok::Comma)
+			|| (node6.next_tok != &Tok::Reg)
+			|| (node7.next_tok != &Tok::Comma)
+			|| (node8.next_tok != &Tok::Reg)
+			|| (node9.next_tok != &Tok::Comma)
+			|| (node10.next_tok != &Tok::Reg)
+			|| (node11.next_tok != &Tok::RBrace))
+		{
+			return false;
+		}
+
+		regs.push_back(node1.next_sym_str);
+		regs.push_back(node4.next_sym_str);
+		regs.push_back(node6.next_sym_str);
+		regs.push_back(node8.next_sym_str);
+		regs.push_back(node10.next_sym_str);
+	}
+	else
+	{
+		return false;
+	}
+
 	return true;
 }
 bool Assembler::__parse_instr_ldst_block_5_to_8
 	(const std::vector<Assembler::ParseNode>& some_parse_vec, 
 	PInstr instr)
 {
+	size_t index = 1;
+	std::vector<std::string> regs;
+
+	// op rA , { rB , rC , rD , rE , rF }
+	if (some_parse_vec.size() == 14)
+	{
+		const auto node1 = spvat(index++);
+		const auto node2 = spvat(index++);
+		const auto node3 = spvat(index++);
+		const auto node4 = spvat(index++);
+		const auto node5 = spvat(index++);
+		const auto node6 = spvat(index++);
+		const auto node7 = spvat(index++);
+		const auto node8 = spvat(index++);
+		const auto node9 = spvat(index++);
+		const auto node10 = spvat(index++);
+		const auto node11 = spvat(index++);
+		const auto node12 = spvat(index++);
+		const auto node13 = spvat(index++);
+
+		if ((node1.next_tok != &Tok::Reg)
+			|| (node2.next_tok != &Tok::Comma)
+			|| (node3.next_tok != &Tok::LBrace)
+			|| (node4.next_tok != &Tok::Reg)
+			|| (node5.next_tok != &Tok::Comma)
+			|| (node6.next_tok != &Tok::Reg)
+			|| (node7.next_tok != &Tok::Comma)
+			|| (node8.next_tok != &Tok::Reg)
+			|| (node9.next_tok != &Tok::Comma)
+			|| (node10.next_tok != &Tok::Reg)
+			|| (node11.next_tok != &Tok::Comma)
+			|| (node12.next_tok != &Tok::Reg)
+			|| (node13.next_tok != &Tok::RBrace))
+		{
+			return false;
+		}
+
+		regs.push_back(node1.next_sym_str);
+		regs.push_back(node4.next_sym_str);
+		regs.push_back(node6.next_sym_str);
+		regs.push_back(node8.next_sym_str);
+		regs.push_back(node10.next_sym_str);
+		regs.push_back(node12.next_sym_str);
+	}
+	// op rA , { rB , rC , rD , rE , rF , rG }
+	else if (some_parse_vec.size() == 16)
+	{
+		const auto node1 = spvat(index++);
+		const auto node2 = spvat(index++);
+		const auto node3 = spvat(index++);
+		const auto node4 = spvat(index++);
+		const auto node5 = spvat(index++);
+		const auto node6 = spvat(index++);
+		const auto node7 = spvat(index++);
+		const auto node8 = spvat(index++);
+		const auto node9 = spvat(index++);
+		const auto node10 = spvat(index++);
+		const auto node11 = spvat(index++);
+		const auto node12 = spvat(index++);
+		const auto node13 = spvat(index++);
+		const auto node14 = spvat(index++);
+		const auto node15 = spvat(index++);
+
+		if ((node1.next_tok != &Tok::Reg)
+			|| (node2.next_tok != &Tok::Comma)
+			|| (node3.next_tok != &Tok::LBrace)
+			|| (node4.next_tok != &Tok::Reg)
+			|| (node5.next_tok != &Tok::Comma)
+			|| (node6.next_tok != &Tok::Reg)
+			|| (node7.next_tok != &Tok::Comma)
+			|| (node8.next_tok != &Tok::Reg)
+			|| (node9.next_tok != &Tok::Comma)
+			|| (node10.next_tok != &Tok::Reg)
+			|| (node11.next_tok != &Tok::Comma)
+			|| (node12.next_tok != &Tok::Reg)
+			|| (node13.next_tok != &Tok::Comma)
+			|| (node14.next_tok != &Tok::Reg)
+			|| (node15.next_tok != &Tok::RBrace))
+		{
+			return false;
+		}
+
+		regs.push_back(node1.next_sym_str);
+		regs.push_back(node4.next_sym_str);
+		regs.push_back(node6.next_sym_str);
+		regs.push_back(node8.next_sym_str);
+		regs.push_back(node10.next_sym_str);
+		regs.push_back(node12.next_sym_str);
+		regs.push_back(node14.next_sym_str);
+	}
+	// op rA , { rB , rC , rD , rE , rF , rG , rH }
+	else if (some_parse_vec.size() == 18)
+	{
+		const auto node1 = spvat(index++);
+		const auto node2 = spvat(index++);
+		const auto node3 = spvat(index++);
+		const auto node4 = spvat(index++);
+		const auto node5 = spvat(index++);
+		const auto node6 = spvat(index++);
+		const auto node7 = spvat(index++);
+		const auto node8 = spvat(index++);
+		const auto node9 = spvat(index++);
+		const auto node10 = spvat(index++);
+		const auto node11 = spvat(index++);
+		const auto node12 = spvat(index++);
+		const auto node13 = spvat(index++);
+		const auto node14 = spvat(index++);
+		const auto node15 = spvat(index++);
+		const auto node16 = spvat(index++);
+		const auto node17 = spvat(index++);
+
+		if ((node1.next_tok != &Tok::Reg)
+			|| (node2.next_tok != &Tok::Comma)
+			|| (node3.next_tok != &Tok::LBrace)
+			|| (node4.next_tok != &Tok::Reg)
+			|| (node5.next_tok != &Tok::Comma)
+			|| (node6.next_tok != &Tok::Reg)
+			|| (node7.next_tok != &Tok::Comma)
+			|| (node8.next_tok != &Tok::Reg)
+			|| (node9.next_tok != &Tok::Comma)
+			|| (node10.next_tok != &Tok::Reg)
+			|| (node11.next_tok != &Tok::Comma)
+			|| (node12.next_tok != &Tok::Reg)
+			|| (node13.next_tok != &Tok::Comma)
+			|| (node14.next_tok != &Tok::Reg)
+			|| (node15.next_tok != &Tok::Comma)
+			|| (node16.next_tok != &Tok::Reg)
+			|| (node17.next_tok != &Tok::RBrace))
+		{
+			return false;
+		}
+
+		regs.push_back(node1.next_sym_str);
+		regs.push_back(node4.next_sym_str);
+		regs.push_back(node6.next_sym_str);
+		regs.push_back(node8.next_sym_str);
+		regs.push_back(node10.next_sym_str);
+		regs.push_back(node12.next_sym_str);
+		regs.push_back(node14.next_sym_str);
+		regs.push_back(node16.next_sym_str);
+	}
+	// op rA , { rB , rC , rD , rE , rF , rG , rH , rI }
+	else if (some_parse_vec.size() == 20)
+	{
+		const auto node1 = spvat(index++);
+		const auto node2 = spvat(index++);
+		const auto node3 = spvat(index++);
+		const auto node4 = spvat(index++);
+		const auto node5 = spvat(index++);
+		const auto node6 = spvat(index++);
+		const auto node7 = spvat(index++);
+		const auto node8 = spvat(index++);
+		const auto node9 = spvat(index++);
+		const auto node10 = spvat(index++);
+		const auto node11 = spvat(index++);
+		const auto node12 = spvat(index++);
+		const auto node13 = spvat(index++);
+		const auto node14 = spvat(index++);
+		const auto node15 = spvat(index++);
+		const auto node16 = spvat(index++);
+		const auto node17 = spvat(index++);
+		const auto node18 = spvat(index++);
+		const auto node19 = spvat(index++);
+
+		if ((node1.next_tok != &Tok::Reg)
+			|| (node2.next_tok != &Tok::Comma)
+			|| (node3.next_tok != &Tok::LBrace)
+			|| (node4.next_tok != &Tok::Reg)
+			|| (node5.next_tok != &Tok::Comma)
+			|| (node6.next_tok != &Tok::Reg)
+			|| (node7.next_tok != &Tok::Comma)
+			|| (node8.next_tok != &Tok::Reg)
+			|| (node9.next_tok != &Tok::Comma)
+			|| (node10.next_tok != &Tok::Reg)
+			|| (node11.next_tok != &Tok::Comma)
+			|| (node12.next_tok != &Tok::Reg)
+			|| (node13.next_tok != &Tok::Comma)
+			|| (node14.next_tok != &Tok::Reg)
+			|| (node15.next_tok != &Tok::Comma)
+			|| (node16.next_tok != &Tok::Reg)
+			|| (node17.next_tok != &Tok::Comma)
+			|| (node18.next_tok != &Tok::Reg)
+			|| (node19.next_tok != &Tok::RBrace))
+		{
+			return false;
+		}
+
+		regs.push_back(node1.next_sym_str);
+		regs.push_back(node4.next_sym_str);
+		regs.push_back(node6.next_sym_str);
+		regs.push_back(node8.next_sym_str);
+		regs.push_back(node10.next_sym_str);
+		regs.push_back(node12.next_sym_str);
+		regs.push_back(node14.next_sym_str);
+		regs.push_back(node16.next_sym_str);
+		regs.push_back(node18.next_sym_str);
+	}
+	else
+	{
+		return false;
+	}
 	return true;
 }
 
