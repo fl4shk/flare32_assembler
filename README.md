@@ -36,7 +36,7 @@ Label addresses can be used in immedate values, as part of expressions.
 Example:
 ```
 .org 9001
-some\_lab:
+some_lab:
     addi r5, r9, some_lab + some_lab
 ```
 
