@@ -253,7 +253,7 @@ void Assembler::lex()
 		return;
 	}
 
-	// The constant 0
+	// The constant 0... or a hexadecimal number!
 	if (next_char() == '0')
 	{
 		set_next_num(0);
@@ -264,6 +264,37 @@ void Assembler::lex()
 		if (isdigit(next_char()))
 		{
 			expected("Natural number that does not start with 0!");
+		}
+
+		// Hexadecimal number
+		if (next_char() == 'x')
+		{
+			advance();
+
+			if (!isxdigit(next_char()))
+			{
+				expected("Hexadecimal number");
+			}
+
+			while (isxdigit(next_char()))
+			{
+				if ((next_char() >= 'a') && (next_char() <= 'f'))
+				{
+					set_next_num((next_num() * 16) 
+						+ (next_char() - 'a' + 0xa));
+				}
+				else if ((next_char() >= 'A') && (next_char() <= 'F'))
+				{
+					set_next_num((next_num() * 16) 
+						+ (next_char() - 'A' + 0xa));
+				}
+				else // if ((next_char() >= '0') && (next_char() <= '9'))
+				{
+					set_next_num((next_num() * 16) + (next_char() - '0'));
+				}
+
+				advance();
+			}
 		}
 
 		return;
@@ -373,6 +404,7 @@ void Assembler::line()
 		for (;;)
 		{
 			gen8(handle_expr(parse_vec, index));
+			printout("\n");
 
 			if (index >= parse_vec.size())
 			{
@@ -394,6 +426,7 @@ void Assembler::line()
 		for (;;)
 		{
 			gen32(handle_expr(parse_vec, index));
+			printout("\n");
 
 			if (index >= parse_vec.size())
 			{
