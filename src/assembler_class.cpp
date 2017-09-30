@@ -948,6 +948,9 @@ bool Assembler::__parse_instr_branch
 			break;
 
 		case 1:
+			expr_result -= 4;
+			break;
+
 		case 2:
 			expr_result -= 4;
 			break;
