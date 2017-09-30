@@ -144,6 +144,73 @@ private:		// functions
 	void finish_line(const std::vector<ParseNode>& some_parse_vec);
 
 
+	bool parse_instr(PInstr instr, 
+		const std::vector<ParseNode>& some_parse_vec, bool just_test);
+
+	bool __parse_instr_no_args
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+	bool __parse_instr_uimm16
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+	bool __parse_instr_simm16
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+	bool __parse_instr_imm32
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+
+	bool __parse_instr_ra
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+	bool __parse_instr_ra_uimm16
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+	bool __parse_instr_ra_rb
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+	bool __parse_instr_ra_rb_uimm16
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+	bool __parse_instr_ra_rb_simm16
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+	bool __parse_instr_ra_rb_rc
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+	bool __parse_instr_ra_rb_rc_simm12
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+
+	bool __parse_instr_ldst_ra_rb
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+	bool __parse_instr_ldst_ra_rb_rc_simm12
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+	bool __parse_instr_ldst_ra_rb_rc
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+	bool __parse_instr_ldst_ra_rb_simm12
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+
+
+	bool __parse_instr_ldst_ra_rb_imm32
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+	bool __parse_instr_ra_rb_imm32
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+
+
+	// Block moves (ldmia, stmia, stmdb) with number of {} args
+	bool __parse_instr_ldst_block_1_to_4
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+	bool __parse_instr_ldst_block_5_to_8
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+
+	bool __parse_instr_ira
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+	bool __parse_instr_ra_ira
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+	bool __parse_instr_ira_ra
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+
+	bool __parse_instr_ra_flags
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+	bool __parse_instr_flags
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+	bool __parse_instr_flags_ra
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+
+	bool __parse_instr_ra_pc
+		(const std::vector<ParseNode>& some_parse_vec, bool just_test);
+
+
 	s64 handle_term(const std::vector<ParseNode>& some_parse_vec, 
 		size_t& index);
 	s64 handle_factor(const std::vector<ParseNode>& some_parse_vec, 

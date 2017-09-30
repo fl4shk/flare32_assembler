@@ -347,7 +347,274 @@ void Assembler::finish_line
 		expected_tokens(&Tok::Instr);
 	}
 
+	const auto& instr_vec = __instr_tbl.at(some_parse_vec.at(0)
+		.next_sym_str);
 
+
+
+	bool complete = false;
+
+
+	PInstr instr = nullptr;
+
+	for (const auto& other_instr : instr_vec)
+	{
+		instr = other_instr;
+		if (parse_instr(instr, some_parse_vec, true))
+		{
+			complete = true;
+			break;
+		}
+	}
+
+	if (complete)
+	{
+		parse_instr(instr, some_parse_vec, false);
+	}
+	else // if (!complete)
+	{
+		err("Invalid instruction arguments");
+	}
+
+}
+
+
+bool Assembler::parse_instr(PInstr instr,
+	const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+	switch (instr->args())
+	{
+		case InstrArgs::no_args:
+			return __parse_instr_no_args(some_parse_vec, 
+				just_test);
+		case InstrArgs::uimm16:
+			return __parse_instr_uimm16(some_parse_vec, 
+				just_test);
+		case InstrArgs::simm16:
+			return __parse_instr_simm16(some_parse_vec, 
+				just_test);
+		case InstrArgs::imm32:
+			return __parse_instr_imm32(some_parse_vec, 
+				just_test);
+
+		case InstrArgs::ra:
+			return __parse_instr_ra(some_parse_vec, 
+				just_test);
+		case InstrArgs::ra_uimm16:
+			return __parse_instr_ra_uimm16(some_parse_vec, 
+				just_test);
+		case InstrArgs::ra_rb:
+			return __parse_instr_ra_rb(some_parse_vec, 
+				just_test);
+		case InstrArgs::ra_rb_uimm16:
+			return __parse_instr_ra_rb_uimm16(some_parse_vec, 
+				just_test);
+		case InstrArgs::ra_rb_simm16:
+			return __parse_instr_ra_rb_simm16(some_parse_vec, 
+				just_test);
+		case InstrArgs::ra_rb_rc:
+			return __parse_instr_ra_rb_rc(some_parse_vec, 
+				just_test);
+		case InstrArgs::ra_rb_rc_simm12:
+			return __parse_instr_ra_rb_rc_simm12(some_parse_vec, 
+				just_test);
+
+		case InstrArgs::ldst_ra_rb:
+			return __parse_instr_ldst_ra_rb(some_parse_vec, 
+				just_test);
+		case InstrArgs::ldst_ra_rb_rc_simm12:
+			return __parse_instr_ldst_ra_rb_rc_simm12(some_parse_vec, 
+				just_test);
+		case InstrArgs::ldst_ra_rb_rc:
+			return __parse_instr_ldst_ra_rb_rc(some_parse_vec, 
+				just_test);
+		case InstrArgs::ldst_ra_rb_simm12:
+			return __parse_instr_ldst_ra_rb_simm12(some_parse_vec, 
+				just_test);
+
+
+		case InstrArgs::ldst_ra_rb_imm32:
+			return __parse_instr_ldst_ra_rb_imm32(some_parse_vec, 
+				just_test);
+		case InstrArgs::ra_rb_imm32:
+			return __parse_instr_ra_rb_imm32(some_parse_vec, 
+				just_test);
+
+
+		// Block moves (ldmia, stmia, stmdb) with number of {} args
+		case InstrArgs::ldst_block_1_to_4:
+			return __parse_instr_ldst_block_1_to_4(some_parse_vec, 
+				just_test);
+		case InstrArgs::ldst_block_5_to_8:
+			return __parse_instr_ldst_block_5_to_8(some_parse_vec, 
+				just_test);
+
+		case InstrArgs::ira:
+			return __parse_instr_ira(some_parse_vec, 
+				just_test);
+		case InstrArgs::ra_ira:
+			return __parse_instr_ra_ira(some_parse_vec, 
+				just_test);
+		case InstrArgs::ira_ra:
+			return __parse_instr_ira_ra(some_parse_vec, 
+				just_test);
+
+		case InstrArgs::ra_flags:
+			return __parse_instr_ra_flags(some_parse_vec, 
+				just_test);
+		case InstrArgs::flags:
+			return __parse_instr_flags(some_parse_vec, 
+				just_test);
+		case InstrArgs::flags_ra:
+			return __parse_instr_flags_ra(some_parse_vec, 
+				just_test);
+
+		case InstrArgs::ra_pc:
+			return __parse_instr_ra_pc(some_parse_vec, 
+				just_test);
+	}
+}
+
+bool Assembler::__parse_instr_no_args
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+}
+bool Assembler::__parse_instr_uimm16
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+}
+bool Assembler::__parse_instr_simm16
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+}
+bool Assembler::__parse_instr_imm32
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+}
+
+bool Assembler::__parse_instr_ra
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+}
+bool Assembler::__parse_instr_ra_uimm16
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+}
+bool Assembler::__parse_instr_ra_rb
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+}
+bool Assembler::__parse_instr_ra_rb_uimm16
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+}
+bool Assembler::__parse_instr_ra_rb_simm16
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+}
+bool Assembler::__parse_instr_ra_rb_rc
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+}
+bool Assembler::__parse_instr_ra_rb_rc_simm12
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+}
+
+bool Assembler::__parse_instr_ldst_ra_rb
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+}
+bool Assembler::__parse_instr_ldst_ra_rb_rc_simm12
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+}
+bool Assembler::__parse_instr_ldst_ra_rb_rc
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+}
+bool Assembler::__parse_instr_ldst_ra_rb_simm12
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+}
+
+
+bool Assembler::__parse_instr_ldst_ra_rb_imm32
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+}
+bool Assembler::__parse_instr_ra_rb_imm32
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+}
+
+
+// Block moves (ldmia, stmia, stmdb) with number of {} args
+bool Assembler::__parse_instr_ldst_block_1_to_4
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+}
+bool Assembler::__parse_instr_ldst_block_5_to_8
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+}
+
+bool Assembler::__parse_instr_ira
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+}
+bool Assembler::__parse_instr_ra_ira
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+}
+bool Assembler::__parse_instr_ira_ra
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+}
+
+bool Assembler::__parse_instr_ra_flags
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+}
+bool Assembler::__parse_instr_flags
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+}
+bool Assembler::__parse_instr_flags_ra
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
+}
+
+bool Assembler::__parse_instr_ra_pc
+	(const std::vector<Assembler::ParseNode>& some_parse_vec,
+	bool just_test)
+{
 }
 
 
