@@ -31,7 +31,7 @@ int Assembler::operator () ()
 			line();
 		}
 
-		printout("\n\n");
+		//printout("\n\n");
 	}
 
 	return 0;
