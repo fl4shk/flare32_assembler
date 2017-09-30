@@ -52,7 +52,7 @@ private:		// variables
 	size_t __line_num = 0;
 
 	int __next_char = ' ';
-	PTok __next_tok = nullptr;
+	PTok __prev_tok = nullptr, __next_tok = nullptr;
 	std::string __next_sym_str;
 	s64 __next_num = -1;
 
@@ -78,13 +78,22 @@ private:		// functions
 	gen_getter_and_setter_by_val(last_addr)
 	gen_getter_and_setter_by_val(line_num)
 	gen_getter_and_setter_by_val(next_char)
-	gen_getter_and_setter_by_val(next_tok)
+	//gen_getter_and_setter_by_val(next_tok)
+	gen_getter_by_val(prev_tok)
+	gen_getter_by_val(next_tok)
 	gen_getter_and_setter_by_con_ref(next_sym_str)
 	gen_getter_and_setter_by_val(next_num)
 	//gen_getter_and_setter_by_val(changed)
 	gen_getter_and_setter_by_val(pass)
 	gen_getter_and_setter_by_val(input_filename)
 	gen_getter_and_setter_by_val(infile)
+
+	inline decltype(__next_tok) set_next_tok(PTok to_copy)
+	{
+		__prev_tok = next_tok();
+		__next_tok = to_copy;
+		return next_tok();
+	}
 
 	void reinit();
 	void fill_builtin_sym_tbl();

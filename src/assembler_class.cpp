@@ -235,6 +235,16 @@ void Assembler::lex()
 			//printout("Creating a new symbol....\n");
 			Symbol to_insert(next_str, &Tok::Ident, 0);
 
+			if ((prev_tok() == &Tok::DotDefine)
+				|| (prev_tok() == &Tok::DotDefn))
+			{
+				to_insert.set_type(SymType::Define);
+			}
+			else
+			{
+				to_insert.set_type(SymType::Other);
+			}
+
 			user_sym_tbl().at(next_str) = to_insert;
 		}
 
@@ -488,6 +498,12 @@ void Assembler::line()
 			eek();
 		}
 
+		if (user_sym_tbl().at(parse_vec.at(1).next_sym_str).type() 
+			!= SymType::Define)
+		{
+			err("Can't redefine a label!");
+		}
+
 		index = 2;
 
 		s64 expr_result = handle_expr(parse_vec, index);
@@ -509,6 +525,12 @@ void Assembler::line()
 			&& parse_vec.at(1).next_tok == &Tok::Colon)
 		{
 			found_label = true;
+
+			if (user_sym_tbl().at(parse_vec.at(0).next_sym_str).type()
+				== SymType::Define)
+			{
+				err("Can't use a define as a label!");
+			}
 
 			// Update the value of the label in the user symbol table.
 			// This happens regardless of what pass we're on.

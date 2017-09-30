@@ -8,26 +8,37 @@
 namespace flare32
 {
 
+enum class SymType
+{
+	Other,
+	Define,
+};
+
 class Symbol
 {
 private:		// variables
 	std::string __name;
 	PTok __token;
 
-	// These are used for user symbols such as labels
 	s64 __value;
+
+	SymType __type;
 
 
 public:		// functions
 	inline Symbol()
 	{
 	}
-	inline Symbol(const std::string& s_name, PTok s_token, s64 s_value=0) 
-		: __name(s_name), __token(s_token), __value(s_value)
+	inline Symbol(const std::string& s_name, PTok s_token, s64 s_value=0,
+		SymType s_type=SymType::Other) 
+		: __name(s_name), __token(s_token), __value(s_value),
+		__type(s_type)
 	{
 	}
-	inline Symbol(std::string&& s_name, PTok s_token, s64 s_value=0)
-		: __name(std::move(s_name)), __token(s_token), __value(s_value)
+	inline Symbol(std::string&& s_name, PTok s_token, s64 s_value=0,
+		SymType s_type=SymType::Other)
+		: __name(std::move(s_name)), __token(s_token), __value(s_value),
+		__type(s_type)
 	{
 	}
 	inline Symbol(const Symbol& to_copy) = default;
@@ -40,6 +51,7 @@ public:		// functions
 	gen_setter_by_rval_ref(name)
 	gen_getter_and_setter_by_con_ref(token)
 	gen_getter_and_setter_by_val(value)
+	gen_getter_and_setter_by_val(type)
 };
 
 class SymbolTable
