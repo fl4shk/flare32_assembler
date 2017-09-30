@@ -53,7 +53,7 @@ private:		// variables
 
 	int __next_char = ' ';
 	PTok __prev_tok = nullptr, __next_tok = nullptr;
-	std::string __next_sym_str;
+	std::string __prev_sym_str, __next_sym_str;
 	s64 __next_num = -1;
 
 	//bool __changed = false;
@@ -70,29 +70,39 @@ public:		// functions
 
 
 private:		// functions
-	gen_getter_by_ref(builtin_sym_tbl)
-	gen_getter_by_ref(user_sym_tbl)
-	gen_getter_by_ref(instr_tbl)
+	gen_getter_by_ref(builtin_sym_tbl);
+	gen_getter_by_ref(user_sym_tbl);
+	gen_getter_by_ref(instr_tbl);
 
-	gen_getter_and_setter_by_val(addr)
-	gen_getter_and_setter_by_val(last_addr)
-	gen_getter_and_setter_by_val(line_num)
-	gen_getter_and_setter_by_val(next_char)
-	//gen_getter_and_setter_by_val(next_tok)
-	gen_getter_by_val(prev_tok)
-	gen_getter_by_val(next_tok)
-	gen_getter_and_setter_by_con_ref(next_sym_str)
-	gen_getter_and_setter_by_val(next_num)
-	//gen_getter_and_setter_by_val(changed)
-	gen_getter_and_setter_by_val(pass)
-	gen_getter_and_setter_by_val(input_filename)
-	gen_getter_and_setter_by_val(infile)
+	gen_getter_and_setter_by_val(addr);
+	gen_getter_and_setter_by_val(last_addr);
+	gen_getter_and_setter_by_val(line_num);
+	gen_getter_and_setter_by_val(next_char);
+	gen_getter_by_val(prev_tok);
+	gen_getter_by_val(next_tok);
+	//gen_getter_and_setter_by_con_ref(next_sym_str);
+	gen_getter_by_con_ref(prev_sym_str);
+	gen_getter_by_con_ref(next_sym_str);
+	gen_getter_and_setter_by_val(next_num);
+	gen_getter_and_setter_by_val(pass);
+	gen_getter_and_setter_by_val(input_filename);
+	gen_getter_and_setter_by_val(infile);
 
-	inline decltype(__next_tok) set_next_tok(PTok to_copy)
+
+
+	inline PTok set_next_tok(PTok to_copy)
 	{
-		__prev_tok = next_tok();
+		__prev_tok = __next_tok;
 		__next_tok = to_copy;
-		return next_tok();
+		return __next_tok;
+	}
+
+	inline const std::string set_next_sym_str(const std::string& to_copy)
+	{
+		__prev_sym_str = __next_sym_str;
+		__next_sym_str = to_copy;
+
+		return __next_sym_str;
 	}
 
 	void reinit();

@@ -177,6 +177,11 @@ void Assembler::lex()
 
 		LIST_OF_DIRECTIVE_TOKENS(VARNAME, VALUE)
 		#undef VARNAME
+
+		else
+		{
+			err("Invalid assembler directive");
+		}
 	}
 
 
@@ -225,8 +230,6 @@ void Assembler::lex()
 			}
 		}
 
-		//printout("lex():  next_str, next_char():  ", next_str, ", ",
-		//	(char)next_char(), "\n");
 
 		// If we haven't seen a user symbol like this before...
 		if (!user_sym_tbl().contains(next_str))
@@ -235,19 +238,29 @@ void Assembler::lex()
 			//printout("Creating a new symbol....\n");
 			Symbol to_insert(next_str, &Tok::Ident, 0);
 
-			if ((prev_tok() == &Tok::DotDefine)
-				|| (prev_tok() == &Tok::DotDefn))
+
+			// Need to use next_tok() here because we haven't
+			// set_next_tok() yet.
+			if ((next_tok() == &Tok::DotDefine)
+				|| (next_tok() == &Tok::DotDefn))
 			{
+				//printout("Test\n");
 				to_insert.set_type(SymType::Define);
 			}
+
 			else
 			{
 				to_insert.set_type(SymType::Other);
 			}
+			
+			//printout((int)to_insert.type(), "\n");
 
 			user_sym_tbl().at(next_str) = to_insert;
 		}
 
+
+		//printout("lex():  next_str, next_char():  ", next_str, ", ",
+		//	(char)next_char(), "\n");
 		if (builtin_sym_tbl().contains(next_str))
 		{
 			const Symbol& temp = builtin_sym_tbl().at(next_str);
@@ -257,6 +270,8 @@ void Assembler::lex()
 		{
 			set_next_tok(&Tok::Ident);
 		}
+
+
 
 		set_next_sym_str(next_str);
 
@@ -497,6 +512,10 @@ void Assembler::line()
 		{
 			eek();
 		}
+
+		//printout(parse_vec.at(1).next_sym_str, " ",
+		//	(int)user_sym_tbl().at(parse_vec.at(1).next_sym_str).type(), 
+		//	"\n");
 
 		if (user_sym_tbl().at(parse_vec.at(1).next_sym_str).type() 
 			!= SymType::Define)
