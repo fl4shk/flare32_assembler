@@ -456,7 +456,10 @@ void Assembler::line()
 		for (;;)
 		{
 			gen8(handle_expr(parse_vec, index));
-			printout("\n");
+			if (pass() == 1)
+			{
+				printout("\n");
+			}
 
 			if (index >= parse_vec.size())
 			{
@@ -481,7 +484,10 @@ void Assembler::line()
 		for (;;)
 		{
 			gen32(handle_expr(parse_vec, index));
-			printout("\n");
+			if (pass() == 1)
+			{
+				printout("\n");
+			}
 
 			if (index >= parse_vec.size())
 			{
