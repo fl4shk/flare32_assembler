@@ -846,6 +846,7 @@ bool Assembler::__parse_instr_ldst_ra_rb_rc
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
+	s64 expr_result = 0;
 
 	// op rA , [ rB , rC ]
 	if (some_parse_vec.size() != 8)
@@ -862,6 +863,7 @@ bool Assembler::__parse_instr_ldst_ra_rb_simm12
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
+	s64 expr_result = 0;
 
 	// op rA , [ rB , expr ]
 	if ((some_parse_vec.size() < 8)
@@ -881,6 +883,7 @@ bool Assembler::__parse_instr_ldst_ra_rb_imm32
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
+	s64 expr_result = 0;
 
 	// op rA , [ rB , expr ]
 	if ((some_parse_vec.size() < 8)
@@ -897,6 +900,7 @@ bool Assembler::__parse_instr_ra_rb_imm32
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
+	s64 expr_result = 0;
 
 	// op rA , rB , expr
 	if (some_parse_vec.size() < 6)
@@ -915,6 +919,7 @@ bool Assembler::__parse_instr_ldst_block_1_to_4
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
+	s64 expr_result = 0;
 
 	// op rA , { rB }
 	if (some_parse_vec.size() == 6)
@@ -1036,6 +1041,8 @@ bool Assembler::__parse_instr_ldst_block_1_to_4
 		return false;
 	}
 
+	encode_and_gen(regs, expr_result, instr);
+
 	return true;
 }
 bool Assembler::__parse_instr_ldst_block_5_to_8
@@ -1044,6 +1051,7 @@ bool Assembler::__parse_instr_ldst_block_5_to_8
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
+	s64 expr_result = 0;
 
 	// op rA , { rB , rC , rD , rE , rF }
 	if (some_parse_vec.size() == 14)
@@ -1255,6 +1263,7 @@ bool Assembler::__parse_instr_ira
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
+	s64 expr_result = 0;
 
 	// op ira
 	if (some_parse_vec.size() != 2)
@@ -1270,6 +1279,7 @@ bool Assembler::__parse_instr_ra_ira
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
+	s64 expr_result = 0;
 
 	return true;
 }
@@ -1279,6 +1289,7 @@ bool Assembler::__parse_instr_ira_ra
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
+	s64 expr_result = 0;
 
 	return true;
 }
@@ -1289,6 +1300,7 @@ bool Assembler::__parse_instr_ra_flags
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
+	s64 expr_result = 0;
 
 	return true;
 }
@@ -1298,6 +1310,7 @@ bool Assembler::__parse_instr_flags
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
+	s64 expr_result = 0;
 
 	return true;
 }
@@ -1307,6 +1320,7 @@ bool Assembler::__parse_instr_flags_ra
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
+	s64 expr_result = 0;
 
 	return true;
 }
@@ -1317,6 +1331,7 @@ bool Assembler::__parse_instr_ra_pc
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
+	s64 expr_result = 0;
 
 	return true;
 }
@@ -1610,17 +1625,28 @@ void Assembler::__encode_opcode(u16& high_hword, PInstr instr) const
 
 void Assembler::__encode_high_hword(u16& high_hword, 
 	const std::vector<std::string>& regs, s64 expr_result, PInstr instr)
-	const
 {
 	__encode_instr_group(high_hword, instr);
 	__encode_affects_flags(high_hword, instr);
 	__encode_opcode(high_hword, instr);
+
+	// Encode rA
+	if (regs.size() >= 1)
+	{
+		clear_and_set_bits_with_range(high_hword, 
+			builtin_sym_tbl().at(regs.at(0)).value(), 7, 4);
+	}
+
+	if (regs.size() >= 2)
+	{
+		clear_and_set_bits_with_range(high_hword, 
+			builtin_sym_tbl().at(regs.at(1)).value(), 3, 0);
+	}
 }
 
 
 void Assembler::__encode_low(u16& g1g2_low, u32& g3_low, 
 	const std::vector<std::string>& regs, s64 expr_result, PInstr instr)
-	const
 {
 }
 
@@ -1636,6 +1662,11 @@ void Assembler::encode_and_gen
 	__encode_low(g1g2_low, g3_low, regs, expr_result, instr);
 	gen16(high_hword);
 	__gen_low(g1g2_low, g3_low, instr);
+
+	if (pass() == 1)
+	{
+		printout("\n");
+	}
 
 }
 
