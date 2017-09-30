@@ -28,6 +28,22 @@ Insert a series of expressions, encoded as 32-bit values:
 ```
 
 
+Define a symbol (can't have same name as label):
+```
+.define nice 5
+.define nice nice + 1 ; redefines nice as 6 because defines are evaluated
+                      ; immediately
+```
+Defined symbols can be assigned the value of an expression, which does mean
+you can use a label in a define.
+
+As mentioned before, defines are evaluated immediately.
+
+It is also possible to use ```.defn``` instead of ```.define``` for
+shorthand purposes.
+
+
+
 # Other features
 Labels can have the same name as instructions or registers.
 
