@@ -235,6 +235,8 @@ void Assembler::lex()
 		{
 			expected("Natural number that does not start with 0!");
 		}
+
+		return;
 	}
 
 	// Find a constant natural number
