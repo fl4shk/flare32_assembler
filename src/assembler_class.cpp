@@ -280,7 +280,7 @@ void Assembler::lex()
 
 void Assembler::line()
 {
-	std::vector<ParseNode> parse_vec, after_label_parse_vec;
+	std::vector<ParseNode> parse_vec, second_parse_vec;
 
 	while ((next_tok() != &Tok::Newline) && (next_tok() != &Tok::Eof))
 	{
@@ -317,18 +317,28 @@ void Assembler::line()
 	{
 		for (size_t i=0; i<parse_vec.size(); ++i)
 		{
-			after_label_parse_vec.push_back(parse_vec.at(i));
+			// Ignore comments
+			if (parse_vec.at(i).next_tok == &Tok::Semicolon)
+			{
+				break;
+			}
+			second_parse_vec.push_back(parse_vec.at(i));
 		}
 	}
 	else
 	{
 		for (size_t i=2; i<parse_vec.size(); ++i)
 		{
-			after_label_parse_vec.push_back(parse_vec.at(i));
+			// Ignore comments
+			if (parse_vec.at(i).next_tok == &Tok::Semicolon)
+			{
+				break;
+			}
+			second_parse_vec.push_back(parse_vec.at(i));
 		}
 	}
 
-	finish_line(after_label_parse_vec);
+	finish_line(second_parse_vec);
 	lex();
 }
 
