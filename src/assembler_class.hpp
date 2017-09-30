@@ -49,7 +49,7 @@ private:		// variables
 	size_t __addr = 0;
 
 	// Where are we in the file?
-	size_t __line_num = 1;
+	size_t __line_num = 0;
 
 	int __next_char = ' ';
 	PTok __next_tok = nullptr;
@@ -127,6 +127,7 @@ private:		// functions
 	template<typename... ArgTypes>
 	void expected_tokens(ArgTypes&&... args) const
 	{
+		printerr("Error, On line ", line_num(), ":  ");
 		printerr("Expected token of type ");
 		__expected_tokens_innards(args...);
 		printerr("!\n");

@@ -43,7 +43,7 @@ void Assembler::reinit()
 {
 	rewind(infile());
 	set_addr(0);
-	set_line_num(1);
+	set_line_num(0);
 	set_next_char(' ');
 	set_next_tok(nullptr);
 	set_next_sym_str("");
@@ -341,6 +341,11 @@ void Assembler::finish_line
 	//	printout(node.next_tok->str(), "\t\t");
 	//}
 	//printout("\n");
+
+	if (some_parse_vec.size() == 0)
+	{
+		return;
+	}
 
 	if (some_parse_vec.at(0).next_tok != &Tok::Instr)
 	{
