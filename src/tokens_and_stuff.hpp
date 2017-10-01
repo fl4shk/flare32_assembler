@@ -4,99 +4,99 @@
 #include "misc_includes.hpp"
 
 
-#define LIST_OF_COMMENT_TOKENS(VARNAME, VALUE) \
-VARNAME(Semicolon) VALUE(";") \
-VARNAME(At) VALUE("@") \
+#define LIST_OF_COMMENT_TOKENS(TOKEN_STUFF) \
+TOKEN_STUFF(Semicolon, ";") \
+TOKEN_STUFF(At, "@") \
 
-#define LIST_OF_PUNCT_TOKENS(VARNAME, VALUE) \
+#define LIST_OF_PUNCT_TOKENS(TOKEN_STUFF) \
 /* "." */ \
-VARNAME(Period) VALUE(".") \
+TOKEN_STUFF(Period, ".") \
 \
 /* "(", ")" */ \
-VARNAME(LParen) VALUE("(") \
-VARNAME(RParen) VALUE(")") \
+TOKEN_STUFF(LParen, "(") \
+TOKEN_STUFF(RParen, ")") \
 \
 /* "[", "]" */ \
-VARNAME(LBracket) VALUE("[") \
-VARNAME(RBracket) VALUE("]") \
+TOKEN_STUFF(LBracket, "[") \
+TOKEN_STUFF(RBracket, "]") \
 \
 /* "{", "}" */ \
-VARNAME(LBrace) VALUE("{") \
-VARNAME(RBrace) VALUE("}") \
+TOKEN_STUFF(LBrace, "{") \
+TOKEN_STUFF(RBrace, "}") \
 \
 /* "=", ";", ",", etc. */ \
-VARNAME(Equals) VALUE("=") \
-LIST_OF_COMMENT_TOKENS(VARNAME, VALUE) \
-VARNAME(Comma) VALUE(",") \
-VARNAME(Colon) VALUE(":") \
+TOKEN_STUFF(Equals, "=") \
+LIST_OF_COMMENT_TOKENS(TOKEN_STUFF) \
+TOKEN_STUFF(Comma, ",") \
+TOKEN_STUFF(Colon, ":") \
 
 
 
 
-#define LIST_OF_SINGLE_CHAR_OPERATOR_TOKENS(VARNAME, VALUE) \
+#define LIST_OF_SINGLE_CHAR_OPERATOR_TOKENS(TOKEN_STUFF) \
 /* "+", "-", etc */ \
-VARNAME(Plus) VALUE("+") \
-VARNAME(Minus) VALUE("-") \
-VARNAME(Mult) VALUE("*") \
-VARNAME(Div) VALUE("/") \
+TOKEN_STUFF(Plus, "+") \
+TOKEN_STUFF(Minus, "-") \
+TOKEN_STUFF(Mult, "*") \
+TOKEN_STUFF(Div, "/") \
 \
 /* "&", "|", "^" */ \
-VARNAME(BitAnd) VALUE("&") \
-VARNAME(BitOr) VALUE("|") \
-VARNAME(BitXor) VALUE("^") \
-VARNAME(BitNot) VALUE("~") \
+TOKEN_STUFF(BitAnd, "&") \
+TOKEN_STUFF(BitOr, "|") \
+TOKEN_STUFF(BitXor, "^") \
+TOKEN_STUFF(BitNot, "~") \
 
-#define LIST_OF_MULTI_CHAR_OPERATOR_TOKESN(VARNAME, VALUE) \
+#define LIST_OF_MULTI_CHAR_OPERATOR_TOKESN(TOKEN_STUFF) \
 /* Shift left, shift right */ \
-VARNAME(BitShL) VALUE("<<") \
-VARNAME(BitShR) VALUE(">>")
+TOKEN_STUFF(BitShL, "<<") \
+TOKEN_STUFF(BitShR, ">>")
 
-#define LIST_OF_OPERATOR_TOKENS(VARNAME, VALUE) \
-LIST_OF_SINGLE_CHAR_OPERATOR_TOKENS(VARNAME, VALUE) \
-LIST_OF_MULTI_CHAR_OPERATOR_TOKESN(VARNAME, VALUE)
-
-
+#define LIST_OF_OPERATOR_TOKENS(TOKEN_STUFF) \
+LIST_OF_SINGLE_CHAR_OPERATOR_TOKENS(TOKEN_STUFF) \
+LIST_OF_MULTI_CHAR_OPERATOR_TOKESN(TOKEN_STUFF)
 
 
-#define LIST_OF_IDENT_ISH_TOKENS(VARNAME, VALUE) \
+
+
+#define LIST_OF_IDENT_ISH_TOKENS(TOKEN_STUFF) \
 /* "Instruction", "Register", "Identifier" */ \
-VARNAME(Instr) VALUE("Instruction") \
-VARNAME(Reg) VALUE("Register") \
-VARNAME(RegPc) VALUE("PC") \
-VARNAME(RegIra) VALUE("IRA") \
-VARNAME(RegFlags) VALUE("Flags") \
-VARNAME(Ident) VALUE("Identifier")
+TOKEN_STUFF(Instr, "Instruction") \
+TOKEN_STUFF(Reg, "Register") \
+TOKEN_STUFF(RegPc, "PC") \
+TOKEN_STUFF(RegIra, "IRA") \
+TOKEN_STUFF(RegFlags, "Flags") \
+TOKEN_STUFF(Ident, "Identifier")
 
-#define LIST_OF_EXTRA_TOKENS(VARNAME, VALUE) \
+#define LIST_OF_EXTRA_TOKENS(TOKEN_STUFF) \
 /* "Number" */ \
-VARNAME(NatNum) VALUE("NaturalNumber") \
+TOKEN_STUFF(NatNum, "NaturalNumber") \
 \
-LIST_OF_IDENT_ISH_TOKENS(VARNAME, VALUE) \
+LIST_OF_IDENT_ISH_TOKENS(TOKEN_STUFF) \
 \
 /* "Newline", "EOF", "Bad" */ \
-VARNAME(Newline) VALUE("newline") \
-VARNAME(Eof) VALUE("EOF") \
-VARNAME(Bad) VALUE("Bad")
+TOKEN_STUFF(Newline, "newline") \
+TOKEN_STUFF(Eof, "EOF") \
+TOKEN_STUFF(Bad, "Bad")
 
 
 
-#define LIST_OF_EQUATE_DIRECTIVE_TOKENS(VARNAME, VALUE) \
-VARNAME(DotEquate) VALUE(".equate") \
-VARNAME(DotEqu) VALUE(".equ") \
+#define LIST_OF_EQUATE_DIRECTIVE_TOKENS(TOKEN_STUFF) \
+TOKEN_STUFF(DotEquate, ".equate") \
+TOKEN_STUFF(DotEqu, ".equ") \
 
-#define LIST_OF_DIRECTIVE_TOKENS(VARNAME, VALUE) \
-VARNAME(DotOrg) VALUE(".org") \
-VARNAME(DotB) VALUE(".db") \
-VARNAME(DotW) VALUE(".dw") \
-LIST_OF_EQUATE_DIRECTIVE_TOKENS(VARNAME, VALUE) \
+#define LIST_OF_DIRECTIVE_TOKENS(TOKEN_STUFF) \
+TOKEN_STUFF(DotOrg, ".org") \
+TOKEN_STUFF(DotB, ".db") \
+TOKEN_STUFF(DotW, ".dw") \
+LIST_OF_EQUATE_DIRECTIVE_TOKENS(TOKEN_STUFF) \
 
 
 
-#define LIST_OF_TOKENS(VARNAME, VALUE) \
-LIST_OF_PUNCT_TOKENS(VARNAME, VALUE) \
-LIST_OF_OPERATOR_TOKENS(VARNAME, VALUE) \
-LIST_OF_EXTRA_TOKENS(VARNAME, VALUE) \
-LIST_OF_DIRECTIVE_TOKENS(VARNAME, VALUE)
+#define LIST_OF_TOKENS(TOKEN_STUFF) \
+LIST_OF_PUNCT_TOKENS(TOKEN_STUFF) \
+LIST_OF_OPERATOR_TOKENS(TOKEN_STUFF) \
+LIST_OF_EXTRA_TOKENS(TOKEN_STUFF) \
+LIST_OF_DIRECTIVE_TOKENS(TOKEN_STUFF)
 
 
 namespace flare32
@@ -114,14 +114,19 @@ private:		// variables
 	std::string __str;
 
 public:		// constants
-	#define VARNAME(some_tok) \
-		some_tok,
-	#define VALUE(some_str) 
+	//#define VARNAME(some_tok) some_tok,
+	//#define VALUE(some_str) 
 
-	static const Tok LIST_OF_TOKENS(VARNAME, VALUE) Dummy;
+	//static const Tok LIST_OF_TOKENS(VARNAME, VALUE) Dummy;
 
-	#undef VARNAME
-	#undef VALUE
+	//#undef VARNAME
+	//#undef VALUE
+
+	#define TOKEN_STUFF(varname, value) varname, 
+
+	static const Tok LIST_OF_TOKENS(TOKEN_STUFF) Dummy;
+
+	#undef TOKEN_STUFF
 
 	static const std::vector<PTok> tok_vec;
 

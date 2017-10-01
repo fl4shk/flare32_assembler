@@ -152,7 +152,7 @@ void Assembler::lex()
 
 
 	// Find assembler directives
-	#define VALUE(some_str)
+	//#define VALUE(some_str)
 
 	if (next_char() == '.')
 	{
@@ -167,16 +167,16 @@ void Assembler::lex()
 		{
 		}
 
-		#define VARNAME(some_tok) \
-			else if (next_str == Tok::some_tok.str()) \
+		#define TOKEN_STUFF(varname, value) \
+			else if (next_str == Tok::varname.str()) \
 			{ \
-				set_next_tok(&Tok::some_tok); \
+				set_next_tok(&Tok::varname); \
 				advance(); \
 				return; \
 			}
 
-		LIST_OF_DIRECTIVE_TOKENS(VARNAME, VALUE)
-		#undef VARNAME
+		LIST_OF_DIRECTIVE_TOKENS(TOKEN_STUFF)
+		#undef TOKEN_STUFF
 
 		else
 		{
@@ -190,19 +190,19 @@ void Assembler::lex()
 	{
 	}
 
-	#define VARNAME(some_tok) \
-		else if (next_str == Tok::some_tok.str()) \
+	#define TOKEN_STUFF(varname, value) \
+		else if (next_str == Tok::varname.str()) \
 		{ \
-			set_next_tok(&Tok::some_tok); \
+			set_next_tok(&Tok::varname); \
 			advance(); \
 			return; \
 		}
 
-	LIST_OF_PUNCT_TOKENS(VARNAME, VALUE)
-	LIST_OF_SINGLE_CHAR_OPERATOR_TOKENS(VARNAME, VALUE)
+	LIST_OF_PUNCT_TOKENS(TOKEN_STUFF)
+	LIST_OF_SINGLE_CHAR_OPERATOR_TOKENS(TOKEN_STUFF)
 
-	#undef VARNAME
-	#undef VALUE
+	#undef TOKEN_STUFF
+	//#undef VALUE
 
 	// Find an identifier
 	if (isalpha(next_char()) || (next_char() == '_'))
@@ -241,15 +241,14 @@ void Assembler::lex()
 
 			// Need to use next_tok() here because we haven't
 			// set_next_tok() yet.
-			#define VARNAME(some_tok) (next_tok() == &Tok::some_tok) ||
-			#define VALUE(some_tok)
-			if (LIST_OF_EQUATE_DIRECTIVE_TOKENS(VARNAME, VALUE) false)
+			#define TOKEN_STUFF(varname, value) \
+				(next_tok() == &Tok::varname) ||
+			if (LIST_OF_EQUATE_DIRECTIVE_TOKENS(TOKEN_STUFF) false)
 			{
 				//printout("Test\n");
 				to_insert.set_type(SymType::Equate);
 			}
-			#undef VARNAME
-			#undef VALUE
+			#undef TOKEN_STUFF
 
 			else
 			{
@@ -510,13 +509,15 @@ void Assembler::line()
 
 	//else if ((parse_vec.front().next_tok == &Tok::DotDefine)
 	//	|| (parse_vec.front().next_tok == &Tok::DotDefn))
-	#define VARNAME(some_tok) \
-		(parse_vec.front().next_tok == &Tok::some_tok) ||
-	#define VALUE(some_tok) 
-	else if (LIST_OF_EQUATE_DIRECTIVE_TOKENS(VARNAME, VALUE) false)
+	//#define VARNAME(some_tok) \
+	//	(parse_vec.front().next_tok == &Tok::some_tok) ||
+	//#define VALUE(some_tok) 
+	
+	#define TOKEN_STUFF(varname, value) \
+		(parse_vec.front().next_tok == &Tok::varname) ||
+	else if (LIST_OF_EQUATE_DIRECTIVE_TOKENS(TOKEN_STUFF) false)
 	{
-	#undef VARNAME
-	#undef VALUE
+	#undef TOKEN_STUFF
 		// .define ident expr
 		if (parse_vec.size() < 3)
 		{
@@ -574,8 +575,8 @@ void Assembler::line()
 	}
 
 	
-	#define VARNAME(stuff) (parse_vec.at(i).next_tok == &Tok::stuff) ||
-	#define VALUE(stuff)
+	#define TOKEN_STUFF(varname, value) \
+		(parse_vec.at(i).next_tok == &Tok::varname) ||
 
 	if (!found_label)
 	{
@@ -583,7 +584,7 @@ void Assembler::line()
 		{
 			// Ignore comments
 			//if (parse_vec.at(i).next_tok == &Tok::Semicolon)
-			if (LIST_OF_COMMENT_TOKENS(VARNAME, VALUE) false)
+			if (LIST_OF_COMMENT_TOKENS(TOKEN_STUFF) false)
 			{
 				break;
 			}
@@ -596,15 +597,14 @@ void Assembler::line()
 		{
 			// Ignore comments
 			//if (parse_vec.at(i).next_tok == &Tok::Semicolon)
-			if (LIST_OF_COMMENT_TOKENS(VARNAME, VALUE) false)
+			if (LIST_OF_COMMENT_TOKENS(TOKEN_STUFF) false)
 			{
 				break;
 			}
 			second_parse_vec.push_back(parse_vec.at(i));
 		}
 	}
-	#undef VARNAME
-	#undef VALUE
+	#undef TOKEN_STUFF
 
 	finish_line(second_parse_vec);
 	lex();
@@ -2021,17 +2021,15 @@ bool Assembler::tok_is_punct(PTok some_tok) const
 	{
 	}
 	
-	#define VARNAME(other_tok) \
-		else if (some_tok == &Tok::other_tok) \
+	#define TOKEN_STUFF(varname, value) \
+		else if (some_tok == &Tok::varname) \
 		{ \
 			return true; \
 		}
-	#define VALUE(other_str) 
 	
-	LIST_OF_PUNCT_TOKENS(VARNAME, VALUE)
+	LIST_OF_PUNCT_TOKENS(TOKEN_STUFF)
 
-	#undef VARNAME
-	#undef VALUE
+	#undef TOKEN_STUFF
 
 	return false;
 }
@@ -2042,17 +2040,15 @@ bool Assembler::tok_is_ident_ish(PTok some_tok) const
 	{
 	}
 
-	#define VARNAME(other_tok) \
-		else if (some_tok == &Tok::other_tok) \
+	#define TOKEN_STUFF(varname, value) \
+		else if (some_tok == &Tok::varname) \
 		{ \
 			return true; \
 		}
-	#define VALUE(other_str) 
 	
-	LIST_OF_IDENT_ISH_TOKENS(VARNAME, VALUE)
+	LIST_OF_IDENT_ISH_TOKENS(TOKEN_STUFF)
 
-	#undef VARNAME
-	#undef VALUE
+	#undef TOKEN_STUFF
 
 	return false;
 }
