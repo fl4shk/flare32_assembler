@@ -4,14 +4,19 @@ namespace flare32
 {
 
 Assembler::Assembler(char* s_input_filename) 
+	: __we(&__line_num),
+	__lexer(&__we, &__builtin_sym_tbl, &__user_sym_tbl, &__define_tbl, 
+	&__instr_tbl)
 {
 	set_input_filename(s_input_filename);
 	set_infile(fopen(input_filename(), "r"));
 
 	if (infile() == nullptr)
 	{
-		err("Cannot read file");
+		we().err("Cannot read file");
 	}
+
+	__lexer.set_infile(infile());
 
 	fill_builtin_sym_tbl();
 }
@@ -98,436 +103,7 @@ void Assembler::fill_builtin_sym_tbl()
 }
 
 
-void Assembler::need(const std::vector<ParseNode>& some_parse_vec, 
-	size_t& index, PTok tok)
-{
-	//if (next_tok() == tok)
-	if (some_parse_vec.at(index).next_tok == tok)
-	{
-		//lex();
-		++index;
-	}
-	else
-	{
-		printerr("need():  ");
-		expected_tokens(tok);
-	}
-}
 
-void Assembler::__advance_innards(int& some_next_char, 
-	PTok& some_next_tok, std::string& some_next_sym_str,
-	s64& some_next_num, size_t& some_line_num,  
-	size_t& some_outer_index, size_t& some_inner_index,
-	std::vector<std::string>* some_str_vec)
-{
-	auto next_char = [&]() -> int
-	{
-		return some_next_char;
-	};
-
-	auto set_next_char = [&](int n_next_char) -> void
-	{
-		some_next_char = n_next_char;
-	};
-
-
-	auto set_next_tok = [&](PTok tok) -> void
-	{
-		some_next_tok = tok;
-	};
-
-
-
-	if (some_str_vec == nullptr)
-	{
-		if (next_char() == EOF)
-		{
-			set_next_tok(&Tok::Eof);
-			return;
-		}
-
-		//set_next_char(getchar());
-		set_next_char(getc(infile()));
-	}
-	else // if (some_str_vec != nullptr)
-	{
-		if (some_outer_index >= some_str_vec->size())
-		{
-			set_next_char(EOF);
-			set_next_tok(&Tok::Eof);
-			return;
-		}
-		set_next_char((*some_str_vec).at(some_outer_index)
-			.at(some_inner_index++));
-
-		if (some_inner_index >= some_str_vec->at(some_outer_index).size())
-		{
-			some_inner_index = 0;
-			++some_outer_index;
-		}
-	}
-
-	if (next_char() == '\n')
-	{
-		++some_line_num;
-	}
-}
-
-
-
-void Assembler::__lex_innards(int& some_next_char, 
-	PTok& some_next_tok, std::string& some_next_sym_str,
-	s64& some_next_num, size_t& some_line_num,  
-	size_t& some_outer_index, size_t& some_inner_index,
-	std::vector<std::string>* some_str_vec,
-	ParsePos* pos)
-{
-	auto next_char = [&]() -> int
-	{
-		return some_next_char;
-	};
-
-	auto next_tok = [&]() -> PTok
-	{
-		return some_next_tok;
-	};
-
-	auto set_next_tok = [&](PTok tok) -> void
-	{
-		some_next_tok = tok;
-	};
-
-	auto next_sym_str = [&]() -> const std::string&
-	{
-		return some_next_sym_str;
-	};
-
-	auto set_next_sym_str = [&](const std::string& n_next_sym_str) -> void
-	{
-		some_next_sym_str = n_next_sym_str;
-	};
-
-	auto next_num = [&]() -> s64
-	{
-		return some_next_num;
-	};
-	auto set_next_num = [&](s64 n_next_num) -> void
-	{
-		some_next_num = n_next_num;
-	};
-
-	auto call_advance = [&]() -> void
-	{
-		__advance_innards(some_next_char, some_next_tok,
-			some_next_sym_str, some_next_num, some_line_num,  
-			some_outer_index, some_inner_index, some_str_vec);
-	};
-
-
-	//while (isspace(next_char()) && (next_char() != '\n'))
-	while (isspace(next_char()) && (next_char() != '\n'))
-	{
-		call_advance();
-	}
-
-	if (pos != nullptr)
-	{
-		pos->outer_index = some_outer_index;
-		pos->inner_index = some_inner_index - 1;
-	}
-
-	if (next_char() == '\n')
-	{
-		set_next_tok(&Tok::Newline);
-		call_advance();
-		return;
-	}
-
-	if (next_char() == EOF)
-	{
-		set_next_tok(&Tok::Eof);
-		return;
-	}
-
-	std::string next_str;
-	next_str += next_char();
-
-
-	// Find assembler directives
-	if (next_char() == '.')
-	{
-		call_advance();
-		while (isalnum(next_char()) || next_char() == '_')
-		{
-			next_str += next_char();
-			call_advance();
-		}
-
-		if (next_str == "")
-		{
-		}
-
-		#define TOKEN_STUFF(varname, value) \
-			else if (next_str == Tok::varname.str()) \
-			{ \
-				set_next_tok(&Tok::varname); \
-				call_advance(); \
-				return; \
-			}
-
-		LIST_OF_DIRECTIVE_TOKENS(TOKEN_STUFF)
-		#undef TOKEN_STUFF
-
-		else
-		{
-			err("Invalid assembler directive");
-		}
-	}
-
-
-
-	if (next_str == "")
-	{
-	}
-
-	#define TOKEN_STUFF(varname, value) \
-		else if (next_str == Tok::varname.str()) \
-		{ \
-			set_next_tok(&Tok::varname); \
-			call_advance(); \
-			return; \
-		}
-
-	LIST_OF_PUNCT_TOKENS(TOKEN_STUFF)
-	LIST_OF_SINGLE_CHAR_OPERATOR_TOKENS(TOKEN_STUFF)
-
-	#undef TOKEN_STUFF
-
-
-	//// Find a .define name
-	//if (next_char() == '`')
-	//{
-	//	next_str = "";
-	//	next_str += next_char();
-	//	call_advance();
-
-	//	if (isalpha(next_char())
-	//}
-
-	// Find an identifier
-	if (isalpha(next_char()) || (next_char() == '_')
-		|| (next_char() == '`'))
-	{
-		//printout("lex():  An ident?\n");
-		next_str = "";
-		next_str += next_char();
-		call_advance();
-
-		while (isalnum(next_char()) || (next_char() == '_'))
-		{
-			next_str += next_char();
-			call_advance();
-		}
-
-		if (next_char() == '.')
-		{
-			next_str += next_char();
-			call_advance();
-
-			while (isalnum(next_char()) || (next_char() == '_'))
-			{
-				next_str += next_char();
-				call_advance();
-			}
-		}
-
-		// Defines must start with "`"
-		if (next_str.front() == '`')
-		{
-			if (!user_sym_tbl().contains(next_str))
-			{
-				// Need to use next_tok() here because we haven't
-				// set_next_tok() yet.
-				if (next_tok() != &Tok::DotDefine)
-				{
-					err("Undefined .define (perhaps just not YET ",
-						"defined?)");
-				}
-
-				Symbol to_insert(next_str, &Tok::Ident, 0,
-					SymType::DefineName);
-
-				user_sym_tbl().insert_or_assign(to_insert);
-			}
-		}
-		// If we haven't seen a user symbol like this before...
-		else if (!user_sym_tbl().contains(next_str))
-		{
-			// ...Then create a new symbol
-			//printout("Creating a new symbol....\n");
-			Symbol to_insert(next_str, &Tok::Ident, 0);
-
-
-			// Need to use next_tok() here because we haven't
-			// set_next_tok() yet.
-			#define TOKEN_STUFF(varname, value) \
-				(next_tok() == &Tok::varname) ||
-			if (LIST_OF_EQUATE_DIRECTIVE_TOKENS(TOKEN_STUFF) false)
-			{
-				to_insert.set_type(SymType::EquateName);
-			}
-			#undef TOKEN_STUFF
-			//else if (next_tok() == &Tok::DotDefine)
-			//{
-			//	to_insert.set_type(SymType::DefineName);
-			//}
-			else
-			{
-				to_insert.set_type(SymType::Other);
-			}
-			
-			//printout((int)to_insert.type(), "\n");
-
-			user_sym_tbl().insert_or_assign(to_insert);
-		}
-
-
-		//printout("lex():  next_str, next_char():  ", next_str, ", ",
-		//	(char)next_char(), "\n");
-		if (builtin_sym_tbl().contains(next_str))
-		{
-			const Symbol& temp = builtin_sym_tbl().at(next_str);
-			set_next_tok(temp.token());
-		}
-		else
-		{
-			set_next_tok(&Tok::Ident);
-		}
-
-		set_next_sym_str(next_str);
-
-		return;
-	}
-
-	// The constant 0... or a hexadecimal or binary number!
-	if (next_char() == '0')
-	{
-		set_next_num(0);
-		set_next_tok(&Tok::NatNum);
-
-		call_advance();
-
-		if (isdigit(next_char()))
-		{
-			expected("Natural number that does not start with 0!");
-		}
-
-		// Hexadecimal number
-		if (next_char() == 'x')
-		{
-			call_advance();
-
-			if (!isxdigit(next_char()))
-			{
-				expected("Hexadecimal number");
-			}
-
-			while (isxdigit(next_char()))
-			{
-				if ((next_char() >= 'a') && (next_char() <= 'f'))
-				{
-					set_next_num((next_num() * 16) 
-						+ (next_char() - 'a' + 0xa));
-				}
-				else if ((next_char() >= 'A') && (next_char() <= 'F'))
-				{
-					set_next_num((next_num() * 16) 
-						+ (next_char() - 'A' + 0xa));
-				}
-				else // if ((next_char() >= '0') && (next_char() <= '9'))
-				{
-					set_next_num((next_num() * 16) + (next_char() - '0'));
-				}
-
-				call_advance();
-			}
-		}
-
-		// Binary number
-		if (next_char() == 'b')
-		{
-			call_advance();
-
-			if ((next_char() != '0') && (next_char() != '1'))
-			{
-				expected("Binary number");
-			}
-
-			while ((next_char() == '0') || (next_char() == '1'))
-			{
-				set_next_num((next_num() * 2) + (next_char() - '0'));
-
-				call_advance();
-			}
-		}
-
-		return;
-	}
-
-	// Find a constant natural number
-	if (isdigit(next_char()))
-	{
-		set_next_num(0);
-
-		do
-		{
-			set_next_num((next_num() * 10) + (next_char() - '0'));
-			call_advance();
-		} while (isdigit(next_char()));
-
-		set_next_tok(&Tok::NatNum);
-
-		return;
-	}
-
-	// BitShL
-	if (next_char() == '<')
-	{
-		call_advance();
-
-		if (next_char() == '<')
-		{
-			call_advance();
-			set_next_tok(&Tok::BitShL);
-		}
-		else
-		{
-			expected("\"<<\" but got \"", next_str, "\"!");
-		}
-
-		return;
-	}
-
-	// BitShR
-	if (next_char() == '>')
-	{
-		call_advance();
-
-		if (next_char() == '>')
-		{
-			call_advance();
-			set_next_tok(&Tok::BitShR);
-		}
-		else
-		{
-			expected("\">>\" but got \"", next_str, "\"!");
-		}
-
-		return;
-	}
-
-	set_next_tok(&Tok::Bad);
-}
 
 void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 	bool just_find_defines)
@@ -558,7 +134,7 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 	if (next_tok() == &Tok::Bad)
 	{
 		set_line_num(line_num() + 1);
-		err("Invalid syntax");
+		we().err("Invalid syntax");
 	}
 
 	if (parse_vec.size() == 0)
@@ -579,7 +155,7 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 	{
 	auto eek = [&]() -> void
 	{
-		err("invalid syntax for ", parse_vec.front().next_tok->str());
+		we().err("invalid syntax for ", parse_vec.front().next_tok->str());
 	};
 	// Check for assembler directives
 	if (parse_vec.front().next_tok == &Tok::DotOrg)
@@ -591,7 +167,7 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 
 			if (index != parse_vec.size())
 			{
-				err("extra characters on line");
+				we().err("extra characters on line");
 			}
 		}
 
@@ -684,7 +260,7 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 		if (user_sym_tbl().at(parse_vec.at(1).next_sym_str).type() 
 			!= SymType::EquateName)
 		{
-			err("Can't convert a label to an equate!");
+			we().err("Can't convert a label to an equate!");
 		}
 
 		index = 2;
@@ -728,7 +304,7 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 
 		if (define_tbl().contains(to_insert.name()))
 		{
-			err(".define already defined");
+			we().err(".define already defined");
 		}
 
 		if (parse_vec.at(3).next_tok == &Tok::RParen)
@@ -815,12 +391,12 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 			if (user_sym_tbl().at(parse_vec.at(0).next_sym_str).type()
 				== SymType::EquateName)
 			{
-				err("Can't use an equate as a label!");
+				we().err("Can't use an equate as a label!");
 			}
 			else if (user_sym_tbl().at(parse_vec.at(0).next_sym_str)
 				.type() != SymType::Other)
 			{
-				err("Invalid label name!");
+				we().err("Invalid label name!");
 			}
 
 			// Update the value of the label in the user symbol table.
@@ -869,7 +445,7 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 
 
 void Assembler::finish_line
-	(const std::vector<Assembler::ParseNode>& some_parse_vec)
+	(const std::vector<ParseNode>& some_parse_vec)
 {
 	//for (const auto& node : some_parse_vec)
 	//{
@@ -895,7 +471,7 @@ void Assembler::finish_line
 
 	if (some_parse_vec.at(0).next_tok != &Tok::Instr)
 	{
-		expected_tokens(&Tok::Instr);
+		we().expected_tokens(&Tok::Instr);
 	}
 
 	const auto& instr_vec = __instr_tbl.at(some_parse_vec.at(0)
@@ -916,7 +492,7 @@ void Assembler::finish_line
 
 	if (!complete)
 	{
-		err("Invalid instruction arguments");
+		we().err("Invalid instruction arguments");
 	}
 
 }
@@ -954,7 +530,7 @@ void Assembler::find_defines()
 	{
 		if (define_expand_depth >= define_expand_max_depth)
 		{
-			err("Cannot resolve .defines\n");
+			we().err("Cannot resolve .defines\n");
 		}
 
 		set_changed(false);
@@ -978,7 +554,7 @@ void Assembler::expand_defines()
 {
 	auto eek = [&]() -> void
 	{
-		err("Unknown .define!");
+		we().err("Unknown .define!");
 	};
 
 	//auto attempt_expand_defn = [&](std::string& iter, size_t old_i, 
@@ -1264,7 +840,7 @@ void Assembler::expand_defines()
 
 
 bool Assembler::parse_instr(PInstr instr,
-	const std::vector<Assembler::ParseNode>& some_parse_vec)
+	const std::vector<ParseNode>& some_parse_vec)
 {
 	switch (instr->args())
 	{
@@ -1368,7 +944,7 @@ bool Assembler::parse_instr(PInstr instr,
 #define spvat(x) some_parse_vec.at(x)
 
 bool Assembler::__parse_instr_no_args
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	//size_t index = 1;
@@ -1385,7 +961,7 @@ bool Assembler::__parse_instr_no_args
 	return true;
 }
 bool Assembler::__parse_instr_uimm16
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1404,7 +980,7 @@ bool Assembler::__parse_instr_uimm16
 	return true;
 }
 bool Assembler::__parse_instr_simm16
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1423,7 +999,7 @@ bool Assembler::__parse_instr_simm16
 	return true;
 }
 bool Assembler::__parse_instr_imm32
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1443,7 +1019,7 @@ bool Assembler::__parse_instr_imm32
 }
 
 bool Assembler::__parse_instr_ra
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	//size_t index = 1;
@@ -1468,7 +1044,7 @@ bool Assembler::__parse_instr_ra
 	return true;
 }
 bool Assembler::__parse_instr_ra_uimm16
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1496,7 +1072,7 @@ bool Assembler::__parse_instr_ra_uimm16
 	return true;
 }
 bool Assembler::__parse_instr_ra_rb
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1524,7 +1100,7 @@ bool Assembler::__parse_instr_ra_rb
 	return true;
 }
 bool Assembler::__parse_instr_ra_rb_uimm16
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1553,7 +1129,7 @@ bool Assembler::__parse_instr_ra_rb_uimm16
 	return true;
 }
 bool Assembler::__parse_instr_ra_rb_simm16
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1581,7 +1157,7 @@ bool Assembler::__parse_instr_ra_rb_simm16
 	return true;
 }
 bool Assembler::__parse_instr_ra_rb_rc
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1608,7 +1184,7 @@ bool Assembler::__parse_instr_ra_rb_rc
 	return true;
 }
 bool Assembler::__parse_instr_ra_rb_rc_simm12
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1640,7 +1216,7 @@ bool Assembler::__parse_instr_ra_rb_rc_simm12
 }
 
 bool Assembler::__parse_instr_ldst_ra_rb
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1667,7 +1243,7 @@ bool Assembler::__parse_instr_ldst_ra_rb
 	return true;
 }
 bool Assembler::__parse_instr_ldst_ra_rb_rc_simm12
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1699,7 +1275,7 @@ bool Assembler::__parse_instr_ldst_ra_rb_rc_simm12
 	return true;
 }
 bool Assembler::__parse_instr_ldst_ra_rb_rc
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1731,7 +1307,7 @@ bool Assembler::__parse_instr_ldst_ra_rb_rc
 	return true;
 }
 bool Assembler::__parse_instr_ldst_ra_rb_simm12
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1763,7 +1339,7 @@ bool Assembler::__parse_instr_ldst_ra_rb_simm12
 
 
 bool Assembler::__parse_instr_branch
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1804,7 +1380,7 @@ bool Assembler::__parse_instr_branch
 
 
 bool Assembler::__parse_instr_ldst_ra_rb_imm32
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1834,7 +1410,7 @@ bool Assembler::__parse_instr_ldst_ra_rb_imm32
 	return true;
 }
 bool Assembler::__parse_instr_ra_rb_imm32
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1866,7 +1442,7 @@ bool Assembler::__parse_instr_ra_rb_imm32
 
 // Block moves (ldmia, stmia, stmdb) with number of {} args
 bool Assembler::__parse_instr_ldst_block_1_to_4
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -1997,7 +1573,7 @@ bool Assembler::__parse_instr_ldst_block_1_to_4
 	return true;
 }
 bool Assembler::__parse_instr_ldst_block_5_to_8
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -2208,7 +1784,7 @@ bool Assembler::__parse_instr_ldst_block_5_to_8
 }
 
 bool Assembler::__parse_instr_ira
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -2230,7 +1806,7 @@ bool Assembler::__parse_instr_ira
 	return true;
 }
 bool Assembler::__parse_instr_ra_ira
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -2256,7 +1832,7 @@ bool Assembler::__parse_instr_ra_ira
 	return true;
 }
 bool Assembler::__parse_instr_ira_ra
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -2282,7 +1858,7 @@ bool Assembler::__parse_instr_ira_ra
 }
 
 bool Assembler::__parse_instr_ra_flags
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -2308,7 +1884,7 @@ bool Assembler::__parse_instr_ra_flags
 	return true;
 }
 bool Assembler::__parse_instr_flags
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -2330,7 +1906,7 @@ bool Assembler::__parse_instr_flags
 	return true;
 }
 bool Assembler::__parse_instr_flags_ra
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -2356,7 +1932,7 @@ bool Assembler::__parse_instr_flags_ra
 }
 
 bool Assembler::__parse_instr_ra_pc
-	(const std::vector<Assembler::ParseNode>& some_parse_vec, PInstr instr)
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
 {
 	std::vector<std::string> regs;
 	size_t index = 1;
@@ -2457,9 +2033,9 @@ s64 Assembler::handle_expr(const std::vector<ParseNode>& some_parse_vec,
 	}
 	else
 	{
-		//err("expr():  3, Eek!\n");
+		//we().err("expr():  3, Eek!\n");
 		//return 9001;
-		err("Invalid expression");
+		we().err("Invalid expression");
 	}
 
 
@@ -2596,15 +2172,15 @@ s64 Assembler::handle_factor(const std::vector<ParseNode>& some_parse_vec,
 				break;
 
 			case SymType::DefineName:
-				//err("Can't use a define in an expression!");
+				//we().err("Can't use a define in an expression!");
 				break;
 
 			case SymType::MacroName:
-				err("Can't use a macro in an expression!");
+				we().err("Can't use a macro in an expression!");
 				break;
 
 			default:
-				err("handle_factor():  Eek!");
+				we().err("handle_factor():  Eek!");
 				break;
 		}
 		
@@ -2618,14 +2194,14 @@ s64 Assembler::handle_factor(const std::vector<ParseNode>& some_parse_vec,
 	{
 		//expected("token of type \"", Tok::NatNum.str(), "\" or \"", 
 		//	Tok::Ident.str(), "\" or \"", Tok::LParen.str(), "\"!");
-		expected_tokens(&Tok::NatNum, &Tok::Ident, &Tok::LParen);
+		we().expected_tokens(&Tok::NatNum, &Tok::Ident, &Tok::LParen);
 	}
 
-	need(some_parse_vec, index, &Tok::LParen);
+	__lexer.need(some_parse_vec, index, &Tok::LParen);
 
 	ret = handle_expr(some_parse_vec, index);
 
-	need(some_parse_vec, index, &Tok::RParen);
+	__lexer.need(some_parse_vec, index, &Tok::RParen);
 
 	return ret;
 }
@@ -2760,7 +2336,7 @@ void Assembler::__encode_low(u16& g1g2_low, u32& g3_low,
 			}
 			else if (regs.size() > 3)
 			{
-				err("__encode_low()::handle_enc_group_2() non else:  ",
+				we().err("__encode_low()::handle_enc_group_2() non else:  ",
 					"Eek!\n");
 			}
 			clear_and_set_bits_with_range(g1g2_low, expr_result, 11, 0);
@@ -2792,7 +2368,7 @@ void Assembler::__encode_low(u16& g1g2_low, u32& g3_low,
 
 			if ((regs.size() < 2) || (regs.size() > 5))
 			{
-				err("__encode_low()::handle_enc_group_2() else:  Eek!\n");
+				we().err("__encode_low()::handle_enc_group_2() else:  Eek!\n");
 			}
 		}
 	};
@@ -2809,7 +2385,7 @@ void Assembler::__encode_low(u16& g1g2_low, u32& g3_low,
 			//}
 			//else if (regs.size() > 3)
 			//{
-			//	err("__encode_low()::handle_enc_group_3() non else:  ",
+			//	we().err("__encode_low()::handle_enc_group_3() non else:  ",
 			//		"Eek!\n");
 			//}
 			g3_low = expr_result;
@@ -2865,7 +2441,8 @@ void Assembler::__encode_low(u16& g1g2_low, u32& g3_low,
 
 			if ((regs.size() < 6) || (regs.size() > 9))
 			{
-				err("__encode_low()::handle_enc_group_3() else:  Eek!\n");
+				we().err("__encode_low()::handle_enc_group_3() else:  ",
+					"Eek!\n");
 			}
 		}
 
@@ -2949,7 +2526,7 @@ void Assembler::split(std::vector<ParseNode>& ret,
 	while (some_next_tok != &Tok::Eof)
 	{
 		ParsePos pos;
-		__lex_innards(some_next_char, some_next_tok,
+		__lexer.__lex_innards(some_next_char, some_next_tok,
 			some_next_sym_str, some_next_num, some_line_num, 
 			outer_index, inner_index, &to_split, &pos);
 

@@ -8,51 +8,23 @@
 #include "symbol_table_class.hpp"
 #include "define_table_class.hpp"
 
+#include "parse_node_class.hpp"
+#include "lexer_class.hpp"
+
 
 namespace flare32
 {
 
 class Assembler
 {
-private:		// classes
-	class ParsePos
-	{
-	public:		// variables
-		s64 outer_index = 0;
-		s64 inner_index = 0;
-	};
-	class ParseNode
-	{
-	public:		// variables
-		PTok next_tok = nullptr;
-		std::string next_sym_str;
-		s64 next_num = -1;
-
-	public:		// functions
-		inline ParseNode()
-		{
-		}
-
-
-		inline ParseNode(PTok s_next_tok, 
-			const std::string& s_next_sym_str, s64 s_next_num)
-			: next_tok(s_next_tok), next_sym_str(s_next_sym_str),
-			next_num(s_next_num)
-		{
-		}
-
-		inline ParseNode(const ParseNode& to_copy) = default;
-		inline ParseNode(ParseNode&& to_move) = default;
-		inline ParseNode& operator = (const ParseNode& to_copy) = default;
-		inline ParseNode& operator = (ParseNode&& to_move) = default;
-	};
-
 private:		// variables
 	static constexpr size_t define_expand_max_depth = 256;
 	static constexpr size_t last_pass = 2;
+	WarnError __we;
 	SymbolTable __builtin_sym_tbl, __user_sym_tbl;
 	DefineTable __define_tbl;
 	InstructionTable __instr_tbl;
+	Lexer __lexer;
 
 	std::vector<std::string> __lines;
 
@@ -87,6 +59,8 @@ private:		// functions
 	gen_getter_by_ref(define_tbl);
 	gen_getter_by_ref(instr_tbl);
 
+	gen_getter_by_ref(we);
+
 	gen_getter_and_setter_by_val(addr);
 	gen_getter_and_setter_by_val(last_addr);
 	gen_getter_and_setter_by_val(line_num);
@@ -103,71 +77,13 @@ private:		// functions
 	void reinit();
 	void fill_builtin_sym_tbl();
 
-	template<typename... ArgTypes>
-	void err_suffix(ArgTypes&&... args) const
-	{
-		printerr(", On line ", line_num(), ":  ", args..., "\n");
-		exit(1);
-	}
-	template<typename... ArgTypes>
-	void err(ArgTypes&&... args) const
-	{
-		printerr("Error");
-		err_suffix(args...);
-	}
-
-	template<typename... ArgTypes>
-	void expected(ArgTypes&&... args) const
-	{
-		err("Expected ", args...);
-	}
 
 
-	void __expected_tokens_innards() const
-	{
-	}
-	template<typename... RemArgTypes>
-	void __expected_tokens_innards(PTok tok, RemArgTypes&&... rem_args)
-		const
-	{
-		printerr("\"", tok->str(), "\"");
 
-		if (sizeof...(rem_args) > 0)
-		{
-			printerr(" or ");
-			__expected_tokens_innards(rem_args...);
-		}
-	}
-	
-	template<typename... ArgTypes>
-	void expected_tokens(ArgTypes&&... args) const
-	{
-		printerr("Error, On line ", line_num(), ":  ");
-		printerr("Expected token of type ");
-		__expected_tokens_innards(args...);
-		printerr("!\n");
-		exit(1);
-	}
-
-
-	void need(const std::vector<ParseNode>& some_parse_vec, size_t& index, 
-		PTok tok);
-
-	void __advance_innards(int& some_next_char, 
-		PTok& some_next_tok, std::string& some_next_sym_str,
-		s64& some_next_num, size_t& some_line_num,
-		size_t& some_outer_index, size_t& some_inner_index,
-		std::vector<std::string>* some_str_vec=nullptr);
-	void __lex_innards(int& some_next_char, 
-		PTok& some_next_tok, std::string& some_next_sym_str,
-		s64& some_next_num, size_t& some_line_num,
-		size_t& some_outer_index, size_t& some_inner_index,
-		std::vector<std::string>* some_str_vec=nullptr,
-		ParsePos* pos=nullptr);
 	inline void advance(size_t& some_outer_index, size_t& some_inner_index,
 		bool use_lines=false)
 	{
-		__advance_innards(__next_char, __next_tok,
+		__lexer.__advance_innards(__next_char, __next_tok,
 			__next_sym_str, __next_num, __line_num, 
 			some_outer_index, some_inner_index,
 			(use_lines ? &__lines : nullptr));
@@ -175,7 +91,7 @@ private:		// functions
 	inline void lex(size_t& some_outer_index, size_t& some_inner_index,
 		bool use_lines=false)
 	{
-		__lex_innards(__next_char, __next_tok,
+		__lexer.__lex_innards(__next_char, __next_tok,
 			__next_sym_str, __next_num, __line_num, 
 			some_outer_index, some_inner_index,
 			(use_lines ? &__lines : nullptr));
