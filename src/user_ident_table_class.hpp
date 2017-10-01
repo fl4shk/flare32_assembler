@@ -45,6 +45,8 @@ public:		// functions
 	{
 		at(to_insert_or_assign.name()) = std::move(to_insert_or_assign);
 	}
+
+	gen_getter_by_con_ref(table);
 };
 
 }

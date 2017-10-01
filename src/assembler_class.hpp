@@ -171,6 +171,13 @@ private:		// functions
 			some_outer_index, some_inner_index,
 			(use_lines ? &__lines : nullptr));
 	}
+	//inline void lex(size_t& some_outer_index, size_t& some_inner_index,
+	//	std::vector<std::string>& some_lines)
+	//{
+	//	__lex_innards(__next_char, __next_tok,
+	//		__next_sym_str, __next_num, __line_num, 
+	//		some_outer_index, some_inner_index, &some_lines);
+	//}
 
 	void line(size_t& some_outer_index, size_t& some_inner_index, 
 		bool just_find_defines=false);

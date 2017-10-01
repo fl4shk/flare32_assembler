@@ -687,10 +687,10 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 			return;
 		}
 
-		// .define ident text
+		// .define ident() text
 		// .define ident(args...) text
 
-		if (parse_vec.size() < 4)
+		if (parse_vec.size() < 5)
 		{
 			eek();
 		}
@@ -709,6 +709,11 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 
 		to_insert.set_name(parse_vec.at(1).next_sym_str);
 
+		if (define_tbl().contains(to_insert.name()))
+		{
+			err(".define already defined");
+		}
+
 		if (parse_vec.at(3).next_tok == &Tok::RParen)
 		{
 			// No arguments, just () stuffs
@@ -717,12 +722,12 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 				if (tok_is_ident_ish(parse_vec.at(i).next_tok))
 				{
 					to_insert.text().push_back(parse_vec.at(i)
-						.next_sym_str);
+						.next_sym_str + '\n');
 				}
 				else
 				{
 					to_insert.text().push_back(parse_vec.at(i).next_tok
-						->str());
+						->str() + '\n');
 				}
 			}
 		}
@@ -739,6 +744,9 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 		{
 			eek();
 		}
+
+		define_tbl().insert_or_assign(to_insert);
+
 
 
 		return;
@@ -906,6 +914,132 @@ void Assembler::find_defines()
 
 void Assembler::expand_defines()
 {
+	auto eek = [&]() -> void
+	{
+		err("Unknown .define!");
+	};
+	auto attempt_find_defn = [&](std::string& iter, size_t& i, 
+		Define& ret) -> void
+	{
+		std::string next_str;
+		next_str += iter.at(i++);
+
+		if (i >= iter.size())
+		{
+			eek();
+		}
+
+		// Same algorithm the 
+		if (isalpha(iter.at(i)) || (iter.at(i) == '_'))
+		{
+			next_str += iter.at(i++);
+			
+			for (; 
+				i < iter.size()
+				&& (isalnum(iter.at(i)) || (iter.at(i) == '_'));
+				++i)
+			{
+				next_str += iter.at(i);
+			}
+
+			if ((i < iter.size()) && (iter.at(i) == '.'))
+			{
+				next_str += iter.at(i++);
+
+				for (; 
+					i < iter.size()
+					&& (isalnum(iter.at(i)) || (iter.at(i) == '_'));
+					++i)
+				{
+					next_str += iter.at(i);
+				}
+			}
+
+			if (!define_tbl().contains(next_str))
+			{
+				eek();
+			}
+
+			ret = define_tbl().at(next_str);
+
+			if (ret.args().size() != 0)
+			{
+				err(".defines with arguments not yet supported!");
+			}
+
+			if ((iter.at(i++) != '(') || (iter.at(i++) != ')'))
+			{
+				eek();
+			}
+
+		}
+
+		else
+		{
+			eek();
+		}
+	};
+
+	auto attempt_expand_defn = [&](std::string& iter, size_t old_i, 
+		size_t& i, Define& defn) -> void
+	{
+		i = old_i;
+
+		std::vector<ParseNode> parse_vec;
+		size_t outer_index = 0, inner_index = 0;
+
+		int some_next_char = ' ';
+		PTok some_next_tok = nullptr;
+		std::string some_next_sym_str;
+		s64 some_next_num = -1;
+		size_t some_line_num = 0;
+
+
+		while (some_next_tok != &Tok::Eof)
+		{
+			__lex_innards(some_next_char, some_next_tok,
+				some_next_sym_str, some_next_num, some_line_num, 
+				outer_index, inner_index, &defn.text());
+
+			if (some_next_tok != &Tok::Eof)
+			{
+				parse_vec.push_back(ParseNode(some_next_tok,
+					some_next_sym_str, some_next_num));
+			}
+		}
+
+	};
+	
+	for (std::string& iter : __lines)
+	{
+		// Yes, this is dumb
+		for (;;)
+		{
+			bool found_define = false;
+
+			for (size_t i=0; i<iter.size(); ++i)
+			{
+				if (iter.at(i) == '`')
+				{
+					Define defn;
+
+					const size_t old_i = i;
+					attempt_find_defn(iter, i, defn);
+					attempt_expand_defn(iter, old_i, i, defn);
+
+
+
+					found_define = true;
+					break;
+				}
+			}
+
+			if (!found_define)
+			{
+				break;
+			}
+		}
+	}
 }
 
 
