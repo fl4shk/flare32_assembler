@@ -22,7 +22,6 @@ int Assembler::operator () ()
 	fill_lines();
 	find_defines();
 
-	printout("Made it past the find_defines()\n");
 
 	// Two passes
 	for (set_pass(1); pass() <= last_pass; set_pass(pass() + 1))
@@ -1129,99 +1128,101 @@ void Assembler::expand_defines()
 	//}
 
 
-	//auto attempt_expand_defn = [&](std::string& iter, size_t old_i, 
-	//	size_t& i, Define& defn, 
-	//	std::vector<ParseNode>& line_parse_vec) -> bool
-	//{
-	//	i = old_i;
-
-	//	std::vector<ParseNode> text_parse_vec;
-	//	std::vector<std::string> iter_vec({iter});
+	auto attempt_expand_defn = [&](std::string& iter, Define& defn, 
+		const std::vector<ParsePos>& pos_vec, size_t i,
+		std::vector<ParseNode>& line_parse_vec) -> bool
+	{
+		std::vector<ParseNode> text_parse_vec;
 
 
-	//	split(text_parse_vec, defn.text());
-	//	split(line_parse_vec, iter_vec);
+		split(text_parse_vec, defn.text());
 
-	//	if (line_parse_vec.front().next_tok == &Tok::DotDefine)
-	//	{
-	//		//	// sneaky comment insertion
-	//		iter.insert(0, "@");
+		if (line_parse_vec.front().next_tok == &Tok::DotDefine)
+		{
+			// sneaky comment insertion
+			iter.insert(0, "@");
 
-	//		return false;
-	//	}
-	//	else if (tok_is_comment(line_parse_vec.front().next_tok))
-	//	{
-	//		return false;
-	//	}
+			return false;
+		}
+		else if (tok_is_comment(line_parse_vec.front().next_tok))
+		{
+			return false;
+		}
 
 
-	//	// Erase the define instance
-	//	//iter.erase(i, defn.name().size() + sizeof('(') + sizeof(')'));
+		// Erase the define instance
+		{
+			size_t j = pos_vec.at(i).inner_index;
+			//iter.erase(j, defn.name().size());
+			for (size_t k=0; k<defn.name().size(); ++k)
+			{
+				iter.at(j++) = ' ';
+			}
+			++i;
 
-	//	{
-	//		size_t j = i;
-	//		iter.erase(j, defn.name().size());
+			if (line_parse_vec.at(i).next_tok != &Tok::LParen)
+			{
+				eek();
+			}
 
-	//		while (isspace(iter.at(j)))
-	//		{
-	//			//printout("Erasing...\n");
-	//			iter.erase(j, 1);
-	//		}
+			j = pos_vec.at(i).inner_index;
+			for (size_t k=0; 
+				k<line_parse_vec.at(i).next_tok->str().size(); 
+				++k)
+			{
+				iter.at(j++) = ' ';
+			}
+			++i;
 
-	//		if (iter.at(j) != '(')
-	//		{
-	//			printout("Type 2:  Couldn't find \"(\"\n");
-	//			printout(iter.at(j), "\n");
-	//			eek();
-	//		}
+			if (line_parse_vec.at(i).next_tok != &Tok::RParen)
+			{
+				eek();
+			}
+			
+			j = pos_vec.at(i).inner_index;
+			for (size_t k=0; 
+				k<line_parse_vec.at(i).next_tok->str().size(); 
+				++k)
+			{
+				iter.at(j++) = ' ';
+			}
 
-	//		iter.erase(j, 1);
+		}
 
-	//		while (isspace(iter.at(j)))
-	//		{
-	//			//printout("Erasing...\n");
-	//			iter.erase(j, 1);
-	//		}
+		size_t j = pos_vec.at(i).inner_index;
 
-	//		if (iter.at(j) != ')')
-	//		{
-	//			printout("Type 2:  Couldn't find \")\"\n");
-	//			printout(iter.at(j), "\n");
-	//			eek();
-	//		}
+		//printout("stuff:  ", iter, "\n");
 
-	//		iter.erase(j, 1);
 
-	//	}
+		for (const auto& parse_iter : text_parse_vec)
+		{
+			if (tok_is_ident_ish(parse_iter.next_tok))
+			{
+				iter.insert(j, parse_iter.next_sym_str + " ");
+				j += parse_iter.next_sym_str.size() 
+					+ std::string(" ").size();
+			}
+			else if (parse_iter.next_tok == &Tok::NatNum)
+			{
+				std::string str = std::to_string(parse_iter.next_num);
+				iter.insert(j, str + " ");
+				j += str.size() + std::string(" ").size();
+			}
+			else
+			{
+				iter.insert(j, parse_iter.next_tok->str() + " ");
+				j += parse_iter.next_tok->str().size() 
+					+ std::string(" ").size();
+			}
+		}
 
-	//	for (const auto& parse_iter : text_parse_vec)
-	//	{
-	//		if (tok_is_ident_ish(parse_iter.next_tok))
-	//		{
-	//			iter.insert(i, parse_iter.next_sym_str + " ");
-	//			i += parse_iter.next_sym_str.size() 
-	//				+ std::string(" ").size();
-	//		}
-	//		else if (parse_iter.next_tok == &Tok::NatNum)
-	//		{
-	//			std::string str = std::to_string(parse_iter.next_num);
-	//			iter.insert(i, str + " ");
-	//			i += str.size() + std::string(" ").size();
-	//		}
-	//		else
-	//		{
-	//			iter.insert(i, parse_iter.next_tok->str() + " ");
-	//			i += parse_iter.next_tok->str().size() 
-	//				+ std::string(" ").size();
-	//		}
-	//	}
+		return true;
 
-	//	return true;
-
-	//};
+	};
 
 	for (std::string& iter : __lines)
 	{
+		//printout(iter);
 		std::vector<std::string> iter_vec({iter});
 
 		std::vector<ParseNode> line_parse_vec;
@@ -1229,11 +1230,11 @@ void Assembler::expand_defines()
 
 		split(line_parse_vec, iter_vec, &pos_vec);
 
-		for (const auto& pos_iter : pos_vec)
-		{
-			printout(pos_iter.outer_index, ",", pos_iter.inner_index, " ");
-		}
-		printout("\n");
+		//for (const auto& pos_iter : pos_vec)
+		//{
+		//	printout(pos_iter.outer_index, ",", pos_iter.inner_index, " ");
+		//}
+		//printout("\n");
 
 		if ((line_parse_vec.size() >= 1) 
 			&& tok_is_comment(line_parse_vec.front().next_tok))
@@ -1241,13 +1242,21 @@ void Assembler::expand_defines()
 			continue;
 		}
 
-		for (const auto& parse_iter : line_parse_vec)
+		//for (const auto& parse_iter : line_parse_vec)
+		for (size_t i=0; i<line_parse_vec.size(); ++i)
 		{
-			//if (tok_is_ident_ish(parse_iter.next_tok)
-			//	&& define_tbl.contains(parse_iter.next_sym_str))
-			//{
-			//	set_changed(true);
-			//}
+			const auto& parse_iter = line_parse_vec.at(i);
+
+			if (tok_is_ident_ish(parse_iter.next_tok)
+				&& define_tbl().contains(parse_iter.next_sym_str))
+			{
+				set_changed(true);
+
+				attempt_expand_defn(iter, 
+					define_tbl().at(parse_iter.next_sym_str), pos_vec, i, 
+					line_parse_vec);
+				break;
+			}
 		}
 	}
 }
