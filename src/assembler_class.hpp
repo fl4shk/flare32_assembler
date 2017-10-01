@@ -74,6 +74,7 @@ public:		// functions
 private:		// functions
 	gen_getter_by_ref(builtin_sym_tbl);
 	gen_getter_by_ref(user_sym_tbl);
+	gen_getter_by_ref(define_tbl);
 	gen_getter_by_ref(instr_tbl);
 
 	gen_getter_and_setter_by_val(addr);
@@ -164,6 +165,9 @@ private:		// functions
 
 	void line();
 	void finish_line(const std::vector<ParseNode>& some_parse_vec);
+	void parse_define_instance
+		(const std::vector<ParseNode>& some_parse_vec,
+		size_t& define_name_index);
 
 
 	bool parse_instr(PInstr instr, 

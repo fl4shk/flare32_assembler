@@ -5,6 +5,8 @@
 #include "tokens_and_stuff.hpp"
 #include "instruction_table_class.hpp"
 
+#include "user_ident_table_class.hpp"
+
 namespace flare32
 {
 
@@ -56,46 +58,7 @@ public:		// functions
 	gen_getter_and_setter_by_val(type)
 };
 
-class SymbolTable
-{
-private:		// variables
-	std::map<std::string, Symbol> __table;
-
-public:		// functions
-	inline SymbolTable()
-	{
-	}
-
-	// Symbol accessors
-	inline Symbol& at(const std::string& some_name)
-	{
-		return __table[some_name];
-	}
-
-	inline const Symbol& at(const std::string& some_name) const
-	{
-		return __table.at(some_name);
-	}
-
-	inline bool contains(const std::string& some_name) const
-	{
-		return (__table.count(some_name) == 1);
-	}
-
-	inline void insert_or_assign(const Symbol& to_insert_or_assign)
-	{
-		at(to_insert_or_assign.name()) = to_insert_or_assign;
-	}
-	inline void insert_or_assign(Symbol&& to_insert_or_assign)
-	{
-		at(to_insert_or_assign.name()) = std::move(to_insert_or_assign);
-	}
-
-
-private:		// functions
-
-
-};
+typedef UserIdentTable<Symbol> SymbolTable;
 
 }
 

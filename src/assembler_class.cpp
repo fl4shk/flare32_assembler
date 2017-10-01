@@ -132,25 +132,12 @@ void Assembler::__advance_innards(int& some_next_char, size_t& some_index,
 		some_index = n_index;
 	};
 
-	auto next_tok = [&]() -> PTok
-	{
-		return some_next_tok;
-	};
 
 	auto set_next_tok = [&](PTok tok) -> void
 	{
 		some_next_tok = tok;
 	};
 
-	auto next_sym_str = [&]() -> const std::string&
-	{
-		return some_next_sym_str;
-	};
-
-	auto set_next_sym_str = [&](const std::string& n_next_sym_str) -> void
-	{
-		some_next_sym_str = n_next_sym_str;
-	};
 
 	auto infile = [&]() -> FILE*
 	{
@@ -193,21 +180,6 @@ void Assembler::__lex_innards(int& some_next_char, size_t& some_index,
 		return some_next_char;
 	};
 
-	auto set_next_char = [&](int n_next_char) -> void
-	{
-		some_next_char = n_next_char;
-	};
-
-	auto index = [&]() -> size_t
-	{
-		return some_index;
-	};
-
-	auto set_index = [&](size_t n_index) -> void
-	{
-		some_index = n_index;
-	};
-
 	auto next_tok = [&]() -> PTok
 	{
 		return some_next_tok;
@@ -226,11 +198,6 @@ void Assembler::__lex_innards(int& some_next_char, size_t& some_index,
 	auto set_next_sym_str = [&](const std::string& n_next_sym_str) -> void
 	{
 		some_next_sym_str = n_next_sym_str;
-	};
-
-	auto infile = [&]() -> FILE*
-	{
-		return some_infile;
 	};
 
 	auto next_num = [&]() -> s64
@@ -335,7 +302,8 @@ void Assembler::__lex_innards(int& some_next_char, size_t& some_index,
 	//}
 
 	// Find an identifier
-	if (isalpha(next_char()) || (next_char() == '_'))
+	if (isalpha(next_char()) || (next_char() == '_')
+		|| (next_char() == '`'))
 	{
 		//printout("lex():  An ident?\n");
 		next_str = "";
@@ -360,9 +328,26 @@ void Assembler::__lex_innards(int& some_next_char, size_t& some_index,
 			}
 		}
 
+		// Defines must start with "`"
+		if (next_str.front() == '`')
+		{
+			if (!user_sym_tbl().contains(next_str))
+			{
+				// Need to use next_tok() here because we haven't
+				// set_next_tok() yet.
+				if (next_tok() != &Tok::DotDefine)
+				{
+					err("Undefined .define");
+				}
 
+				Symbol to_insert(next_str, &Tok::Ident, 0,
+					SymType::DefineName);
+
+				user_sym_tbl().insert_or_assign(to_insert);
+			}
+		}
 		// If we haven't seen a user symbol like this before...
-		if (!user_sym_tbl().contains(next_str))
+		else if (!user_sym_tbl().contains(next_str))
 		{
 			// ...Then create a new symbol
 			//printout("Creating a new symbol....\n");
@@ -378,6 +363,10 @@ void Assembler::__lex_innards(int& some_next_char, size_t& some_index,
 				to_insert.set_type(SymType::EquateName);
 			}
 			#undef TOKEN_STUFF
+			//else if (next_tok() == &Tok::DotDefine)
+			//{
+			//	to_insert.set_type(SymType::DefineName);
+			//}
 			else
 			{
 				to_insert.set_type(SymType::Other);
@@ -385,7 +374,7 @@ void Assembler::__lex_innards(int& some_next_char, size_t& some_index,
 			
 			//printout((int)to_insert.type(), "\n");
 
-			user_sym_tbl().at(next_str) = to_insert;
+			user_sym_tbl().insert_or_assign(to_insert);
 		}
 
 
@@ -400,8 +389,6 @@ void Assembler::__lex_innards(int& some_next_char, size_t& some_index,
 		{
 			set_next_tok(&Tok::Ident);
 		}
-
-
 
 		set_next_sym_str(next_str);
 

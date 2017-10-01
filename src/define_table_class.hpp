@@ -6,6 +6,8 @@
 #include "tokens_and_stuff.hpp"
 #include "instruction_table_class.hpp"
 
+#include "user_ident_table_class.hpp"
+
 namespace flare32
 {
 
@@ -40,41 +42,8 @@ public:		// functions
 
 };
 
-class DefineTable
-{
-private:		// variables
-	std::map<std::string, Define> __table;
+typedef UserIdentTable<Define> DefineTable;
 
-public:		// functions
-	inline DefineTable()
-	{
-	}
-
-	// Define accessors
-	inline Define& at(const std::string& some_name)
-	{
-		return __table[some_name];
-	}
-
-	inline const Define& at(const std::string& some_name) const
-	{
-		return __table.at(some_name);
-	}
-
-	inline bool contains(const std::string& some_name) const
-	{
-		return (__table.count(some_name) == 1);
-	}
-
-	inline void insert_or_assign(const Define& to_insert_or_assign)
-	{
-		at(to_insert_or_assign.name()) = to_insert_or_assign;
-	}
-	inline void insert_or_assign(Define&& to_insert_or_assign)
-	{
-		at(to_insert_or_assign.name()) = std::move(to_insert_or_assign);
-	}
-};
 
 
 }
