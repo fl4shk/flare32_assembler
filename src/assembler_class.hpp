@@ -10,6 +10,7 @@
 
 #include "parse_node_class.hpp"
 #include "lexer_class.hpp"
+#include "code_generator_class.hpp"
 
 
 namespace flare32
@@ -25,6 +26,7 @@ private:		// variables
 	DefineTable __define_tbl;
 	InstructionTable __instr_tbl;
 	Lexer __lexer;
+	CodeGenerator __codegen;
 
 	std::vector<std::string> __lines;
 
@@ -204,27 +206,6 @@ private:		// functions
 	//	return tok_is_ident_ish(next_tok());
 	//}
 
-	// Code generator stuff
-	inline void __encode_instr_group(u16& high_hword, PInstr instr) const
-	{
-		clear_and_set_bits_with_range(high_hword, instr->enc_group(),
-			15, 14);
-	}
-	inline void __encode_affects_flags(u16& high_hword, PInstr instr) const
-	{
-		clear_and_set_bits_with_range(high_hword, instr->affects_flags(),
-			13, 13);
-	}
-	void __encode_opcode(u16& high_hword, PInstr instr) const;
-	void __encode_high_hword(u16& high_hword, 
-		const std::vector<std::string>& regs, s64 expr_result,
-		PInstr instr);
-	void __encode_low(u16& g1g2_low, u32& g3_low, 
-		const std::vector<std::string>& regs, s64 expr_result,
-		PInstr instr);
-	void __gen_low(u16 g1g2_low, u32 g3_low, PInstr instr);
-	void encode_and_gen(const std::vector<std::string>& regs, 
-		s64 expr_result, PInstr instr);
 	
 	void split(std::vector<ParseNode>& ret, 
 		std::vector<std::string>& to_split,
@@ -257,9 +238,6 @@ private:		// functions
 		return false;
 	}
 
-	void gen8(s32 v);
-	void gen16(s32 v);
-	void gen32(s32 v);
 
 
 };
