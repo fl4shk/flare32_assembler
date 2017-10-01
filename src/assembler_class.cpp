@@ -107,37 +107,159 @@ void Assembler::need(const std::vector<ParseNode>& some_parse_vec,
 	}
 }
 
-void Assembler::advance()
+void Assembler::__advance_innards(int& some_next_char, size_t& some_index, 
+	PTok& some_next_tok, std::string& some_next_sym_str,
+	s64& some_next_num, size_t& some_line_num, FILE* some_infile, 
+	std::string* some_str)
 {
+	auto next_char = [&]() -> int
+	{
+		return some_next_char;
+	};
+
+	auto set_next_char = [&](int n_next_char) -> void
+	{
+		some_next_char = n_next_char;
+	};
+
+	auto index = [&]() -> size_t
+	{
+		return some_index;
+	};
+
+	auto set_index = [&](size_t n_index) -> void
+	{
+		some_index = n_index;
+	};
+
+	auto next_tok = [&]() -> PTok
+	{
+		return some_next_tok;
+	};
+
+	auto set_next_tok = [&](PTok tok) -> void
+	{
+		some_next_tok = tok;
+	};
+
+	auto next_sym_str = [&]() -> const std::string&
+	{
+		return some_next_sym_str;
+	};
+
+	auto set_next_sym_str = [&](const std::string& n_next_sym_str) -> void
+	{
+		some_next_sym_str = n_next_sym_str;
+	};
+
+	auto infile = [&]() -> FILE*
+	{
+		return some_infile;
+	};
+
+
 	if (next_char() == EOF)
 	{
 		set_next_tok(&Tok::Eof);
 		return;
 	}
 
-	//set_next_char(getchar());
-	set_next_char(getc(infile()));
+	if (some_str == nullptr)
+	{
+		//set_next_char(getchar());
+		set_next_char(getc(infile()));
+	}
+	else // if (some_str != nullptr)
+	{
+		set_next_char((*some_str)[index()]);
+		set_index(index() + 1);
+	}
 
 	if (next_char() == '\n')
 	{
-		++__line_num;
+		++some_line_num;
 	}
 }
 
 
 
-void Assembler::lex()
+void Assembler::__lex_innards(int& some_next_char, size_t& some_index, 
+	PTok& some_next_tok, std::string& some_next_sym_str,
+	s64& some_next_num, size_t& some_line_num, FILE* some_infile, 
+	std::string* some_str)
 {
+	auto next_char = [&]() -> int
+	{
+		return some_next_char;
+	};
+
+	auto set_next_char = [&](int n_next_char) -> void
+	{
+		some_next_char = n_next_char;
+	};
+
+	auto index = [&]() -> size_t
+	{
+		return some_index;
+	};
+
+	auto set_index = [&](size_t n_index) -> void
+	{
+		some_index = n_index;
+	};
+
+	auto next_tok = [&]() -> PTok
+	{
+		return some_next_tok;
+	};
+
+	auto set_next_tok = [&](PTok tok) -> void
+	{
+		some_next_tok = tok;
+	};
+
+	auto next_sym_str = [&]() -> const std::string&
+	{
+		return some_next_sym_str;
+	};
+
+	auto set_next_sym_str = [&](const std::string& n_next_sym_str) -> void
+	{
+		some_next_sym_str = n_next_sym_str;
+	};
+
+	auto infile = [&]() -> FILE*
+	{
+		return some_infile;
+	};
+
+	auto next_num = [&]() -> s64
+	{
+		return some_next_num;
+	};
+	auto set_next_num = [&](s64 n_next_num) -> void
+	{
+		some_next_num = n_next_num;
+	};
+
+	auto call_advance = [&]() -> void
+	{
+		__advance_innards(some_next_char, some_index, some_next_tok,
+			some_next_sym_str, some_next_num, some_line_num, some_infile, 
+			nullptr);
+	};
+
+
 	//while (isspace(next_char()) && (next_char() != '\n'))
 	while (isspace(next_char()) && (next_char() != '\n'))
 	{
-		advance();
+		call_advance();
 	}
 
 	if (next_char() == '\n')
 	{
 		set_next_tok(&Tok::Newline);
-		advance();
+		call_advance();
 		return;
 	}
 
@@ -154,11 +276,11 @@ void Assembler::lex()
 	// Find assembler directives
 	if (next_char() == '.')
 	{
-		advance();
+		call_advance();
 		while (isalnum(next_char()) || next_char() == '_')
 		{
 			next_str += next_char();
-			advance();
+			call_advance();
 		}
 
 		if (next_str == "")
@@ -169,7 +291,7 @@ void Assembler::lex()
 			else if (next_str == Tok::varname.str()) \
 			{ \
 				set_next_tok(&Tok::varname); \
-				advance(); \
+				call_advance(); \
 				return; \
 			}
 
@@ -192,7 +314,7 @@ void Assembler::lex()
 		else if (next_str == Tok::varname.str()) \
 		{ \
 			set_next_tok(&Tok::varname); \
-			advance(); \
+			call_advance(); \
 			return; \
 		}
 
@@ -207,7 +329,7 @@ void Assembler::lex()
 	//{
 	//	next_str = "";
 	//	next_str += next_char();
-	//	advance();
+	//	call_advance();
 
 	//	if (isalpha(next_char())
 	//}
@@ -218,23 +340,23 @@ void Assembler::lex()
 		//printout("lex():  An ident?\n");
 		next_str = "";
 		next_str += next_char();
-		advance();
+		call_advance();
 
 		while (isalnum(next_char()) || (next_char() == '_'))
 		{
 			next_str += next_char();
-			advance();
+			call_advance();
 		}
 
 		if (next_char() == '.')
 		{
 			next_str += next_char();
-			advance();
+			call_advance();
 
 			while (isalnum(next_char()) || (next_char() == '_'))
 			{
 				next_str += next_char();
-				advance();
+				call_advance();
 			}
 		}
 
@@ -292,7 +414,7 @@ void Assembler::lex()
 		set_next_num(0);
 		set_next_tok(&Tok::NatNum);
 
-		advance();
+		call_advance();
 
 		if (isdigit(next_char()))
 		{
@@ -302,7 +424,7 @@ void Assembler::lex()
 		// Hexadecimal number
 		if (next_char() == 'x')
 		{
-			advance();
+			call_advance();
 
 			if (!isxdigit(next_char()))
 			{
@@ -326,14 +448,14 @@ void Assembler::lex()
 					set_next_num((next_num() * 16) + (next_char() - '0'));
 				}
 
-				advance();
+				call_advance();
 			}
 		}
 
 		// Binary number
 		if (next_char() == 'b')
 		{
-			advance();
+			call_advance();
 
 			if ((next_char() != '0') && (next_char() != '1'))
 			{
@@ -344,7 +466,7 @@ void Assembler::lex()
 			{
 				set_next_num((next_num() * 2) + (next_char() - '0'));
 
-				advance();
+				call_advance();
 			}
 		}
 
@@ -359,7 +481,7 @@ void Assembler::lex()
 		do
 		{
 			set_next_num((next_num() * 10) + (next_char() - '0'));
-			advance();
+			call_advance();
 		} while (isdigit(next_char()));
 
 		set_next_tok(&Tok::NatNum);
@@ -370,11 +492,11 @@ void Assembler::lex()
 	// BitShL
 	if (next_char() == '<')
 	{
-		advance();
+		call_advance();
 
 		if (next_char() == '<')
 		{
-			advance();
+			call_advance();
 			set_next_tok(&Tok::BitShL);
 		}
 		else
@@ -388,11 +510,11 @@ void Assembler::lex()
 	// BitShR
 	if (next_char() == '>')
 	{
-		advance();
+		call_advance();
 
 		if (next_char() == '>')
 		{
-			advance();
+			call_advance();
 			set_next_tok(&Tok::BitShR);
 		}
 		else

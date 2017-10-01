@@ -54,8 +54,8 @@ private:		// variables
 	size_t __line_num = 0;
 
 	int __next_char = ' ';
-	PTok __prev_tok = nullptr, __next_tok = nullptr;
-	std::string __prev_sym_str, __next_sym_str;
+	PTok __next_tok = nullptr;
+	std::string __next_sym_str;
 	s64 __next_num = -1;
 
 	//bool __changed = false;
@@ -80,32 +80,13 @@ private:		// functions
 	gen_getter_and_setter_by_val(last_addr);
 	gen_getter_and_setter_by_val(line_num);
 	gen_getter_and_setter_by_val(next_char);
-	gen_getter_by_val(prev_tok);
-	gen_getter_by_val(next_tok);
-	//gen_getter_and_setter_by_con_ref(next_sym_str);
-	gen_getter_by_con_ref(prev_sym_str);
-	gen_getter_by_con_ref(next_sym_str);
+	gen_getter_and_setter_by_val(next_tok);
+	gen_getter_and_setter_by_con_ref(next_sym_str);
 	gen_getter_and_setter_by_val(next_num);
 	gen_getter_and_setter_by_val(pass);
 	gen_getter_and_setter_by_val(input_filename);
 	gen_getter_and_setter_by_val(infile);
 
-
-
-	inline PTok set_next_tok(PTok to_copy)
-	{
-		__prev_tok = __next_tok;
-		__next_tok = to_copy;
-		return __next_tok;
-	}
-
-	inline const std::string set_next_sym_str(const std::string& to_copy)
-	{
-		__prev_sym_str = __next_sym_str;
-		__next_sym_str = to_copy;
-
-		return __next_sym_str;
-	}
 
 	void reinit();
 	void fill_builtin_sym_tbl();
@@ -160,8 +141,26 @@ private:		// functions
 	void need(const std::vector<ParseNode>& some_parse_vec, size_t& index, 
 		PTok tok);
 
-	void advance();
-	void lex();
+	void __advance_innards(int& some_next_char, size_t& some_index, 
+		PTok& some_next_tok, std::string& some_next_sym_str,
+		s64& some_next_num, size_t& some_line_num, FILE* some_infile, 
+		std::string* some_str=nullptr);
+	void __lex_innards(int& some_next_char, size_t& some_index, 
+		PTok& some_next_tok, std::string& some_next_sym_str,
+		s64& some_next_num, size_t& some_line_num, FILE* some_infile, 
+		std::string* some_str=nullptr);
+	inline void advance()
+	{
+		size_t temp_index;
+		__advance_innards(__next_char, temp_index, __next_tok,
+			__next_sym_str, __next_num, __line_num, __infile, nullptr);
+	}
+	inline void lex()
+	{
+		size_t temp_index;
+		__lex_innards(__next_char, temp_index, __next_tok, __next_sym_str,
+			__next_num, __line_num, __infile, nullptr);
+	}
 
 	void line();
 	void finish_line(const std::vector<ParseNode>& some_parse_vec);
