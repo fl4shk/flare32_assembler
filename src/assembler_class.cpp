@@ -1060,7 +1060,7 @@ void Assembler::expand_defines()
 	};
 
 	auto attempt_expand_defn = [&](std::string& iter, size_t old_i, 
-		size_t& i, Define& defn) -> void
+		size_t& i, Define& defn) -> bool
 	{
 		i = old_i;
 
@@ -1070,6 +1070,20 @@ void Assembler::expand_defines()
 
 		split(text_parse_vec, defn.text());
 		split(line_parse_vec, iter_vec);
+
+		if (line_parse_vec.front().next_tok == &Tok::DotDefine)
+		{
+			//	// sneaky comment insertion
+			iter.insert(0, "@");
+
+			return false;
+		}
+		#define TOKEN_STUFF(varname, value) \
+			(line_parse_vec.front().next_tok == &Tok::varname) ||
+		else if (LIST_OF_COMMENT_TOKENS(TOKEN_STUFF) false)
+		{
+			return false;
+		}
 
 
 		// Erase the define instance
@@ -1135,6 +1149,8 @@ void Assembler::expand_defines()
 			}
 		}
 
+		return true;
+
 	};
 	
 	for (std::string& iter : __lines)
@@ -1159,13 +1175,15 @@ void Assembler::expand_defines()
 				}
 				if (iter.at(i) == '`')
 				{
-					set_changed(true);
 					Define defn;
 
 					const size_t old_i = i;
 					printout("Before:  \"", iter, "\"\n");
 					attempt_find_defn(iter, i, defn);
-					attempt_expand_defn(iter, old_i, i, defn);
+					if(attempt_expand_defn(iter, old_i, i, defn))
+					{
+						set_changed(true);
+					}
 					printout("After:  \"", iter, "\"\n");
 
 
