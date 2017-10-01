@@ -84,11 +84,13 @@ TOKEN_STUFF(Bad, "Bad")
 TOKEN_STUFF(DotEquate, ".equate") \
 TOKEN_STUFF(DotEqu, ".equ") \
 
+
 #define LIST_OF_DIRECTIVE_TOKENS(TOKEN_STUFF) \
 TOKEN_STUFF(DotOrg, ".org") \
 TOKEN_STUFF(DotB, ".db") \
 TOKEN_STUFF(DotW, ".dw") \
 LIST_OF_EQUATE_DIRECTIVE_TOKENS(TOKEN_STUFF) \
+TOKEN_STUFF(DotDefine, ".define") \
 
 
 

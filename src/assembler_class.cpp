@@ -152,8 +152,6 @@ void Assembler::lex()
 
 
 	// Find assembler directives
-	//#define VALUE(some_str)
-
 	if (next_char() == '.')
 	{
 		advance();
@@ -202,7 +200,17 @@ void Assembler::lex()
 	LIST_OF_SINGLE_CHAR_OPERATOR_TOKENS(TOKEN_STUFF)
 
 	#undef TOKEN_STUFF
-	//#undef VALUE
+
+
+	//// Find a .define name
+	//if (next_char() == '`')
+	//{
+	//	next_str = "";
+	//	next_str += next_char();
+	//	advance();
+
+	//	if (isalpha(next_char())
+	//}
 
 	// Find an identifier
 	if (isalpha(next_char()) || (next_char() == '_'))
@@ -245,11 +253,9 @@ void Assembler::lex()
 				(next_tok() == &Tok::varname) ||
 			if (LIST_OF_EQUATE_DIRECTIVE_TOKENS(TOKEN_STUFF) false)
 			{
-				//printout("Test\n");
-				to_insert.set_type(SymType::Equate);
+				to_insert.set_type(SymType::EquateName);
 			}
 			#undef TOKEN_STUFF
-
 			else
 			{
 				to_insert.set_type(SymType::Other);
@@ -507,12 +513,7 @@ void Assembler::line()
 		return;
 	}
 
-	//else if ((parse_vec.front().next_tok == &Tok::DotDefine)
-	//	|| (parse_vec.front().next_tok == &Tok::DotDefn))
-	//#define VARNAME(some_tok) \
-	//	(parse_vec.front().next_tok == &Tok::some_tok) ||
-	//#define VALUE(some_tok) 
-	
+
 	#define TOKEN_STUFF(varname, value) \
 		(parse_vec.front().next_tok == &Tok::varname) ||
 	else if (LIST_OF_EQUATE_DIRECTIVE_TOKENS(TOKEN_STUFF) false)
@@ -534,7 +535,7 @@ void Assembler::line()
 		//	"\n");
 
 		if (user_sym_tbl().at(parse_vec.at(1).next_sym_str).type() 
-			!= SymType::Equate)
+			!= SymType::EquateName)
 		{
 			err("Can't convert a label to an equate!");
 		}
@@ -546,6 +547,12 @@ void Assembler::line()
 		user_sym_tbl().at(parse_vec.at(1).next_sym_str).set_value
 			(expr_result);
 
+		return;
+	}
+
+	else if (parse_vec.front().next_tok == &Tok::DotDefine)
+	{
+		
 		return;
 	}
 	}
@@ -562,7 +569,7 @@ void Assembler::line()
 			found_label = true;
 
 			if (user_sym_tbl().at(parse_vec.at(0).next_sym_str).type()
-				== SymType::Equate)
+				== SymType::EquateName)
 			{
 				err("Can't use an equate as a label!");
 			}

@@ -6,6 +6,7 @@
 
 
 #include "symbol_table_class.hpp"
+#include "define_table_class.hpp"
 
 
 namespace flare32
@@ -42,6 +43,7 @@ private:		// classes
 
 private:		// variables
 	SymbolTable __builtin_sym_tbl, __user_sym_tbl;
+	DefineTable __define_tbl;
 	InstructionTable __instr_tbl;
 
 
