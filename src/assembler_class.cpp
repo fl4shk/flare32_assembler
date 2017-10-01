@@ -18,12 +18,13 @@ Assembler::Assembler(char* s_input_filename)
 
 int Assembler::operator () ()
 {
+	set_pass(0);
 	fill_lines();
 	find_defines();
 	expand_defines();
 
 	// Two passes
-	for (set_pass(0); pass() < 2; set_pass(pass() + 1))
+	for (set_pass(1); pass() <= last_pass; set_pass(pass() + 1))
 	{
 		reinit();
 
@@ -576,68 +577,77 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 	// Check for assembler directives
 	if (parse_vec.front().next_tok == &Tok::DotOrg)
 	{
-		// .org expr
-		set_addr(handle_expr(parse_vec, index));
-
-		if (index != parse_vec.size())
+		if (pass() > 0)
 		{
-			err("extra characters on line");
+			// .org expr
+			set_addr(handle_expr(parse_vec, index));
+
+			if (index != parse_vec.size())
+			{
+				err("extra characters on line");
+			}
 		}
 
 		return;
 	}
 	else if (parse_vec.front().next_tok == &Tok::DotB)
 	{
-		// .db expr
-		// .db expr, expr2
-		// .db expr, expr2, ...
-		for (;;)
+		if (pass() > 0)
 		{
-			gen8(handle_expr(parse_vec, index));
-			if (pass() == 1)
+			// .db expr
+			// .db expr, expr2
+			// .db expr, expr2, ...
+			for (;;)
 			{
-				printout("\n");
-			}
+				gen8(handle_expr(parse_vec, index));
+				if (pass() == last_pass)
+				{
+					printout("\n");
+				}
 
-			if (index >= parse_vec.size())
-			{
-				break;
-			}
-			
-			if (parse_vec.at(index).next_tok != &Tok::Comma)
-			{
-				eek();
-			}
+				if (index >= parse_vec.size())
+				{
+					break;
+				}
+				
+				if (parse_vec.at(index).next_tok != &Tok::Comma)
+				{
+					eek();
+				}
 
-			++index;
+				++index;
+			}
 		}
 
 		return;
 	}
 	else if (parse_vec.front().next_tok == &Tok::DotW)
 	{
-		// .dw expr
-		// .dw expr, expr2
-		// .dw expr, expr2, ...
-		for (;;)
+		if (pass() > 0)
 		{
-			gen32(handle_expr(parse_vec, index));
-			if (pass() == 1)
+			// .dw expr
+			// .dw expr, expr2
+			// .dw expr, expr2, ...
+			for (;;)
 			{
-				printout("\n");
-			}
+				gen32(handle_expr(parse_vec, index));
+				if (pass() == last_pass)
+				{
+					printout("\n");
+				}
 
-			if (index >= parse_vec.size())
-			{
-				break;
-			}
-			
-			if (parse_vec.at(index).next_tok != &Tok::Comma)
-			{
-				eek();
-			}
+				if (index >= parse_vec.size())
+				{
+					break;
+				}
+				
+				if (parse_vec.at(index).next_tok != &Tok::Comma)
+				{
+					eek();
+				}
 
-			++index;
+				++index;
+			}
 		}
 
 		return;
@@ -723,6 +733,11 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 				{
 					to_insert.text().push_back(parse_vec.at(i)
 						.next_sym_str + '\n');
+				}
+				else if (parse_vec.at(i).next_tok == &Tok::NatNum)
+				{
+					to_insert.text().push_back(std::to_string
+						(parse_vec.at(i).next_num) + '\n');
 				}
 				else
 				{
@@ -1017,11 +1032,14 @@ void Assembler::expand_defines()
 				some_next_sym_str, some_next_num, some_line_num, 
 				outer_index, inner_index, &defn.text());
 
-			if (some_next_tok != &Tok::Eof)
+			if ((some_next_tok != &Tok::Newline)
+				&& (some_next_tok != &Tok::Eof))
 			{
 				parse_vec.push_back(ParseNode(some_next_tok,
 					some_next_sym_str, some_next_num));
 			}
+			
+			printout("");
 		}
 
 		// Erase the define instance
@@ -1029,14 +1047,25 @@ void Assembler::expand_defines()
 
 		for (const auto& parse_iter : parse_vec)
 		{
+			printout(parse_iter.next_tok->str(), " ",
+				parse_iter.next_sym_str, " ");
 			if (tok_is_ident_ish(parse_iter.next_tok))
 			{
+				printout("Test1\n");
 				iter.insert(i, parse_iter.next_sym_str + " ");
 				i += parse_iter.next_sym_str.size() 
 					+ std::string(" ").size();
 			}
+			else if (parse_iter.next_tok == &Tok::NatNum)
+			{
+				printout("Test2\n");
+				std::string str = std::to_string(parse_iter.next_num);
+				iter.insert(i, str + " ");
+				i += str.size() + std::string(" ").size();
+			}
 			else
 			{
+				printout("Test3\n");
 				iter.insert(i, parse_iter.next_tok->str() + " ");
 				i += parse_iter.next_tok->str().size() 
 					+ std::string(" ").size();
@@ -1048,7 +1077,6 @@ void Assembler::expand_defines()
 	for (std::string& iter : __lines)
 	{
 		//printout(iter);
-		printout("Before:  \"", iter, "\n");
 		// Yes, this is dumb
 		for (;;)
 		{
@@ -1061,8 +1089,10 @@ void Assembler::expand_defines()
 					Define defn;
 
 					const size_t old_i = i;
+					printout("Before:  \"", iter, "\"\n");
 					attempt_find_defn(iter, i, defn);
 					attempt_expand_defn(iter, old_i, i, defn);
+					printout("After:  \"", iter, "\"\n");
 
 
 
@@ -1081,7 +1111,6 @@ void Assembler::expand_defines()
 			}
 		}
 
-		printout("After:  \"", iter, "\n");
 	}
 
 	//for (std::string& iter : __lines)
@@ -2424,7 +2453,7 @@ s64 Assembler::handle_factor(const std::vector<ParseNode>& some_parse_vec,
 				break;
 
 			case SymType::DefineName:
-				err("Can't use a define in an expression!");
+				//err("Can't use a define in an expression!");
 				break;
 
 			case SymType::MacroName:
@@ -2729,7 +2758,7 @@ void Assembler::encode_and_gen
 	gen16(high_hword);
 	__gen_low(g1g2_low, g3_low, instr);
 
-	if (pass() == 1)
+	if (pass() == last_pass)
 	{
 		printout("\n");
 	}
@@ -2763,7 +2792,7 @@ void Assembler::__gen_low(u16 g1g2_low, u32 g3_low, PInstr instr)
 
 void Assembler::gen8(s32 v)
 {
-	if (pass() == 1)
+	if (pass() == last_pass)
 	{
 		if (last_addr() != addr())
 		{

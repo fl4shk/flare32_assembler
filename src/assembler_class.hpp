@@ -43,6 +43,7 @@ private:		// classes
 
 private:		// variables
 	static constexpr size_t define_expand_max_depth = 256;
+	static constexpr size_t last_pass = 2;
 	SymbolTable __builtin_sym_tbl, __user_sym_tbl;
 	DefineTable __define_tbl;
 	InstructionTable __instr_tbl;
