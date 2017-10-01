@@ -21,6 +21,9 @@ int Assembler::operator () ()
 	// Two passes
 	for (set_pass(0); pass() < 2; set_pass(pass() + 1))
 	{
+		find_defines();
+		expand_defines();
+
 		reinit();
 
 		advance();
@@ -107,10 +110,11 @@ void Assembler::need(const std::vector<ParseNode>& some_parse_vec,
 	}
 }
 
-void Assembler::__advance_innards(int& some_next_char, size_t& some_index, 
+void Assembler::__advance_innards(int& some_next_char, 
 	PTok& some_next_tok, std::string& some_next_sym_str,
-	s64& some_next_num, size_t& some_line_num, FILE* some_infile, 
-	std::string* some_str)
+	s64& some_next_num, size_t& some_line_num,  
+	size_t& some_outer_index, size_t& some_inner_index,
+	std::vector<std::string>* some_str_vec)
 {
 	auto next_char = [&]() -> int
 	{
@@ -122,16 +126,6 @@ void Assembler::__advance_innards(int& some_next_char, size_t& some_index,
 		some_next_char = n_next_char;
 	};
 
-	auto index = [&]() -> size_t
-	{
-		return some_index;
-	};
-
-	auto set_index = [&](size_t n_index) -> void
-	{
-		some_index = n_index;
-	};
-
 
 	auto set_next_tok = [&](PTok tok) -> void
 	{
@@ -139,27 +133,36 @@ void Assembler::__advance_innards(int& some_next_char, size_t& some_index,
 	};
 
 
-	auto infile = [&]() -> FILE*
-	{
-		return some_infile;
-	};
 
 
-	if (next_char() == EOF)
+	if (some_str_vec == nullptr)
 	{
-		set_next_tok(&Tok::Eof);
-		return;
-	}
+		if (next_char() == EOF)
+		{
+			set_next_tok(&Tok::Eof);
+			return;
+		}
 
-	if (some_str == nullptr)
-	{
 		//set_next_char(getchar());
 		set_next_char(getc(infile()));
 	}
-	else // if (some_str != nullptr)
+	else // if (some_str_vec != nullptr)
 	{
-		set_next_char((*some_str)[index()]);
-		set_index(index() + 1);
+		if (some_inner_index >= some_str_vec->at(some_outer_index).size())
+		{
+			some_inner_index = 0;
+			++some_outer_index;
+		}
+
+		if (some_outer_index >= some_str_vec->size())
+		{
+			set_next_char(EOF);
+			set_next_tok(&Tok::Eof);
+			return;
+		}
+
+		set_next_char((*some_str_vec).at(some_outer_index)
+			.at(some_inner_index++));
 	}
 
 	if (next_char() == '\n')
@@ -170,10 +173,11 @@ void Assembler::__advance_innards(int& some_next_char, size_t& some_index,
 
 
 
-void Assembler::__lex_innards(int& some_next_char, size_t& some_index, 
+void Assembler::__lex_innards(int& some_next_char, 
 	PTok& some_next_tok, std::string& some_next_sym_str,
-	s64& some_next_num, size_t& some_line_num, FILE* some_infile, 
-	std::string* some_str)
+	s64& some_next_num, size_t& some_line_num,  
+	size_t& some_outer_index, size_t& some_inner_index,
+	std::vector<std::string>* some_str_vec)
 {
 	auto next_char = [&]() -> int
 	{
@@ -211,9 +215,9 @@ void Assembler::__lex_innards(int& some_next_char, size_t& some_index,
 
 	auto call_advance = [&]() -> void
 	{
-		__advance_innards(some_next_char, some_index, some_next_tok,
-			some_next_sym_str, some_next_num, some_line_num, some_infile, 
-			nullptr);
+		__advance_innards(some_next_char, some_next_tok,
+			some_next_sym_str, some_next_num, some_line_num,  
+			some_outer_index, some_inner_index, some_str_vec);
 	};
 
 
@@ -337,7 +341,8 @@ void Assembler::__lex_innards(int& some_next_char, size_t& some_index,
 				// set_next_tok() yet.
 				if (next_tok() != &Tok::DotDefine)
 				{
-					err("Undefined .define");
+					err("Undefined .define (perhaps just not YET ",
+						"defined?)");
 				}
 
 				Symbol to_insert(next_str, &Tok::Ident, 0,
@@ -628,7 +633,7 @@ void Assembler::line()
 	else if (LIST_OF_EQUATE_DIRECTIVE_TOKENS(TOKEN_STUFF) false)
 	{
 	#undef TOKEN_STUFF
-		// .define ident expr
+		// .equate ident expr
 		if (parse_vec.size() < 3)
 		{
 			eek();
@@ -681,6 +686,11 @@ void Assembler::line()
 				== SymType::EquateName)
 			{
 				err("Can't use an equate as a label!");
+			}
+			else if (user_sym_tbl().at(parse_vec.at(0).next_sym_str)
+				.type() != SymType::Other)
+			{
+				err("Invalid label name!");
 			}
 
 			// Update the value of the label in the user symbol table.
@@ -751,6 +761,7 @@ void Assembler::finish_line
 	//set_addr(addr() + 4);
 	//}
 
+
 	if (some_parse_vec.at(0).next_tok != &Tok::Instr)
 	{
 		expected_tokens(&Tok::Instr);
@@ -778,6 +789,14 @@ void Assembler::finish_line
 	}
 
 }
+
+void Assembler::find_defines()
+{
+}
+void Assembler::expand_defines()
+{
+}
+
 
 
 bool Assembler::parse_instr(PInstr instr,
@@ -2101,9 +2120,30 @@ s64 Assembler::handle_factor(const std::vector<ParseNode>& some_parse_vec,
 		// we're not asking for a user symbol
 		const Symbol& sym = user_sym_tbl().at(some_parse_vec.at(index)
 			.next_sym_str);
-		s64 ret = sym.value();
-		//lex();
-		++index;
+		s64 ret;
+
+		switch (sym.type())
+		{
+			case SymType::Other:
+			case SymType::EquateName:
+				ret = sym.value();
+				//lex();
+				++index;
+				break;
+
+			case SymType::DefineName:
+				err("Can't use a define in an expression!");
+				break;
+
+			case SymType::MacroName:
+				err("Can't use a macro in an expression!");
+				break;
+
+			default:
+				err("handle_factor():  Eek!");
+				break;
+		}
+		
 		return ret;
 	}
 

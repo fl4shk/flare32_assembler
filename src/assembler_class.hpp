@@ -42,6 +42,7 @@ private:		// classes
 	};
 
 private:		// variables
+	static constexpr size_t define_expand_max_depth = 256;
 	SymbolTable __builtin_sym_tbl, __user_sym_tbl;
 	DefineTable __define_tbl;
 	InstructionTable __instr_tbl;
@@ -142,32 +143,36 @@ private:		// functions
 	void need(const std::vector<ParseNode>& some_parse_vec, size_t& index, 
 		PTok tok);
 
-	void __advance_innards(int& some_next_char, size_t& some_index, 
+	void __advance_innards(int& some_next_char, 
 		PTok& some_next_tok, std::string& some_next_sym_str,
-		s64& some_next_num, size_t& some_line_num, FILE* some_infile, 
-		std::string* some_str=nullptr);
-	void __lex_innards(int& some_next_char, size_t& some_index, 
+		s64& some_next_num, size_t& some_line_num,
+		size_t& some_outer_index, size_t& some_inner_index,
+		std::vector<std::string>* some_str_vec=nullptr);
+	void __lex_innards(int& some_next_char, 
 		PTok& some_next_tok, std::string& some_next_sym_str,
-		s64& some_next_num, size_t& some_line_num, FILE* some_infile, 
-		std::string* some_str=nullptr);
+		s64& some_next_num, size_t& some_line_num,
+		size_t& some_outer_index, size_t& some_inner_index,
+		std::vector<std::string>* some_str_vec=nullptr);
 	inline void advance()
 	{
-		size_t temp_index;
-		__advance_innards(__next_char, temp_index, __next_tok,
-			__next_sym_str, __next_num, __line_num, __infile, nullptr);
+		size_t temp_outer_index, temp_inner_index;
+		__advance_innards(__next_char, __next_tok,
+			__next_sym_str, __next_num, __line_num, 
+			temp_outer_index, temp_inner_index, nullptr);
 	}
 	inline void lex()
 	{
-		size_t temp_index;
-		__lex_innards(__next_char, temp_index, __next_tok, __next_sym_str,
-			__next_num, __line_num, __infile, nullptr);
+		size_t temp_outer_index, temp_inner_index;
+		__lex_innards(__next_char, __next_tok,
+			__next_sym_str, __next_num, __line_num, 
+			temp_outer_index, temp_inner_index, nullptr);
 	}
 
 	void line();
 	void finish_line(const std::vector<ParseNode>& some_parse_vec);
-	void parse_define_instance
-		(const std::vector<ParseNode>& some_parse_vec,
-		size_t& define_name_index);
+
+	void find_defines();
+	void expand_defines();
 
 
 	bool parse_instr(PInstr instr, 
