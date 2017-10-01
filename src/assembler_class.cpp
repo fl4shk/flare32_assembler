@@ -748,6 +748,22 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 		define_tbl().insert_or_assign(to_insert);
 
 
+		size_t where = 0;
+
+		for (auto iter=__lines.begin(); iter!=__lines.end(); ++iter)
+		{
+			++where;
+			//printout("searching:  ", *iter);
+			if (where == some_outer_index - 1)
+			{
+				//printout("That's it\n");
+				__lines.erase(iter);
+				break;
+			}
+		}
+
+
+
 
 		return;
 	}
@@ -1008,16 +1024,37 @@ void Assembler::expand_defines()
 			}
 		}
 
+		// Erase the define instance
+		iter.erase(i, defn.name().size() + sizeof('(') + sizeof(')'));
+
+		for (const auto& parse_iter : parse_vec)
+		{
+			if (tok_is_ident_ish(parse_iter.next_tok))
+			{
+				iter.insert(i, parse_iter.next_sym_str + " ");
+				i += parse_iter.next_sym_str.size() 
+					+ std::string(" ").size();
+			}
+			else
+			{
+				iter.insert(i, parse_iter.next_tok->str() + " ");
+				i += parse_iter.next_tok->str().size() 
+					+ std::string(" ").size();
+			}
+		}
+
 	};
 	
 	for (std::string& iter : __lines)
 	{
+		//printout(iter);
+		printout("Before:  \"", iter, "\n");
 		// Yes, this is dumb
 		for (;;)
 		{
 			bool found_define = false;
 
-			for (size_t i=0; i<iter.size(); ++i)
+			for (size_t i=0; i<iter.size(); )
 			{
 				if (iter.at(i) == '`')
 				{
@@ -1032,6 +1069,10 @@ void Assembler::expand_defines()
 					found_define = true;
 					break;
 				}
+				else
+				{
+					++i;
+				}
 			}
 
 			if (!found_define)
@@ -1039,7 +1080,13 @@ void Assembler::expand_defines()
 				break;
 			}
 		}
+
+		printout("After:  \"", iter, "\n");
 	}
+
+	//for (std::string& iter : __lines)
+	//{
+	//}
 }
 
 
