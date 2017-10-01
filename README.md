@@ -28,18 +28,18 @@ Insert a series of expressions, encoded as 32-bit values:
 ```
 
 
-Define a symbol (can't have same name as label):
+Equate a symbol (can't have same name as label):
 ```
-.define nice 5
-.define nice nice + 1 ; redefines nice as 6 because defines are evaluated
+.equate nice 5
+.equate nice nice + 1 ; re-equates nice as 6 because equates are evaluated
                       ; immediately
 ```
-Defined symbols can be assigned the value of an expression, which does mean
-you can use a label in a define.
+Equated symbols can be assigned the value of an expression, which does mean
+you can use a label as part of the value of an equate.
 
-As mentioned before, defines are evaluated immediately.
+As mentioned before, equates are evaluated immediately.
 
-It is also possible to use ```.defn``` instead of ```.define``` for
+It is also possible to use ```.equ``` instead of ```.equate``` for
 shorthand purposes.
 
 

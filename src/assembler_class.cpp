@@ -241,12 +241,15 @@ void Assembler::lex()
 
 			// Need to use next_tok() here because we haven't
 			// set_next_tok() yet.
-			if ((next_tok() == &Tok::DotDefine)
-				|| (next_tok() == &Tok::DotDefn))
+			#define VARNAME(some_tok) (next_tok() == &Tok::some_tok) ||
+			#define VALUE(some_tok)
+			if (LIST_OF_EQUATE_DIRECTIVE_TOKENS(VARNAME, VALUE) false)
 			{
 				//printout("Test\n");
-				to_insert.set_type(SymType::Define);
+				to_insert.set_type(SymType::Equate);
 			}
+			#undef VARNAME
+			#undef VALUE
 
 			else
 			{
@@ -505,9 +508,15 @@ void Assembler::line()
 		return;
 	}
 
-	else if ((parse_vec.front().next_tok == &Tok::DotDefine)
-		|| (parse_vec.front().next_tok == &Tok::DotDefn))
+	//else if ((parse_vec.front().next_tok == &Tok::DotDefine)
+	//	|| (parse_vec.front().next_tok == &Tok::DotDefn))
+	#define VARNAME(some_tok) \
+		(parse_vec.front().next_tok == &Tok::some_tok) ||
+	#define VALUE(some_tok) 
+	else if (LIST_OF_EQUATE_DIRECTIVE_TOKENS(VARNAME, VALUE) false)
 	{
+	#undef VARNAME
+	#undef VALUE
 		// .define ident expr
 		if (parse_vec.size() < 3)
 		{
@@ -524,9 +533,9 @@ void Assembler::line()
 		//	"\n");
 
 		if (user_sym_tbl().at(parse_vec.at(1).next_sym_str).type() 
-			!= SymType::Define)
+			!= SymType::Equate)
 		{
-			err("Can't redefine a label!");
+			err("Can't convert a label to an equate!");
 		}
 
 		index = 2;
@@ -552,9 +561,9 @@ void Assembler::line()
 			found_label = true;
 
 			if (user_sym_tbl().at(parse_vec.at(0).next_sym_str).type()
-				== SymType::Define)
+				== SymType::Equate)
 			{
-				err("Can't use a define as a label!");
+				err("Can't use an equate as a label!");
 			}
 
 			// Update the value of the label in the user symbol table.

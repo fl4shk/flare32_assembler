@@ -11,7 +11,7 @@ namespace flare32
 enum class SymType
 {
 	Other,
-	Define,
+	Equate,
 };
 
 class Symbol
