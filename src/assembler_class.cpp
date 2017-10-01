@@ -18,20 +18,22 @@ Assembler::Assembler(char* s_input_filename)
 
 int Assembler::operator () ()
 {
+	fill_lines();
+	expand_defines();
+
 	// Two passes
 	for (set_pass(0); pass() < 2; set_pass(pass() + 1))
 	{
-		find_defines();
-		expand_defines();
-
 		reinit();
 
-		advance();
-		lex();
+		size_t outer_index = 0, inner_index = 0;
+
+		//advance(outer_index, inner_index, true);
+		lex(outer_index, inner_index, true);
 
 		while (next_tok() != &Tok::Eof)
 		{
-			line();
+			line(outer_index, inner_index, false);
 		}
 
 		//printout("\n\n");
@@ -134,7 +136,6 @@ void Assembler::__advance_innards(int& some_next_char,
 
 
 
-
 	if (some_str_vec == nullptr)
 	{
 		if (next_char() == EOF)
@@ -148,21 +149,20 @@ void Assembler::__advance_innards(int& some_next_char,
 	}
 	else // if (some_str_vec != nullptr)
 	{
-		if (some_inner_index >= some_str_vec->at(some_outer_index).size())
-		{
-			some_inner_index = 0;
-			++some_outer_index;
-		}
-
 		if (some_outer_index >= some_str_vec->size())
 		{
 			set_next_char(EOF);
 			set_next_tok(&Tok::Eof);
 			return;
 		}
-
 		set_next_char((*some_str_vec).at(some_outer_index)
 			.at(some_inner_index++));
+
+		if (some_inner_index >= some_str_vec->at(some_outer_index).size())
+		{
+			some_inner_index = 0;
+			++some_outer_index;
+		}
 	}
 
 	if (next_char() == '\n')
@@ -520,17 +520,31 @@ void Assembler::__lex_innards(int& some_next_char,
 	set_next_tok(&Tok::Bad);
 }
 
-void Assembler::line()
+void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
+	bool just_find_defines)
 {
 	std::vector<ParseNode> parse_vec, second_parse_vec;
+	auto call_lex = [&]() -> void
+	{
+		lex(some_outer_index, some_inner_index, !just_find_defines);
+	};
+
 
 	while ((next_tok() != &Tok::Newline) && (next_tok() != &Tok::Eof)
 		&& (next_tok() != &Tok::Bad))
 	{
 		parse_vec.push_back(ParseNode(next_tok(), next_sym_str(),
 			next_num()));
-		lex();
+
+		//lex(!just_find_defines);
+		call_lex();
 	}
+
+	//for (size_t i=0; i<parse_vec.size(); ++i)
+	//{
+	//	printout(parse_vec.at(i).next_tok->str(), " ");
+	//}
+	//printout("\n");
 
 	if (next_tok() == &Tok::Bad)
 	{
@@ -540,7 +554,8 @@ void Assembler::line()
 
 	if (parse_vec.size() == 0)
 	{
-		lex();
+		//lex(!just_find_defines);
+		call_lex();
 		return;
 	}
 
@@ -733,7 +748,8 @@ void Assembler::line()
 	#undef TOKEN_STUFF
 
 	finish_line(second_parse_vec);
-	lex();
+	//lex(!just_find_defines);
+	call_lex();
 }
 
 
@@ -790,9 +806,32 @@ void Assembler::finish_line
 
 }
 
-void Assembler::find_defines()
+void Assembler::fill_lines()
 {
+	reinit();
+
+	std::string some_line;
+
+	size_t outer_index = 0, inner_index = 0;
+
+	while (next_tok() != &Tok::Eof)
+	{
+		advance(outer_index, inner_index);
+
+		some_line += next_char();
+		if (next_char() == '\n')
+		{
+			__lines.push_back(some_line);
+			some_line = "";
+		}
+	}
+
+	//for (size_t i=0; i<__lines.size(); ++i)
+	//{
+	//	printout(__lines.at(i));
+	//}
 }
+
 void Assembler::expand_defines()
 {
 }

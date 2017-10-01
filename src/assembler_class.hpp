@@ -47,6 +47,8 @@ private:		// variables
 	DefineTable __define_tbl;
 	InstructionTable __instr_tbl;
 
+	std::vector<std::string> __lines;
+
 
 	// Where are we in the generated binary?
 	size_t __addr = 0, __last_addr = -1;
@@ -153,25 +155,28 @@ private:		// functions
 		s64& some_next_num, size_t& some_line_num,
 		size_t& some_outer_index, size_t& some_inner_index,
 		std::vector<std::string>* some_str_vec=nullptr);
-	inline void advance()
+	inline void advance(size_t& some_outer_index, size_t& some_inner_index,
+		bool use_lines=false)
 	{
-		size_t temp_outer_index, temp_inner_index;
 		__advance_innards(__next_char, __next_tok,
 			__next_sym_str, __next_num, __line_num, 
-			temp_outer_index, temp_inner_index, nullptr);
+			some_outer_index, some_inner_index,
+			(use_lines ? &__lines : nullptr));
 	}
-	inline void lex()
+	inline void lex(size_t& some_outer_index, size_t& some_inner_index,
+		bool use_lines=false)
 	{
-		size_t temp_outer_index, temp_inner_index;
 		__lex_innards(__next_char, __next_tok,
 			__next_sym_str, __next_num, __line_num, 
-			temp_outer_index, temp_inner_index, nullptr);
+			some_outer_index, some_inner_index,
+			(use_lines ? &__lines : nullptr));
 	}
 
-	void line();
+	void line(size_t& some_outer_index, size_t& some_inner_index, 
+		bool just_find_defines=false);
 	void finish_line(const std::vector<ParseNode>& some_parse_vec);
 
-	void find_defines();
+	void fill_lines();
 	void expand_defines();
 
 
