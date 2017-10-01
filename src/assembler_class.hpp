@@ -62,7 +62,7 @@ private:		// variables
 	std::string __next_sym_str;
 	s64 __next_num = -1;
 
-	//bool __changed = false;
+	bool __changed = false;
 	s32 __pass = 0;
 
 	char* __input_filename = nullptr;
@@ -88,6 +88,7 @@ private:		// functions
 	gen_getter_and_setter_by_val(next_tok);
 	gen_getter_and_setter_by_con_ref(next_sym_str);
 	gen_getter_and_setter_by_val(next_num);
+	gen_getter_and_setter_by_val(changed);
 	gen_getter_and_setter_by_val(pass);
 	gen_getter_and_setter_by_val(input_filename);
 	gen_getter_and_setter_by_val(infile);
@@ -300,6 +301,9 @@ private:		// functions
 	void __gen_low(u16 g1g2_low, u32 g3_low, PInstr instr);
 	void encode_and_gen(const std::vector<std::string>& regs, 
 		s64 expr_result, PInstr instr);
+	
+	void split(std::vector<ParseNode>& ret, 
+		std::vector<std::string>& to_split);
 
 
 

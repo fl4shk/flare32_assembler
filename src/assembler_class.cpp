@@ -21,7 +21,8 @@ int Assembler::operator () ()
 	set_pass(0);
 	fill_lines();
 	find_defines();
-	expand_defines();
+
+	printout("Made it past the find_defines()\n");
 
 	// Two passes
 	for (set_pass(1); pass() <= last_pass; set_pass(pass() + 1))
@@ -763,19 +764,29 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 		define_tbl().insert_or_assign(to_insert);
 
 
-		size_t where = 0;
+		//size_t where = 0;
 
-		for (auto iter=__lines.begin(); iter!=__lines.end(); ++iter)
-		{
-			++where;
-			//printout("searching:  ", *iter);
-			if (where == some_outer_index - 1)
-			{
-				//printout("That's it\n");
-				__lines.erase(iter);
-				break;
-			}
-		}
+		//for (auto line_iter=__lines.begin(); 
+		//	line_iter!=__lines.end(); 
+		//	++line_iter)
+		//{
+		//	++where;
+		//	printout("searching:  ", *line_iter);
+		//	//if (where == some_outer_index - 1)
+		//	//{
+		//	//	printout("That's it\n");
+		//	//	//__lines.erase(line_iter);
+
+		//	//	// sneaky comment insertion
+		//	//	line_iter->insert(0, "@");
+
+		//	//	printout(*line_iter, "\n\n");
+		//	//	break;
+		//	//}
+
+		//	printout(where, "\n");
+
+		//}
 
 
 
@@ -932,15 +943,29 @@ void Assembler::fill_lines()
 
 void Assembler::find_defines()
 {
-	reinit();
-
-	size_t outer_index = 0, inner_index = 0;
-	lex(outer_index, inner_index, true);
-
-	while (next_tok() != &Tok::Eof)
+	size_t define_expand_depth = 0;
+	do
 	{
-		line(outer_index, inner_index, true);
-	}
+		if (define_expand_depth >= define_expand_max_depth)
+		{
+			err("Cannot resolve .defines\n");
+		}
+
+		set_changed(false);
+		reinit();
+
+		size_t outer_index = 0, inner_index = 0;
+		lex(outer_index, inner_index, true);
+
+		while (next_tok() != &Tok::Eof)
+		{
+			line(outer_index, inner_index, true);
+		}
+
+		expand_defines();
+
+		++define_expand_depth;
+	} while (changed());
 }
 
 void Assembler::expand_defines()
@@ -957,6 +982,7 @@ void Assembler::expand_defines()
 
 		if (i >= iter.size())
 		{
+			printout("Test1\n");
 			eek();
 		}
 
@@ -988,6 +1014,7 @@ void Assembler::expand_defines()
 
 			if (!define_tbl().contains(next_str))
 			{
+				printout("Test2\n");
 				eek();
 			}
 
@@ -998,8 +1025,29 @@ void Assembler::expand_defines()
 				err(".defines with arguments not yet supported!");
 			}
 
-			if ((iter.at(i++) != '(') || (iter.at(i++) != ')'))
+			//if ((iter.at(i++) != '(') || (iter.at(i++) != ')'))
+			//{
+			//	eek();
+			//}
+
+			while (isspace(iter.at(i)))
 			{
+				++i;
+			}
+			if (iter.at(i++) != '(')
+			{
+				printout("Couldn't find \"(\"\n");
+				eek();
+			}
+
+			while (isspace(iter.at(i)))
+			{
+				++i;
+			}
+
+			if (iter.at(i++) != ')')
+			{
+				printout("Couldn't find \")\"\n");
 				eek();
 			}
 
@@ -1016,56 +1064,71 @@ void Assembler::expand_defines()
 	{
 		i = old_i;
 
-		std::vector<ParseNode> parse_vec;
-		size_t outer_index = 0, inner_index = 0;
-
-		int some_next_char = ' ';
-		PTok some_next_tok = nullptr;
-		std::string some_next_sym_str;
-		s64 some_next_num = -1;
-		size_t some_line_num = 0;
+		std::vector<ParseNode> text_parse_vec, line_parse_vec;
+		std::vector<std::string> iter_vec({iter});
 
 
-		while (some_next_tok != &Tok::Eof)
-		{
-			__lex_innards(some_next_char, some_next_tok,
-				some_next_sym_str, some_next_num, some_line_num, 
-				outer_index, inner_index, &defn.text());
+		split(text_parse_vec, defn.text());
+		split(line_parse_vec, iter_vec);
 
-			if ((some_next_tok != &Tok::Newline)
-				&& (some_next_tok != &Tok::Eof))
-			{
-				parse_vec.push_back(ParseNode(some_next_tok,
-					some_next_sym_str, some_next_num));
-			}
-			
-			printout("");
-		}
 
 		// Erase the define instance
-		iter.erase(i, defn.name().size() + sizeof('(') + sizeof(')'));
+		//iter.erase(i, defn.name().size() + sizeof('(') + sizeof(')'));
 
-		for (const auto& parse_iter : parse_vec)
 		{
-			printout(parse_iter.next_tok->str(), " ",
-				parse_iter.next_sym_str, " ");
+			size_t j = i;
+			iter.erase(j, defn.name().size());
+
+			while (isspace(iter.at(j)))
+			{
+				//printout("Erasing...\n");
+				iter.erase(j, 1);
+			}
+
+			if (iter.at(j) != '(')
+			{
+				printout("Type 2:  Couldn't find \"(\"\n");
+				printout(iter.at(j), "\n");
+				eek();
+			}
+
+			iter.erase(j, 1);
+
+			while (isspace(iter.at(j)))
+			{
+				//printout("Erasing...\n");
+				iter.erase(j, 1);
+			}
+
+			if (iter.at(j) != ')')
+			{
+				printout("Type 2:  Couldn't find \")\"\n");
+				printout(iter.at(j), "\n");
+				eek();
+			}
+
+			iter.erase(j, 1);
+
+		}
+
+		for (const auto& parse_iter : text_parse_vec)
+		{
+			//printout(parse_iter.next_tok->str(), " ",
+			//	parse_iter.next_sym_str, " ");
 			if (tok_is_ident_ish(parse_iter.next_tok))
 			{
-				printout("Test1\n");
 				iter.insert(i, parse_iter.next_sym_str + " ");
 				i += parse_iter.next_sym_str.size() 
 					+ std::string(" ").size();
 			}
 			else if (parse_iter.next_tok == &Tok::NatNum)
 			{
-				printout("Test2\n");
 				std::string str = std::to_string(parse_iter.next_num);
 				iter.insert(i, str + " ");
 				i += str.size() + std::string(" ").size();
 			}
 			else
 			{
-				printout("Test3\n");
 				iter.insert(i, parse_iter.next_tok->str() + " ");
 				i += parse_iter.next_tok->str().size() 
 					+ std::string(" ").size();
@@ -1076,16 +1139,27 @@ void Assembler::expand_defines()
 	
 	for (std::string& iter : __lines)
 	{
+		bool found_non_ws = false;
 		//printout(iter);
 		// Yes, this is dumb
 		for (;;)
 		{
-			bool found_define = false;
+			if ((iter.size() >= 1) && (iter.front() == '@'))
+			{
+				break;
+			}
+
+			bool can_break = true;
 
 			for (size_t i=0; i<iter.size(); )
 			{
+				if (iter.front() == '@')
+				{
+					break;
+				}
 				if (iter.at(i) == '`')
 				{
+					set_changed(true);
 					Define defn;
 
 					const size_t old_i = i;
@@ -1096,7 +1170,7 @@ void Assembler::expand_defines()
 
 
 
-					found_define = true;
+					can_break = false;
 					break;
 				}
 				else
@@ -1105,7 +1179,7 @@ void Assembler::expand_defines()
 				}
 			}
 
-			if (!found_define)
+			if (can_break)
 			{
 				break;
 			}
@@ -2787,6 +2861,31 @@ void Assembler::__gen_low(u16 g1g2_low, u32 g3_low, PInstr instr)
 		case 3:
 			gen32(g3_low);
 			break;
+	}
+}
+
+void Assembler::split(std::vector<ParseNode>& ret, 
+	std::vector<std::string>& to_split)
+{
+	size_t outer_index = 0, inner_index = 0;
+	int some_next_char = ' ';
+	PTok some_next_tok = nullptr;
+	std::string some_next_sym_str;
+	s64 some_next_num = -1;
+	size_t some_line_num = 0;
+
+	while (some_next_tok != &Tok::Eof)
+	{
+		__lex_innards(some_next_char, some_next_tok,
+			some_next_sym_str, some_next_num, some_line_num, 
+			outer_index, inner_index, &to_split);
+
+		if ((some_next_tok != &Tok::Newline)
+			&& (some_next_tok != &Tok::Eof))
+		{
+			ret.push_back(ParseNode(some_next_tok,
+				some_next_sym_str, some_next_num));
+		}
 	}
 }
 
