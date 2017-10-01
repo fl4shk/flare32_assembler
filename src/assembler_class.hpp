@@ -177,6 +177,7 @@ private:		// functions
 	void finish_line(const std::vector<ParseNode>& some_parse_vec);
 
 	void fill_lines();
+	void find_defines();
 	void expand_defines();
 
 

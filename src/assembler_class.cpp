@@ -19,6 +19,7 @@ Assembler::Assembler(char* s_input_filename)
 int Assembler::operator () ()
 {
 	fill_lines();
+	find_defines();
 	expand_defines();
 
 	// Two passes
@@ -526,7 +527,7 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 	std::vector<ParseNode> parse_vec, second_parse_vec;
 	auto call_lex = [&]() -> void
 	{
-		lex(some_outer_index, some_inner_index, !just_find_defines);
+		lex(some_outer_index, some_inner_index, true);
 	};
 
 
@@ -570,7 +571,7 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 	{
 	auto eek = [&]() -> void
 	{
-		err("invalid syntax for ", parse_vec.front().next_sym_str);
+		err("invalid syntax for ", parse_vec.front().next_tok->str());
 	};
 	// Check for assembler directives
 	if (parse_vec.front().next_tok == &Tok::DotOrg)
@@ -681,7 +682,65 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 
 	else if (parse_vec.front().next_tok == &Tok::DotDefine)
 	{
-		
+		if (!just_find_defines)
+		{
+			return;
+		}
+
+		// .define ident text
+		// .define ident(args...) text
+
+		if (parse_vec.size() < 4)
+		{
+			eek();
+		}
+
+		if (!tok_is_ident_ish(parse_vec.at(1).next_tok))
+		{
+			eek();
+		}
+
+		if (parse_vec.at(2).next_tok != &Tok::LParen)
+		{
+			eek();
+		}
+
+		Define to_insert;
+
+		to_insert.set_name(parse_vec.at(1).next_sym_str);
+
+		if (parse_vec.at(3).next_tok == &Tok::RParen)
+		{
+			// No arguments, just () stuffs
+			for (size_t i=4; i<parse_vec.size(); ++i)
+			{
+				if (tok_is_ident_ish(parse_vec.at(i).next_tok))
+				{
+					to_insert.text().push_back(parse_vec.at(i)
+						.next_sym_str);
+				}
+				else
+				{
+					to_insert.text().push_back(parse_vec.at(i).next_tok
+						->str());
+				}
+			}
+		}
+
+
+		//if (!tok_is_ident_ish(parse_vec.at(3).next_tok))
+		//{
+		//	eek();
+		//}
+
+
+		// Only allow no argument defines for now
+		else
+		{
+			eek();
+		}
+
+
 		return;
 	}
 	}
@@ -830,6 +889,19 @@ void Assembler::fill_lines()
 	//{
 	//	printout(__lines.at(i));
 	//}
+}
+
+void Assembler::find_defines()
+{
+	reinit();
+
+	size_t outer_index = 0, inner_index = 0;
+	lex(outer_index, inner_index, true);
+
+	while (next_tok() != &Tok::Eof)
+	{
+		line(outer_index, inner_index, true);
+	}
 }
 
 void Assembler::expand_defines()
