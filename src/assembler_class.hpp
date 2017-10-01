@@ -15,6 +15,12 @@ namespace flare32
 class Assembler
 {
 private:		// classes
+	class ParsePos
+	{
+	public:		// variables
+		s64 outer_index = 0;
+		s64 inner_index = 0;
+	};
 	class ParseNode
 	{
 	public:		// variables
@@ -156,7 +162,8 @@ private:		// functions
 		PTok& some_next_tok, std::string& some_next_sym_str,
 		s64& some_next_num, size_t& some_line_num,
 		size_t& some_outer_index, size_t& some_inner_index,
-		std::vector<std::string>* some_str_vec=nullptr);
+		std::vector<std::string>* some_str_vec=nullptr,
+		ParsePos* pos=nullptr);
 	inline void advance(size_t& some_outer_index, size_t& some_inner_index,
 		bool use_lines=false)
 	{
@@ -270,6 +277,7 @@ private:		// functions
 
 	bool tok_is_punct(PTok some_tok) const;
 	bool tok_is_ident_ish(PTok some_tok) const;
+	bool tok_is_comment(PTok some_tok) const;
 
 	//inline bool next_tok_is_punct() const
 	//{
@@ -303,7 +311,8 @@ private:		// functions
 		s64 expr_result, PInstr instr);
 	
 	void split(std::vector<ParseNode>& ret, 
-		std::vector<std::string>& to_split);
+		std::vector<std::string>& to_split,
+		std::vector<ParsePos>* pos_vec=nullptr);
 
 
 
