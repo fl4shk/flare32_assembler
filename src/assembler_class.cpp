@@ -704,24 +704,9 @@ void Assembler::expand_defines()
 				break;
 			}
 
-			//for (const auto& parse_iter : line_parse_vec)
 			for (size_t i=0; i<line_parse_vec.size(); ++i)
 			{
 				const auto& parse_iter = line_parse_vec.at(i);
-
-				//if (tok_is_ident_ish(parse_iter.next_tok))
-				//{
-				//	if (define_tbl().contains(parse_iter.next_sym_str))
-				//	{
-				//		printout("I found .def \"", 
-				//			parse_iter.next_sym_str, "\"\n");
-				//	}
-				//	else
-				//	{
-				//		printout("I did not find .def \"", 
-				//			parse_iter.next_sym_str, "\"\n");
-				//	}
-				//}
 
 				if (tok_is_ident_ish(parse_iter.next_tok)
 					&& define_tbl().contains(parse_iter.next_sym_str))

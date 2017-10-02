@@ -91,6 +91,12 @@ TOKEN_STUFF(DotB, ".db") \
 TOKEN_STUFF(DotW, ".dw") \
 LIST_OF_EQUATE_DIRECTIVE_TOKENS(TOKEN_STUFF) \
 TOKEN_STUFF(DotDef, ".def") \
+TOKEN_STUFF(DotDefined, ".defined") \
+TOKEN_STUFF(DotNot, ".not") \
+TOKEN_STUFF(DotIf, ".if") \
+TOKEN_STUFF(DotElseIf, ".elseif") \
+TOKEN_STUFF(DotElse, ".else") \
+TOKEN_STUFF(DotEndIf, ".endif") \
 
 
 
