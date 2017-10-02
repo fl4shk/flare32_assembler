@@ -2057,6 +2057,11 @@ s64 Assembler::handle_term(const std::vector<ParseNode>& some_parse_vec,
 s64 Assembler::handle_factor(const std::vector<ParseNode>& some_parse_vec, 
 	size_t& index)
 {
+	if (index >= some_parse_vec.size())
+	{
+		we().err("Invalid expression!");
+	}
+
 	//if (next_tok() == &Tok::NatNum)
 	if (some_parse_vec.at(index).next_tok == &Tok::NatNum)
 	{
