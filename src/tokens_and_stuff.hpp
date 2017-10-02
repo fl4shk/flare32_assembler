@@ -6,7 +6,6 @@
 
 #define LIST_OF_COMMENT_TOKENS(TOKEN_STUFF) \
 TOKEN_STUFF(Semicolon, ";") \
-TOKEN_STUFF(At, "@") \
 
 #define LIST_OF_PUNCT_TOKENS(TOKEN_STUFF) \
 /* "." */ \
@@ -29,6 +28,7 @@ TOKEN_STUFF(Equals, "=") \
 LIST_OF_COMMENT_TOKENS(TOKEN_STUFF) \
 TOKEN_STUFF(Comma, ",") \
 TOKEN_STUFF(Colon, ":") \
+TOKEN_STUFF(At, "@") \
 
 
 
@@ -90,7 +90,7 @@ TOKEN_STUFF(DotOrg, ".org") \
 TOKEN_STUFF(DotB, ".db") \
 TOKEN_STUFF(DotW, ".dw") \
 LIST_OF_EQUATE_DIRECTIVE_TOKENS(TOKEN_STUFF) \
-TOKEN_STUFF(DotDefine, ".define") \
+TOKEN_STUFF(DotDef, ".def") \
 
 
 

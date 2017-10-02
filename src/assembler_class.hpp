@@ -20,7 +20,8 @@ class Assembler
 {
 private:		// variables
 	static constexpr size_t define_expand_max_depth = 256;
-	static constexpr size_t last_pass = 2;
+	//static constexpr size_t define_expand_max_depth = 4;
+	static constexpr s32 last_pass = 2;
 	WarnError __we;
 	SymbolTable __builtin_sym_tbl, __user_sym_tbl;
 	DefineTable __define_tbl;
@@ -38,7 +39,7 @@ private:		// variables
 	size_t __line_num = 0;
 
 	int __next_char = ' ';
-	PTok __next_tok = nullptr;
+	PTok __prev_tok = nullptr, __next_tok = nullptr;
 	std::string __next_sym_str;
 	s64 __next_num = -1;
 
@@ -67,7 +68,9 @@ private:		// functions
 	gen_getter_and_setter_by_val(last_addr);
 	gen_getter_and_setter_by_val(line_num);
 	gen_getter_and_setter_by_val(next_char);
-	gen_getter_and_setter_by_val(next_tok);
+	//gen_getter_and_setter_by_val(next_tok);
+	gen_getter_by_val(prev_tok)
+	gen_getter_by_val(next_tok)
 	gen_getter_and_setter_by_con_ref(next_sym_str);
 	gen_getter_and_setter_by_val(next_num);
 	gen_getter_and_setter_by_val(changed);
@@ -78,6 +81,14 @@ private:		// functions
 
 	void reinit();
 	void fill_builtin_sym_tbl();
+
+
+	PTok set_next_tok(PTok n_next_tok)
+	{
+		__prev_tok = next_tok();
+		__next_tok = n_next_tok;
+		return next_tok();
+	}
 
 
 
@@ -93,7 +104,7 @@ private:		// functions
 	inline void lex(size_t& some_outer_index, size_t& some_inner_index,
 		bool use_lines=false)
 	{
-		__lexer.__lex_innards(__next_char, __next_tok,
+		__lexer.__lex_innards(__next_char, __next_tok, __prev_tok,
 			__next_sym_str, __next_num, __line_num, 
 			some_outer_index, some_inner_index,
 			(use_lines ? &__lines : nullptr));
@@ -210,6 +221,7 @@ private:		// functions
 	void split(std::vector<ParseNode>& ret, 
 		std::vector<std::string>& to_split,
 		std::vector<ParsePos>* pos_vec=nullptr);
+
 
 
 

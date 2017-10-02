@@ -19,14 +19,14 @@ private:		// variables
 	WarnError* __we = nullptr;
 	size_t * __addr = nullptr, * __last_addr = nullptr;
 	s32* __pass = nullptr;
-	size_t last_pass;
+	s32 last_pass;
 	SymbolTable * __builtin_sym_tbl = nullptr, * __user_sym_tbl = nullptr;
 	DefineTable* __define_tbl = nullptr;
 	InstructionTable* __instr_tbl = nullptr;
 	
 public:		// functions
 	inline CodeGenerator(WarnError* s_we, size_t* s_addr,
-		size_t* s_last_addr, s32* s_pass, size_t s_last_pass,
+		size_t* s_last_addr, s32* s_pass, s32 s_last_pass,
 		SymbolTable* s_builtin_sym_tbl, SymbolTable* s_user_sym_tbl,
 		DefineTable* s_define_tbl, InstructionTable* s_instr_tbl)
 		: __we(s_we), __addr(s_addr), __last_addr(s_last_addr),

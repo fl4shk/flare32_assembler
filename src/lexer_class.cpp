@@ -82,8 +82,9 @@ void Lexer::__advance_innards(int& some_next_char,
 
 
 void Lexer::__lex_innards(int& some_next_char, 
-	PTok& some_next_tok, std::string& some_next_sym_str,
-	s64& some_next_num, size_t& some_line_num,  
+	PTok& some_next_tok, PTok& some_prev_tok, 
+	std::string& some_next_sym_str,
+	s64& some_next_num, size_t& some_line_num,
 	size_t& some_outer_index, size_t& some_inner_index,
 	std::vector<std::string>* some_str_vec,
 	ParsePos* pos)
@@ -93,6 +94,7 @@ void Lexer::__lex_innards(int& some_next_char,
 		return some_next_char;
 	};
 
+
 	auto next_tok = [&]() -> PTok
 	{
 		return some_next_tok;
@@ -100,13 +102,19 @@ void Lexer::__lex_innards(int& some_next_char,
 
 	auto set_next_tok = [&](PTok tok) -> void
 	{
+		some_prev_tok = some_next_tok;
 		some_next_tok = tok;
 	};
 
-	auto next_sym_str = [&]() -> const std::string&
+	auto prev_tok = [&]() -> PTok
 	{
-		return some_next_sym_str;
+		return some_prev_tok;
 	};
+
+	//auto next_sym_str = [&]() -> const std::string&
+	//{
+	//	return some_next_sym_str;
+	//};
 
 	auto set_next_sym_str = [&](const std::string& n_next_sym_str) -> void
 	{
@@ -254,9 +262,11 @@ void Lexer::__lex_innards(int& some_next_char,
 			{
 				// Need to use next_tok() here because we haven't
 				// set_next_tok() yet.
-				if (next_tok() != &Tok::DotDefine)
+				if (((prev_tok() == &Tok::Newline)
+					|| (prev_tok() == nullptr))
+					&& (next_tok() != &Tok::DotDef))
 				{
-					we().err("Undefined .define (perhaps just not YET ",
+					we().err("Undefined .def (perhaps just not YET ",
 						"defined?)");
 				}
 
@@ -283,7 +293,7 @@ void Lexer::__lex_innards(int& some_next_char,
 				to_insert.set_type(SymType::EquateName);
 			}
 			#undef TOKEN_STUFF
-			//else if (next_tok() == &Tok::DotDefine)
+			//else if (next_tok() == &Tok::DotDef)
 			//{
 			//	to_insert.set_type(SymType::DefineName);
 			//}

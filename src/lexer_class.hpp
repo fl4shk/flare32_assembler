@@ -43,7 +43,8 @@ public:		// functions
 		size_t& some_outer_index, size_t& some_inner_index,
 		std::vector<std::string>* some_str_vec=nullptr);
 	void __lex_innards(int& some_next_char, 
-		PTok& some_next_tok, std::string& some_next_sym_str,
+		PTok& some_next_tok, PTok& some_prev_tok, 
+		std::string& some_next_sym_str,
 		s64& some_next_num, size_t& some_line_num,
 		size_t& some_outer_index, size_t& some_inner_index,
 		std::vector<std::string>* some_str_vec=nullptr,
