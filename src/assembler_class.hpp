@@ -19,7 +19,9 @@ namespace flare32
 class Assembler
 {
 private:		// variables
-	static constexpr size_t define_expand_max_depth = 256;
+	// Arbitrary number
+	static constexpr size_t define_expand_max_depth = 9001;
+	//static constexpr size_t define_expand_max_depth = 256;
 	//static constexpr size_t define_expand_max_depth = 4;
 	static constexpr s32 last_pass = 2;
 	WarnError __we;

@@ -541,13 +541,6 @@ void Assembler::find_defines()
 	size_t define_expand_depth = 0;
 	do
 	{
-		//printout("find_defines():  Before\n");
-		//for (const auto& line_iter : __lines)
-		//{
-		//	printout(line_iter);
-		//}
-		//printout("\n\n");
-
 		if (define_expand_depth >= define_expand_max_depth)
 		{
 			we().err("Cannot resolve .defs!\n");
@@ -567,13 +560,6 @@ void Assembler::find_defines()
 		expand_defines();
 
 		++define_expand_depth;
-
-		//printout("find_defines():  After\n");
-		//for (const auto& line_iter : __lines)
-		//{
-		//	printout(line_iter);
-		//}
-		//printout("\n\n\n\n");
 	} while (changed());
 }
 
@@ -616,33 +602,58 @@ void Assembler::expand_defines()
 			{
 				iter.at(j++) = ' ';
 			}
-			++i;
 
-			if (line_parse_vec.at(i).next_tok != &Tok::LParen)
-			{
-				eek();
-			}
 
-			j = pos_vec.at(i).inner_index;
-			for (size_t k=0; 
-				k<line_parse_vec.at(i).next_tok->str().size(); 
-				++k)
+			if (defn.args().size() != 0)
 			{
-				iter.at(j++) = ' ';
-			}
-			++i;
+				++i;
+				if (line_parse_vec.at(i).next_tok != &Tok::LParen)
+				{
+					eek();
+				}
 
-			if (line_parse_vec.at(i).next_tok != &Tok::RParen)
-			{
-				eek();
-			}
-			
-			j = pos_vec.at(i).inner_index;
-			for (size_t k=0; 
-				k<line_parse_vec.at(i).next_tok->str().size(); 
-				++k)
-			{
-				iter.at(j++) = ' ';
+				j = pos_vec.at(i).inner_index;
+				for (size_t k=0; 
+					k<line_parse_vec.at(i).next_tok->str().size(); 
+					++k)
+				{
+					iter.at(j++) = ' ';
+				}
+
+				++i;
+
+				while ((i < line_parse_vec.size())
+					&& (line_parse_vec.at(i).next_tok != &Tok::RParen))
+				{
+					j = pos_vec.at(i).inner_index;
+					for (size_t k=0; 
+						k<line_parse_vec.at(i).next_tok->str().size(); 
+						++k)
+					{
+						iter.at(j++) = ' ';
+					}
+					++i;
+				}
+
+				if (i >= line_parse_vec.size())
+				{
+					eek();
+				}
+
+
+
+				if (line_parse_vec.at(i).next_tok != &Tok::RParen)
+				{
+					eek();
+				}
+				
+				j = pos_vec.at(i).inner_index;
+				for (size_t k=0; 
+					k<line_parse_vec.at(i).next_tok->str().size(); 
+					++k)
+				{
+					iter.at(j++) = ' ';
+				}
 			}
 
 		}
