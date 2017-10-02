@@ -105,27 +105,31 @@ void Assembler::fill_builtin_sym_tbl()
 }
 
 
+void Assembler::next_line(size_t& some_outer_index, 
+	size_t& some_inner_index, std::vector<ParseNode>& some_parse_vec)
+{
+	while ((next_tok() != &Tok::Newline) && (next_tok() != &Tok::Eof)
+		&& (next_tok() != &Tok::Bad))
+	{
+		some_parse_vec.push_back(ParseNode(next_tok(), next_sym_str(), 
+			next_num()));
+		lex(some_outer_index, some_inner_index, true);
+	}
+}
 
 
 void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 	bool just_find_defines)
 {
 	std::vector<ParseNode> parse_vec, second_parse_vec;
+
 	auto call_lex = [&]() -> void
 	{
 		lex(some_outer_index, some_inner_index, true);
 	};
 
+	next_line(some_outer_index, some_inner_index, parse_vec);
 
-	while ((next_tok() != &Tok::Newline) && (next_tok() != &Tok::Eof)
-		&& (next_tok() != &Tok::Bad))
-	{
-		parse_vec.push_back(ParseNode(next_tok(), next_sym_str(),
-			next_num()));
-
-		//lex(!just_find_defines);
-		call_lex();
-	}
 
 	//printout("line():  ");
 	//for (size_t i=0; i<parse_vec.size(); ++i)
@@ -158,11 +162,86 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 
 	size_t index = 1;
 
+	if (handle_directives(some_outer_index, some_inner_index, index,
+		parse_vec, just_find_defines))
 	{
+		return;
+	}
+
+	if (just_find_defines)
+	{
+		return;
+	}
+
+
+	bool found_label = false;
+
+	// Check for a label
+	if (parse_vec.size() >= 2)
+	{
+		if (tok_is_ident_ish(parse_vec.at(0).next_tok) 
+			&& parse_vec.at(1).next_tok == &Tok::Colon)
+		{
+			found_label = true;
+
+			if (user_sym_tbl().at(parse_vec.at(0).next_sym_str).type()
+				== SymType::EquateName)
+			{
+				we().err("Can't use an equate as a label!");
+			}
+			else if (user_sym_tbl().at(parse_vec.at(0).next_sym_str)
+				.type() != SymType::Other)
+			{
+				we().err("Invalid label name!");
+			}
+
+			// Update the value of the label in the user symbol table.
+			// This happens regardless of what pass we're on.
+			user_sym_tbl().at(parse_vec.at(0).next_sym_str).set_value
+				(addr());
+		}
+	}
+
+	if (!found_label)
+	{
+		for (size_t i=0; i<parse_vec.size(); ++i)
+		{
+			// Ignore comments
+			if (tok_is_comment(parse_vec.at(i).next_tok))
+			{
+				break;
+			}
+			second_parse_vec.push_back(parse_vec.at(i));
+		}
+	}
+	else
+	{
+		for (size_t i=2; i<parse_vec.size(); ++i)
+		{
+			// Ignore comments
+			if (tok_is_comment(parse_vec.at(i).next_tok))
+			{
+				break;
+			}
+			second_parse_vec.push_back(parse_vec.at(i));
+		}
+	}
+
+	finish_line(second_parse_vec);
+	//lex(!just_find_defines);
+	call_lex();
+}
+
+
+bool Assembler::handle_directives(size_t& some_outer_index, 
+	size_t& some_inner_index, size_t& index,
+	const std::vector<ParseNode>& parse_vec, bool just_find_defines)
+{
 	auto eek = [&]() -> void
 	{
 		we().err("invalid syntax for ", parse_vec.front().next_tok->str());
 	};
+
 	// Check for assembler directives
 	if (parse_vec.front().next_tok == &Tok::DotOrg)
 	{
@@ -177,7 +256,7 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 			}
 		}
 
-		return;
+		return true;
 	}
 	else if (parse_vec.front().next_tok == &Tok::DotB)
 	{
@@ -208,7 +287,7 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 			}
 		}
 
-		return;
+		return true;
 	}
 	else if (parse_vec.front().next_tok == &Tok::DotW)
 	{
@@ -239,7 +318,7 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 			}
 		}
 
-		return;
+		return true;
 	}
 
 
@@ -276,7 +355,7 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 		user_sym_tbl().at(parse_vec.at(1).next_sym_str).set_value
 			(expr_result);
 
-		return;
+		return true;
 	}
 
 	else if (parse_vec.front().next_tok == &Tok::DotDef)
@@ -284,7 +363,7 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 		if (!just_find_defines)
 		{
 			//printout("!just_find_defines\n");
-			return;
+			return true;
 		}
 		//printout("just_find_defines\n");
 
@@ -388,74 +467,11 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 
 		define_tbl().insert_or_assign(to_insert);
 
-		return;
-	}
-	}
-
-	if (just_find_defines)
-	{
-		return;
+		return true;
 	}
 
-
-	bool found_label = false;
-
-	// Check for a label
-	if (parse_vec.size() >= 2)
-	{
-		if (tok_is_ident_ish(parse_vec.at(0).next_tok) 
-			&& parse_vec.at(1).next_tok == &Tok::Colon)
-		{
-			found_label = true;
-
-			if (user_sym_tbl().at(parse_vec.at(0).next_sym_str).type()
-				== SymType::EquateName)
-			{
-				we().err("Can't use an equate as a label!");
-			}
-			else if (user_sym_tbl().at(parse_vec.at(0).next_sym_str)
-				.type() != SymType::Other)
-			{
-				we().err("Invalid label name!");
-			}
-
-			// Update the value of the label in the user symbol table.
-			// This happens regardless of what pass we're on.
-			user_sym_tbl().at(parse_vec.at(0).next_sym_str).set_value
-				(addr());
-		}
-	}
-
-	if (!found_label)
-	{
-		for (size_t i=0; i<parse_vec.size(); ++i)
-		{
-			// Ignore comments
-			if (tok_is_comment(parse_vec.at(i).next_tok))
-			{
-				break;
-			}
-			second_parse_vec.push_back(parse_vec.at(i));
-		}
-	}
-	else
-	{
-		for (size_t i=2; i<parse_vec.size(); ++i)
-		{
-			// Ignore comments
-			if (tok_is_comment(parse_vec.at(i).next_tok))
-			{
-				break;
-			}
-			second_parse_vec.push_back(parse_vec.at(i));
-		}
-	}
-
-	finish_line(second_parse_vec);
-	//lex(!just_find_defines);
-	call_lex();
+	return false;
 }
-
 
 void Assembler::finish_line
 	(const std::vector<ParseNode>& some_parse_vec)
@@ -1872,6 +1888,7 @@ bool Assembler::__parse_instr_ra_pc
 	return true;
 }
 
+#undef spvat
 
 
 
@@ -2127,6 +2144,9 @@ s64 Assembler::handle_factor(const std::vector<ParseNode>& some_parse_vec,
 
 
 
+void Assembler::handle_dot_if(std::vector<std::vector<ParseNode>>& vec_vec)
+{
+}
 
 
 
@@ -2172,7 +2192,6 @@ bool Assembler::tok_is_comment(PTok some_tok) const
 #undef TOKEN_STUFF
 
 
-#undef spvat
 
 
 

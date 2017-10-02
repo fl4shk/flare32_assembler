@@ -119,8 +119,17 @@ private:		// functions
 	//		some_outer_index, some_inner_index, &some_lines);
 	//}
 
+	void next_line(size_t& some_outer_index, size_t& some_inner_index,
+		std::vector<ParseNode>& some_parse_vec);
 	void line(size_t& some_outer_index, size_t& some_inner_index, 
 		bool just_find_defines=false);
+
+	bool handle_directives(size_t& some_outer_index, 
+		size_t& some_inner_index, size_t& index,
+		const std::vector<ParseNode>& parse_vec,
+		bool just_find_defines);
+	void handle_dot_if(std::vector<std::vector<ParseNode>>& vec_vec);
+
 	void finish_line(const std::vector<ParseNode>& some_parse_vec);
 
 	void fill_lines();
@@ -199,12 +208,14 @@ private:		// functions
 		(const std::vector<ParseNode>& some_parse_vec, PInstr instr);
 
 
+	s64 handle_expr(const std::vector<ParseNode>& some_parse_vec, 
+		size_t& index);
 	s64 handle_term(const std::vector<ParseNode>& some_parse_vec, 
 		size_t& index);
 	s64 handle_factor(const std::vector<ParseNode>& some_parse_vec, 
 		size_t& index);
-	s64 handle_expr(const std::vector<ParseNode>& some_parse_vec, 
-		size_t& index);
+
+	
 
 	bool tok_is_punct(PTok some_tok) const;
 	bool tok_is_ident_ish(PTok some_tok) const;
