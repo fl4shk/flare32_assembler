@@ -80,27 +80,47 @@ TOKEN_STUFF(Bad, "Bad")
 
 
 
+/* Equates */ \
 #define LIST_OF_EQUATE_DIRECTIVE_TOKENS(TOKEN_STUFF) \
 TOKEN_STUFF(DotEquate, ".equate") \
 TOKEN_STUFF(DotEqu, ".equ") \
 
-
-#define LIST_OF_DIRECTIVE_TOKENS(TOKEN_STUFF) \
-TOKEN_STUFF(DotOrg, ".org") \
-TOKEN_STUFF(DotB, ".db") \
-TOKEN_STUFF(DotW, ".dw") \
-LIST_OF_EQUATE_DIRECTIVE_TOKENS(TOKEN_STUFF) \
-TOKEN_STUFF(DotDef, ".def") \
-TOKEN_STUFF(DotDefined, ".defined") \
+/* Comparison operators */ \
+#define LIST_OF_COMPARISON_DIRECTIVE_TOKENS(TOKEN_STUFF) \
 TOKEN_STUFF(DotEq, ".eq") \
 TOKEN_STUFF(DotNe, ".ne") \
 TOKEN_STUFF(DotLt, ".lt" ) \
 TOKEN_STUFF(DotLe, ".le" ) \
 TOKEN_STUFF(DotGt, ".gt" ) \
 TOKEN_STUFF(DotGe, ".ge" ) \
+
+/* Logical operations */ \
+#define LIST_OF_LOGICAL_OP_DIRECTIVE_TOKENS(TOKEN_STUFF) \
 TOKEN_STUFF(DotNot, ".not") \
 TOKEN_STUFF(DotAnd, ".and") \
 TOKEN_STUFF(DotOr, ".or") \
+
+
+#define LIST_OF_DIRECTIVE_TOKENS(TOKEN_STUFF) \
+/* Change the address */ \
+TOKEN_STUFF(DotOrg, ".org") \
+\
+/* Table in ROM stuff */ \
+TOKEN_STUFF(DotB, ".db") \
+TOKEN_STUFF(DotW, ".dw") \
+\
+LIST_OF_EQUATE_DIRECTIVE_TOKENS(TOKEN_STUFF) \
+\
+/* Defines stuff */ \
+TOKEN_STUFF(DotDef, ".def") \
+TOKEN_STUFF(DotUndef, ".undef") \
+	/* If the define exists */ \
+TOKEN_STUFF(DotDefined, ".defined") \
+\
+LIST_OF_COMPARISON_DIRECTIVE_TOKENS(TOKEN_STUFF) \
+LIST_OF_LOGICAL_OP_DIRECTIVE_TOKENS(TOKEN_STUFF) \
+\
+/* if, elseif, else */ \
 TOKEN_STUFF(DotIf, ".if") \
 TOKEN_STUFF(DotElseIf, ".elseif") \
 TOKEN_STUFF(DotElse, ".else") \
