@@ -223,6 +223,7 @@ private:		// functions
 	void split(std::vector<ParseNode>& ret, 
 		std::vector<std::string>& to_split,
 		std::vector<ParsePos>* pos_vec=nullptr);
+	//void expand_single_define(std::string& iter, const Define& defn);
 
 
 

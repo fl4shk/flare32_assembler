@@ -92,7 +92,15 @@ TOKEN_STUFF(DotW, ".dw") \
 LIST_OF_EQUATE_DIRECTIVE_TOKENS(TOKEN_STUFF) \
 TOKEN_STUFF(DotDef, ".def") \
 TOKEN_STUFF(DotDefined, ".defined") \
+TOKEN_STUFF(DotEq, ".eq") \
+TOKEN_STUFF(DotNe, ".ne") \
+TOKEN_STUFF(DotLt, ".lt" ) \
+TOKEN_STUFF(DotLe, ".le" ) \
+TOKEN_STUFF(DotGt, ".gt" ) \
+TOKEN_STUFF(DotGe, ".ge" ) \
 TOKEN_STUFF(DotNot, ".not") \
+TOKEN_STUFF(DotAnd, ".and") \
+TOKEN_STUFF(DotOr, ".or") \
 TOKEN_STUFF(DotIf, ".if") \
 TOKEN_STUFF(DotElseIf, ".elseif") \
 TOKEN_STUFF(DotElse, ".else") \
