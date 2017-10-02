@@ -2184,10 +2184,16 @@ void Assembler::split(std::vector<ParseNode>& ret,
 		}
 
 		if ((some_next_tok != &Tok::Newline)
-			&& (some_next_tok != &Tok::Eof))
+			&& (some_next_tok != &Tok::Eof)
+			&& !tok_is_comment(some_next_tok))
 		{
 			ret.push_back(ParseNode(some_next_tok,
 				some_next_sym_str, some_next_num));
+		}
+
+		if (tok_is_comment(some_next_tok))
+		{
+			break;
 		}
 	}
 }
