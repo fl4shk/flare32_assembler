@@ -706,8 +706,8 @@ bool Assembler::handle_earlier_directives(size_t& some_outer_index,
 		std::vector<ParseNode> parse_vec;
 		next_line(some_outer_index, some_inner_index, parse_vec);
 
-		printout("After next_line():  ");
-		print_parse_vec(parse_vec);
+		//printout("After next_line():  ");
+		//print_parse_vec(parse_vec);
 
 		if (parse_vec.size() == 0)
 		{
@@ -725,6 +725,9 @@ bool Assembler::handle_earlier_directives(size_t& some_outer_index,
 				we().err("Missing .endif, tried to find it for line ",
 					"number ", first_line_num, "!");
 			}
+
+			handle_dot_if(some_outer_index, some_inner_index,
+				lines_vec, first_line_num);
 		}
 	}
 
@@ -768,9 +771,13 @@ bool Assembler::find_matching_directive(size_t& some_outer_index,
 
 void Assembler::handle_dot_if(size_t& some_outer_index, 
 	size_t& some_inner_index, 
-	std::vector<std::vector<ParseNode>>& lines_vec, 
+	const std::vector<std::vector<ParseNode>>& lines_vec, 
 	const size_t first_line_num)
 {
+	for (const auto& line_iter : lines_vec)
+	{
+		print_parse_vec(line_iter);
+	}
 }
 
 

@@ -149,7 +149,7 @@ private:		// functions
 		std::vector<std::vector<ParseNode>>& ret_lines_vec, PTok some_tok);
 
 	void handle_dot_if(size_t& some_outer_index, size_t& some_inner_index, 
-		std::vector<std::vector<ParseNode>>& lines_vec,
+		const std::vector<std::vector<ParseNode>>& lines_vec,
 		const size_t first_line_num);
 	
 	inline void insert_comment(std::string& iter)
