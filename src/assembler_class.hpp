@@ -141,15 +141,27 @@ private:		// functions
 
 	// Directives evaluated before much else is done, but still done after
 	// fill_lines() is called.
-	void handle_earlier_directives();
+	bool handle_earlier_directives(size_t& some_outer_index, 
+		size_t& some_inner_index, const size_t last_line_num);
+	bool find_matching_directive(size_t& some_outer_index,
+		size_t& some_inner_index, const size_t last_line_num,
+		std::vector<ParseNode>&& orig_parse_vec,
+		std::vector<std::vector<ParseNode>>& ret_lines_vec, PTok some_tok);
+
+	void handle_dot_if(size_t& some_outer_index, size_t& some_inner_index, 
+		std::vector<std::vector<ParseNode>>& lines_vec,
+		const size_t first_line_num);
+	
+	inline void insert_comment(std::string& iter)
+	{
+		iter.insert(0, ";");
+	}
 
 	// Directives evaluated after conditional assembly and .def, evaluated
 	// alongside labels, instructions, and comments.
 	bool handle_later_directives(size_t& some_outer_index, 
 		size_t& some_inner_index, size_t& index,
 		const std::vector<ParseNode>& parse_vec);
-	void handle_dot_if(std::vector<std::vector<ParseNode>>& lines_vec,
-		bool just_find_defines, const size_t first_line_num);
 
 
 

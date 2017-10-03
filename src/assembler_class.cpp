@@ -30,9 +30,13 @@ int Assembler::operator () ()
 {
 	set_pass(0);
 	fill_lines();
-	//find_defines();
 
-	handle_earlier_directives();
+	{
+	reinit();
+	size_t outer_index = 0, inner_index = 0;
+
+	handle_earlier_directives(outer_index, inner_index, __lines.size());
+	}
 
 
 	// Two passes
@@ -124,13 +128,75 @@ void Assembler::print_parse_vec
 void Assembler::next_line(size_t& some_outer_index, 
 	size_t& some_inner_index, std::vector<ParseNode>& some_parse_vec)
 {
-	while ((next_tok() != &Tok::Newline) && (next_tok() != &Tok::Eof)
-		&& (next_tok() != &Tok::Bad))
+	//bool found_comment = false;
+	//while ((next_tok() != &Tok::Newline) && (next_tok() != &Tok::Eof)
+	//	&& (next_tok() != &Tok::Bad))
+	////while (next_tok() != &Tok::Bad)
+	//{
+	//	if (!tok_is_comment(next_tok()))
+	//	{
+	//		found_comment = true;
+	//	}
+	//	//if ((next_tok() == &Tok::Newline)
+	//	//	|| (next_tok() == &Tok::Eof))
+	//	//{
+	//	//	some_parse_vec.push_back(ParseNode(next_tok(), next_sym_str(), 
+	//	//		next_num()));
+
+	//	//	if (next_tok() != &Tok::Eof)
+	//	//	{
+	//	//		lex(some_outer_index, some_inner_index, true);
+	//	//	}
+	//	//	break;
+	//	//}
+
+	//	//if (!found_comment || (next_tok() == &Tok::Newline)
+	//	//	|| (next_tok() == &Tok::Eof))
+	//	//if (!found_comment)
+	//	{
+	//		some_parse_vec.push_back(ParseNode(next_tok(), next_sym_str(), 
+	//			next_num()));
+	//	}
+	//	lex(some_outer_index, some_inner_index, true);
+
+	//}
+
+	//printout("next_line():  ");
+	//print_parse_vec(some_parse_vec);
+
+
+	bool found_comment = false;
+
+	if (next_tok() == &Tok::Newline)
 	{
-		some_parse_vec.push_back(ParseNode(next_tok(), next_sym_str(), 
-			next_num()));
 		lex(some_outer_index, some_inner_index, true);
 	}
+
+	else
+	{
+		while ((next_tok() != &Tok::Newline)
+			&& (next_tok() != &Tok::Eof))
+		{
+			if (tok_is_comment(next_tok()))
+			{
+				found_comment = true;
+			}
+
+			//if (!found_comment)
+			//{
+			//}
+
+			if (!found_comment && (next_tok() != nullptr))
+			{
+				some_parse_vec.push_back(ParseNode(next_tok(), 
+					next_sym_str(), next_num()));
+			}
+			lex(some_outer_index, some_inner_index, true);
+
+			//lex(some_outer_index, some_inner_index, true);
+		}
+	}
+
 }
 
 
@@ -603,7 +669,107 @@ void Assembler::fill_lines()
 
 
 
-void Assembler::handle_earlier_directives()
+bool Assembler::handle_earlier_directives(size_t& some_outer_index, 
+	size_t& some_inner_index, const size_t last_line_num)
+{
+	lex(some_outer_index, some_inner_index, true);
+	//printout(next_tok()->str(), "\n");
+
+	std::vector<std::vector<ParseNode>> lines_vec;
+
+	auto call_find_matching_directive = [&]
+		(std::vector<ParseNode>&& parse_vec, PTok which_tok) -> bool
+	{
+		return find_matching_directive(some_outer_index, some_inner_index,
+			last_line_num, std::move(parse_vec), lines_vec, which_tok);
+	};
+
+	//printout("last_line_num, __lines.size():  ", last_line_num, ", ",
+	//	__lines.size(), "\n");
+
+
+	while (next_tok() != &Tok::Eof)
+	{
+		////std::vector<ParseNode> parse_vec;
+		//lex(some_outer_index, some_inner_index, true);
+		//printout(next_tok()->str(), "\n");
+
+		//printout("line_num:  ", line_num(), "\n");
+
+		if (line_num() > last_line_num)
+		{
+			return false;
+		}
+
+		lines_vec.clear();
+
+		std::vector<ParseNode> parse_vec;
+		next_line(some_outer_index, some_inner_index, parse_vec);
+
+		printout("After next_line():  ");
+		print_parse_vec(parse_vec);
+
+		if (parse_vec.size() == 0)
+		{
+			continue;
+		}
+
+		if (parse_vec.front().next_tok == &Tok::DotIf)
+		{
+			const size_t first_line_num = line_num() - 1;
+
+			// Find the .endif
+			if (!call_find_matching_directive(std::move(parse_vec),
+				&Tok::DotEndIf))
+			{
+				we().err("Missing .endif, tried to find it for line ",
+					"number ", first_line_num, "!");
+			}
+		}
+	}
+
+	return true;
+
+}
+
+
+bool Assembler::find_matching_directive(size_t& some_outer_index,
+	size_t& some_inner_index, const size_t last_line_num,
+	std::vector<ParseNode>&& orig_parse_vec,
+	std::vector<std::vector<ParseNode>>& ret_lines_vec, PTok some_tok)
+{
+	ret_lines_vec.push_back(std::move(orig_parse_vec));
+
+	while (next_tok() != &Tok::Eof)
+	{
+		if (line_num() > last_line_num)
+		{
+			return false;
+		}
+
+		std::vector<ParseNode> other_parse_vec;
+		next_line(some_outer_index, some_inner_index, other_parse_vec);
+
+		ret_lines_vec.push_back(std::move(other_parse_vec));
+
+		if (ret_lines_vec.back().size() == 0)
+		{
+			continue;
+		}
+
+		if (ret_lines_vec.back().front().next_tok == some_tok)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void Assembler::handle_dot_if(size_t& some_outer_index, 
+	size_t& some_inner_index, 
+	std::vector<std::vector<ParseNode>>& lines_vec, 
+	const size_t first_line_num)
 {
 }
 
@@ -893,11 +1059,6 @@ bool Assembler::handle_later_directives(size_t& some_outer_index,
 	return false;
 }
 
-void Assembler::handle_dot_if
-	(std::vector<std::vector<ParseNode>>& lines_vec,
-	bool just_find_defines, const size_t first_line_num)
-{
-}
 
 void Assembler::split(std::vector<ParseNode>& ret, 
 	std::vector<std::string>& to_split,

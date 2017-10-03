@@ -113,6 +113,7 @@ void Lexer::__advance_innards(int& some_next_char,
 
 	if (next_char() == '\n')
 	{
+		//printout("adding to some_line_num!\n");
 		++some_line_num;
 	}
 }
