@@ -261,7 +261,7 @@ void Assembler::finish_line
 	
 	//{
 	//size_t index = 0;
-	//const auto temp = handle_expr(some_parse_vec, index);
+	//const auto temp = __handle_expr(some_parse_vec, index);
 
 	//printout(temp, "\n");
 
@@ -613,7 +613,7 @@ bool Assembler::handle_later_directives(size_t& some_outer_index,
 		if (pass() > 0)
 		{
 			// .org expr
-			set_addr(handle_expr(parse_vec, index));
+			set_addr(__handle_expr(parse_vec, index));
 			//printout("addr(), last_addr():  ", addr(), ", ", last_addr(),
 			//	"\n");
 
@@ -634,7 +634,7 @@ bool Assembler::handle_later_directives(size_t& some_outer_index,
 			// .db expr, expr2, ...
 			for (;;)
 			{
-				__codegen.gen8(handle_expr(parse_vec, index));
+				__codegen.gen8(__handle_expr(parse_vec, index));
 				if (pass() == last_pass)
 				{
 					printout("\n");
@@ -665,7 +665,7 @@ bool Assembler::handle_later_directives(size_t& some_outer_index,
 			// .dw expr, expr2, ...
 			for (;;)
 			{
-				__codegen.gen32(handle_expr(parse_vec, index));
+				__codegen.gen32(__handle_expr(parse_vec, index));
 				if (pass() == last_pass)
 				{
 					printout("\n");
@@ -717,7 +717,7 @@ bool Assembler::handle_later_directives(size_t& some_outer_index,
 
 		index = 2;
 
-		s64 expr_result = handle_expr(parse_vec, index);
+		s64 expr_result = __handle_expr(parse_vec, index);
 
 		user_sym_tbl().at(parse_vec.at(1).next_sym_str).set_value
 			(expr_result);
@@ -1059,7 +1059,7 @@ bool Assembler::__parse_instr_uimm16
 		return false;
 	}
 
-	expr_result = handle_expr(some_parse_vec, index);
+	expr_result = instr_expr(some_parse_vec, index);
 
 	__codegen.encode_and_gen(regs, expr_result, instr);
 
@@ -1078,7 +1078,7 @@ bool Assembler::__parse_instr_simm16
 		return false;
 	}
 
-	expr_result = handle_expr(some_parse_vec, index);
+	expr_result = instr_expr(some_parse_vec, index);
 
 	__codegen.encode_and_gen(regs, expr_result, instr);
 
@@ -1097,7 +1097,7 @@ bool Assembler::__parse_instr_imm32
 		return false;
 	}
 
-	expr_result = handle_expr(some_parse_vec, index);
+	expr_result = instr_expr(some_parse_vec, index);
 
 	__codegen.encode_and_gen(regs, expr_result, instr);
 
@@ -1149,7 +1149,7 @@ bool Assembler::__parse_instr_ra_uimm16
 		return false;
 	}
 
-	expr_result = handle_expr(some_parse_vec, index);
+	expr_result = instr_expr(some_parse_vec, index);
 
 	regs.push_back(spvat(1).next_sym_str);
 
@@ -1208,7 +1208,7 @@ bool Assembler::__parse_instr_ra_rb_uimm16
 	regs.push_back(spvat(1).next_sym_str);
 	regs.push_back(spvat(3).next_sym_str);
 
-	expr_result = handle_expr(some_parse_vec, index);
+	expr_result = instr_expr(some_parse_vec, index);
 
 	__codegen.encode_and_gen(regs, expr_result, instr);
 
@@ -1236,7 +1236,7 @@ bool Assembler::__parse_instr_ra_rb_simm16
 	regs.push_back(spvat(1).next_sym_str);
 	regs.push_back(spvat(3).next_sym_str);
 
-	expr_result = handle_expr(some_parse_vec, index);
+	expr_result = instr_expr(some_parse_vec, index);
 
 	__codegen.encode_and_gen(regs, expr_result, instr);
 
@@ -1293,7 +1293,7 @@ bool Assembler::__parse_instr_ra_rb_rc_simm12
 	regs.push_back(spvat(5).next_sym_str);
 
 
-	expr_result = handle_expr(some_parse_vec, index);
+	expr_result = instr_expr(some_parse_vec, index);
 
 
 	__codegen.encode_and_gen(regs, expr_result, instr);
@@ -1354,7 +1354,8 @@ bool Assembler::__parse_instr_ldst_ra_rb_rc_simm12
 	regs.push_back(spvat(4).next_sym_str);
 	regs.push_back(spvat(6).next_sym_str);
 
-	expr_result = handle_expr(some_parse_vec, index);
+	expr_result = instr_expr(some_parse_vec, index, 
+		some_parse_vec.size() - 1);
 
 	__codegen.encode_and_gen(regs, expr_result, instr);
 
@@ -1416,7 +1417,8 @@ bool Assembler::__parse_instr_ldst_ra_rb_simm12
 	regs.push_back(spvat(1).next_sym_str);
 	regs.push_back(spvat(4).next_sym_str);
 
-	expr_result = handle_expr(some_parse_vec, index);
+	expr_result = instr_expr(some_parse_vec, index,
+		some_parse_vec.size() - 1);
 
 	__codegen.encode_and_gen(regs, expr_result, instr);
 
@@ -1437,7 +1439,7 @@ bool Assembler::__parse_instr_branch
 		return false;
 	}
 
-	expr_result = handle_expr(some_parse_vec, index) - addr();
+	expr_result = instr_expr(some_parse_vec, index) - addr();
 
 	switch (instr->enc_group())
 	{
@@ -1489,7 +1491,8 @@ bool Assembler::__parse_instr_ldst_ra_rb_imm32
 	regs.push_back(spvat(1).next_sym_str);
 	regs.push_back(spvat(4).next_sym_str);
 
-	expr_result = handle_expr(some_parse_vec, index);
+	expr_result = instr_expr(some_parse_vec, index,
+		some_parse_vec.size() - 1);
 
 	__codegen.encode_and_gen(regs, expr_result, instr);
 
@@ -1518,7 +1521,7 @@ bool Assembler::__parse_instr_ra_rb_imm32
 	regs.push_back(spvat(3).next_sym_str);
 
 
-	expr_result = handle_expr(some_parse_vec, index);
+	expr_result = instr_expr(some_parse_vec, index);
 
 	__codegen.encode_and_gen(regs, expr_result, instr);
 
@@ -2047,8 +2050,25 @@ bool Assembler::__parse_instr_ra_pc
 #undef spvat
 
 
+s64 Assembler::instr_expr(const std::vector<ParseNode>& some_parse_vec, 
+	size_t& index, size_t valid_end_index)
+{
+	if (valid_end_index == static_cast<size_t>(-1))
+	{
+		valid_end_index = some_parse_vec.size();
+	}
 
-s64 Assembler::handle_expr(const std::vector<ParseNode>& some_parse_vec, 
+	s64 ret = __handle_expr(some_parse_vec, index);
+
+	if (index != valid_end_index)
+	{
+		we().err("Invalid expression");
+	}
+
+	return ret;
+}
+
+s64 Assembler::__handle_expr(const std::vector<ParseNode>& some_parse_vec, 
 	size_t& index)
 {
 	////const auto old_next_tok = next_tok();
@@ -2063,16 +2083,16 @@ s64 Assembler::handle_expr(const std::vector<ParseNode>& some_parse_vec,
 
 	//	if (old_next_tok == &Tok::Plus)
 	//	{
-	//		ret = handle_term(some_parse_vec, index);
+	//		ret = __handle_term(some_parse_vec, index);
 	//	}
 	//	else // if (old_next_tok == &Tok::Minus)
 	//	{
-	//		ret = -handle_term(some_parse_vec, index);
+	//		ret = -__handle_term(some_parse_vec, index);
 	//	}
 	//}
 	//else
 	//{
-	//	ret = handle_term(some_parse_vec, index);
+	//	ret = __handle_term(some_parse_vec, index);
 	//}
 
 	//if (index >= some_parse_vec.size())
@@ -2084,7 +2104,7 @@ s64 Assembler::handle_expr(const std::vector<ParseNode>& some_parse_vec,
 	//if ((some_parse_vec.at(index).next_tok == &Tok::Plus)
 	//	|| (some_parse_vec.at(index).next_tok == &Tok::Minus))
 	//{
-	//	ret += handle_expr(some_parse_vec, index);
+	//	ret += __handle_expr(some_parse_vec, index);
 	//}
 
 	//return ret;
@@ -2099,20 +2119,20 @@ s64 Assembler::handle_expr(const std::vector<ParseNode>& some_parse_vec,
 		//lex();
 		++index;
 
-		ret = -handle_term(some_parse_vec, index);
+		ret = -__handle_term(some_parse_vec, index);
 	}
 	else if (some_parse_vec.at(index).next_tok == &Tok::Plus)
 	{
 		//lex();
 		++index;
 
-		ret = handle_term(some_parse_vec, index);
+		ret = __handle_term(some_parse_vec, index);
 	}
 	else if (tok_is_ident_ish(some_parse_vec.at(index).next_tok)
 		|| (some_parse_vec.at(index).next_tok == &Tok::NatNum)
 		|| (some_parse_vec.at(index).next_tok == &Tok::LParen))
 	{
-		ret = handle_term(some_parse_vec, index);
+		ret = __handle_term(some_parse_vec, index);
 	}
 	else if (some_parse_vec.at(index).next_tok == &Tok::Period)
 	{
@@ -2120,7 +2140,7 @@ s64 Assembler::handle_expr(const std::vector<ParseNode>& some_parse_vec,
 	}
 	else
 	{
-		//we().err("expr():  3, Eek!\n");
+		//we().err("__handle_expr():  3, Eek!\n");
 		//return 9001;
 		we().err("Invalid expression");
 	}
@@ -2144,11 +2164,11 @@ s64 Assembler::handle_expr(const std::vector<ParseNode>& some_parse_vec,
 
 		if (minus)
 		{
-			ret -= handle_term(some_parse_vec, index);
+			ret -= __handle_term(some_parse_vec, index);
 		}
 		else
 		{
-			ret += handle_term(some_parse_vec, index);
+			ret += __handle_term(some_parse_vec, index);
 		}
 
 		if (index >= some_parse_vec.size())
@@ -2161,10 +2181,10 @@ s64 Assembler::handle_expr(const std::vector<ParseNode>& some_parse_vec,
 
 }
 
-s64 Assembler::handle_term(const std::vector<ParseNode>& some_parse_vec, 
+s64 Assembler::__handle_term(const std::vector<ParseNode>& some_parse_vec, 
 	size_t& index)
 {
-	s64 ret = handle_factor(some_parse_vec, index);
+	s64 ret = __handle_factor(some_parse_vec, index);
 
 	if (index >= some_parse_vec.size())
 	{
@@ -2187,31 +2207,31 @@ s64 Assembler::handle_term(const std::vector<ParseNode>& some_parse_vec,
 
 		if (old_next_tok == &Tok::Mult)
 		{
-			ret *= handle_factor(some_parse_vec, index);
+			ret *= __handle_factor(some_parse_vec, index);
 		}
 		else if (old_next_tok == &Tok::Div)
 		{
-			ret /= handle_factor(some_parse_vec, index);
+			ret /= __handle_factor(some_parse_vec, index);
 		}
 		else if (old_next_tok == &Tok::BitAnd)
 		{
-			ret &= handle_factor(some_parse_vec, index);
+			ret &= __handle_factor(some_parse_vec, index);
 		}
 		else if (old_next_tok == &Tok::BitOr)
 		{
-			ret |= handle_factor(some_parse_vec, index);
+			ret |= __handle_factor(some_parse_vec, index);
 		}
 		else if (old_next_tok == &Tok::BitXor)
 		{
-			ret ^= handle_factor(some_parse_vec, index);
+			ret ^= __handle_factor(some_parse_vec, index);
 		}
 		else if (old_next_tok == &Tok::BitShL)
 		{
-			ret <<= handle_factor(some_parse_vec, index);
+			ret <<= __handle_factor(some_parse_vec, index);
 		}
 		else if (old_next_tok == &Tok::BitShR)
 		{
-			ret >>= handle_factor(some_parse_vec, index);
+			ret >>= __handle_factor(some_parse_vec, index);
 		}
 
 
@@ -2227,7 +2247,7 @@ s64 Assembler::handle_term(const std::vector<ParseNode>& some_parse_vec,
 
 }
 
-s64 Assembler::handle_factor(const std::vector<ParseNode>& some_parse_vec, 
+s64 Assembler::__handle_factor(const std::vector<ParseNode>& some_parse_vec, 
 	size_t& index)
 {
 	if (index >= some_parse_vec.size())
@@ -2248,7 +2268,7 @@ s64 Assembler::handle_factor(const std::vector<ParseNode>& some_parse_vec,
 	//else if (next_tok_is_ident_ish())
 	else if (tok_is_ident_ish(some_parse_vec.at(index).next_tok))
 	{
-		// This works because handle_factor() should only be called when
+		// This works because __handle_factor() should only be called when
 		// we're not asking for a user symbol
 		const Symbol& sym = user_sym_tbl().at(some_parse_vec.at(index)
 			.next_sym_str);
@@ -2272,7 +2292,7 @@ s64 Assembler::handle_factor(const std::vector<ParseNode>& some_parse_vec,
 				break;
 
 			default:
-				we().err("handle_factor():  Eek!");
+				we().err("__handle_factor():  Eek!");
 				break;
 		}
 		
@@ -2291,7 +2311,7 @@ s64 Assembler::handle_factor(const std::vector<ParseNode>& some_parse_vec,
 
 	__lexer.need(some_parse_vec, index, &Tok::LParen);
 
-	ret = handle_expr(some_parse_vec, index);
+	ret = __handle_expr(some_parse_vec, index);
 
 	__lexer.need(some_parse_vec, index, &Tok::RParen);
 
