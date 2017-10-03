@@ -30,7 +30,9 @@ int Assembler::operator () ()
 {
 	set_pass(0);
 	fill_lines();
-	find_defines();
+	//find_defines();
+
+	handle_conditional_assembly();
 
 
 	// Two passes
@@ -45,7 +47,7 @@ int Assembler::operator () ()
 
 		while (next_tok() != &Tok::Eof)
 		{
-			line(outer_index, inner_index, false);
+			line(outer_index, inner_index);
 		}
 
 		//printout("\n\n");
@@ -132,8 +134,7 @@ void Assembler::next_line(size_t& some_outer_index,
 }
 
 
-void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
-	bool just_find_defines)
+void Assembler::line(size_t& some_outer_index, size_t& some_inner_index)
 {
 	std::vector<ParseNode> parse_vec, second_parse_vec;
 
@@ -173,13 +174,8 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 
 	size_t index = 1;
 
-	if (handle_directives(some_outer_index, some_inner_index, index,
-		parse_vec, just_find_defines))
-	{
-		return;
-	}
-
-	if (just_find_defines)
+	if (handle_later_directives(some_outer_index, some_inner_index, index,
+		parse_vec))
 	{
 		return;
 	}
@@ -248,17 +244,366 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 	call_lex();
 }
 
+void Assembler::finish_line
+	(const std::vector<ParseNode>& some_parse_vec)
+{
+	//for (const auto& node : some_parse_vec)
+	//{
+	//	printout(node.next_tok->str(), "\t\t");
+	//}
+	//printout("\n");
 
-bool Assembler::handle_directives(size_t& some_outer_index, 
+	if (some_parse_vec.size() == 0)
+	{
+		return;
+	}
+
+	
+	//{
+	//size_t index = 0;
+	//const auto temp = handle_expr(some_parse_vec, index);
+
+	//printout(temp, "\n");
+
+	//set_addr(addr() + 4);
+	//}
+
+	//printout("finish_line():  ");
+	//print_parse_vec(some_parse_vec);
+
+
+	if (some_parse_vec.at(0).next_tok != &Tok::Instr)
+	{
+		we().expected_tokens(&Tok::Instr);
+	}
+
+	const auto& instr_vec = __instr_tbl.at(some_parse_vec.at(0)
+		.next_sym_str);
+
+
+
+	bool complete = false;
+
+	for (const auto& instr : instr_vec)
+	{
+		if (parse_instr(instr, some_parse_vec))
+		{
+			complete = true;
+			break;
+		}
+	}
+
+	if (!complete)
+	{
+		we().err("Invalid instruction arguments");
+	}
+
+}
+
+void Assembler::fill_lines()
+{
+	reinit();
+
+	{
+	std::string some_line;
+
+	size_t outer_index = 0, inner_index = 0;
+
+	//while (next_tok() != &Tok::Eof)
+	while (next_char() != EOF)
+	{
+		advance(outer_index, inner_index);
+
+		if ((next_char() != '\n') && (next_char() != EOF))
+		{
+			some_line += next_char();
+		}
+		else // if ((next_char() == '\n') || (next_char() == EOF))
+		{
+			if (next_char() == '\n')
+			{
+				some_line += '\n';
+			}
+
+			// Don't append a blank line
+			if (some_line.size() >= 1)
+			{
+				__lines.push_back(some_line);
+				some_line = "";
+			}
+		}
+	}
+	}
+}
+
+//void Assembler::find_defines()
+//{
+//	size_t define_expand_depth = 0;
+//	do
+//	{
+//		//printout("find_defines():  define_expand_depth:  ",
+//		//	define_expand_depth, "\n");
+//
+//		if (define_expand_depth >= expand_max_depth)
+//		{
+//			we().err("Cannot resolve .defs!\n");
+//		}
+//
+//		set_changed(false);
+//		reinit();
+//
+//		size_t outer_index = 0, inner_index = 0;
+//
+//		lex(outer_index, inner_index, true);
+//
+//		while (next_tok() != &Tok::Eof)
+//		{
+//			line(outer_index, inner_index, true);
+//		}
+//
+//		expand_defines();
+//
+//		++define_expand_depth;
+//
+//		//printout("\nfind_defines():  \n");
+//
+//		//for (const auto& line_iter : __lines)
+//		//{
+//		//	std::vector<ParseNode> parse_vec;
+//		//	std::vector<std::string> iter_vec({line_iter});
+//
+//		//	split(parse_vec, iter_vec);
+//		//	printout(line_iter);
+//		//	printout("parse_vec:  ");
+//		//	print_parse_vec(parse_vec);
+//		//}
+//
+//	} while (changed());
+//}
+//
+//void Assembler::expand_defines()
+//{
+//	auto eek = [&]() -> void
+//	{
+//		we().err("Unknown .def!");
+//	};
+//
+//
+//	auto attempt_expand_defn = [&](std::string& iter, Define& defn, 
+//		const std::vector<ParsePos>& pos_vec, size_t i,
+//		std::vector<ParseNode>& line_parse_vec) -> bool
+//	{
+//		std::vector<ParseNode> text_parse_vec;
+//
+//
+//		split(text_parse_vec, defn.text());
+//
+//		if (line_parse_vec.front().next_tok == &Tok::DotDef)
+//		{
+//			// sneaky comment insertion
+//			//iter.insert(0, "@");
+//			printout("sneaky comment insertion:  ", iter);
+//			iter.insert(0, ";");
+//
+//
+//			return false;
+//		}
+//		else if (tok_is_comment(line_parse_vec.front().next_tok))
+//		{
+//			return false;
+//		}
+//
+//
+//		// Erase the define instance
+//		{
+//			size_t j = pos_vec.at(i).inner_index;
+//			//auto show_to_erase = [&]() -> void
+//			//{
+//			//	printout("Erasing \"", iter.at(j), "\"\n");
+//			//};
+//			//iter.erase(j, defn.name().size());
+//			for (size_t k=0; k<defn.name().size(); ++k)
+//			{
+//				//show_to_erase();
+//				iter.at(j++) = ' ';
+//			}
+//
+//
+//			if (defn.args().size() != 0)
+//			{
+//				++i;
+//				if (line_parse_vec.at(i).next_tok != &Tok::LParen)
+//				{
+//					eek();
+//				}
+//
+//				j = pos_vec.at(i).inner_index;
+//				for (size_t k=0; 
+//					k<line_parse_vec.at(i).next_tok->str().size(); 
+//					++k)
+//				{
+//					//show_to_erase();
+//					iter.at(j++) = ' ';
+//				}
+//
+//				++i;
+//
+//				while ((i < line_parse_vec.size())
+//					&& (line_parse_vec.at(i).next_tok != &Tok::RParen))
+//				{
+//					j = pos_vec.at(i).inner_index;
+//					for (size_t k=0; 
+//						k<line_parse_vec.at(i).next_tok->str().size(); 
+//						++k)
+//					{
+//						//show_to_erase();
+//						iter.at(j++) = ' ';
+//					}
+//					++i;
+//				}
+//
+//				if (i >= line_parse_vec.size())
+//				{
+//					eek();
+//				}
+//
+//
+//
+//				if (line_parse_vec.at(i).next_tok != &Tok::RParen)
+//				{
+//					eek();
+//				}
+//				
+//				j = pos_vec.at(i).inner_index;
+//				for (size_t k=0; 
+//					k<line_parse_vec.at(i).next_tok->str().size(); 
+//					++k)
+//				{
+//					//show_to_erase();
+//					iter.at(j++) = ' ';
+//				}
+//			}
+//
+//		}
+//
+//		size_t j = pos_vec.at(i).inner_index;
+//
+//		//printout("stuff:  ", iter, "\n");
+//
+//
+//		for (const auto& parse_iter : text_parse_vec)
+//		{
+//			if (tok_is_ident_ish(parse_iter.next_tok))
+//			{
+//				iter.insert(j, parse_iter.next_sym_str + " ");
+//				j += parse_iter.next_sym_str.size() 
+//					+ std::string(" ").size();
+//			}
+//			else if (parse_iter.next_tok == &Tok::NatNum)
+//			{
+//				std::string str = std::to_string(parse_iter.next_num);
+//				iter.insert(j, str + " ");
+//				j += str.size() + std::string(" ").size();
+//			}
+//			else
+//			{
+//				iter.insert(j, parse_iter.next_tok->str() + " ");
+//				j += parse_iter.next_tok->str().size() 
+//					+ std::string(" ").size();
+//			}
+//		}
+//
+//		return true;
+//
+//	};
+//
+//	for (std::string& iter : __lines)
+//	{
+//		//printout("Start:\n", iter);
+//		size_t define_expand_depth = 0;
+//
+//		for (; 
+//			define_expand_depth < expand_max_depth;
+//			++define_expand_depth)
+//		{
+//			bool can_break = true;
+//
+//			//printout(iter);
+//			std::vector<std::string> iter_vec({iter});
+//
+//			std::vector<ParseNode> line_parse_vec;
+//			std::vector<ParsePos> pos_vec;
+//
+//			split(line_parse_vec, iter_vec, &pos_vec);
+//
+//			if ((line_parse_vec.size() >= 1) 
+//				&& tok_is_comment(line_parse_vec.front().next_tok))
+//			{
+//				can_break = true;
+//				break;
+//			}
+//
+//			printout("old iter:  ", iter);
+//			for (size_t i=0; i<line_parse_vec.size(); ++i)
+//			{
+//				const auto& parse_iter = line_parse_vec.at(i);
+//
+//				if (tok_is_ident_ish(parse_iter.next_tok)
+//					&& define_tbl().contains(parse_iter.next_sym_str))
+//				{
+//					if (line_parse_vec.front().next_tok != &Tok::DotDef)
+//					{
+//						//printout("Can't break\n");
+//						can_break = false;
+//						set_changed(true);
+//					}
+//
+//					attempt_expand_defn(iter, 
+//						define_tbl().at(parse_iter.next_sym_str), 
+//						pos_vec, i, line_parse_vec);
+//					printout("new iter:  ", iter);
+//
+//					break;
+//				}
+//			}
+//
+//			//printout(iter);
+//
+//			if (can_break)
+//			{
+//				//printout("Can break\n");
+//				break;
+//			}
+//		}
+//		//printout("define_expand_depth:  ", define_expand_depth, "\n");
+//
+//		if (define_expand_depth >= expand_max_depth)
+//		{
+//			we().err("Cannot resolve .defs!\n");
+//		}
+//
+//		//printout("\n\n");
+//	}
+//}
+
+
+
+
+void Assembler::handle_earlier_directives()
+{
+}
+
+
+bool Assembler::handle_later_directives(size_t& some_outer_index, 
 	size_t& some_inner_index, size_t& index,
-	const std::vector<ParseNode>& parse_vec, bool just_find_defines)
+	const std::vector<ParseNode>& parse_vec)
 {
 	auto eek = [&]() -> void
 	{
 		we().err("invalid syntax for ", parse_vec.front().next_tok->str());
 	};
 
-	//printout("handle_directives():  ");
+	//printout("handle_later_directives():  ");
 	//print_parse_vec(parse_vec);
 
 
@@ -382,148 +727,151 @@ bool Assembler::handle_directives(size_t& some_outer_index,
 
 	else if (parse_vec.front().next_tok == &Tok::DotDef)
 	{
-		if (!just_find_defines)
-		{
-			//printout("!just_find_defines\n");
-			return true;
-		}
-		//printout("just_find_defines\n");
-
-		// .def `ident() text
-		// .def `ident(args...) text
-
-		if (parse_vec.size() < 5)
-		{
-			eek();
-		}
-
-		if (!tok_is_ident_ish(parse_vec.at(1).next_tok))
-		{
-			eek();
-		}
-
-		if (parse_vec.at(2).next_tok != &Tok::LParen)
-		{
-			eek();
-		}
-
-		Define to_insert;
-
-		to_insert.set_name(parse_vec.at(1).next_sym_str);
-
-		if (define_tbl().contains(to_insert.name()))
-		{
-			we().err(".def already defined");
-		}
-
-		if (parse_vec.at(3).next_tok == &Tok::RParen)
-		{
-			// No arguments, just () stuffs
-			for (size_t i=4; i<parse_vec.size(); ++i)
-			{
-				if (tok_is_ident_ish(parse_vec.at(i).next_tok))
-				{
-					to_insert.text().push_back(parse_vec.at(i)
-						.next_sym_str + '\n');
-				}
-				else if (parse_vec.at(i).next_tok == &Tok::NatNum)
-				{
-					to_insert.text().push_back(std::to_string
-						(parse_vec.at(i).next_num) + '\n');
-				}
-				else
-				{
-					to_insert.text().push_back(parse_vec.at(i).next_tok
-						->str() + '\n');
-				}
-			}
-		}
-
-		//else
+		
+		//if (!just_find_defines)
 		//{
-		//	bool found_rparen = false;
-
-
-		//	size_t i, j = 3;
-
-		//	{
-		//		i = j;
-
-		//		while ((i < parse_vec.size())
-		//			&& (parse_vec.at(i).next_tok != &Tok::RParen))
-		//		{
-		//			++i;
-		//		}
-
-		//		if (i >= parse_vec.size())
-		//		{
-		//			eek();
-		//		}
-		//	}
-
-		//	if (i == j + 1)
-		//	{
-		//	}
-
+		//	//printout("!just_find_defines\n");
+		//	return true;
 		//}
+		////printout("just_find_defines\n");
 
+		//// .def `ident() text
+		//// .def `ident(args...) text
 
-		//if (!tok_is_ident_ish(parse_vec.at(3).next_tok))
+		//if (parse_vec.size() < 5)
 		//{
 		//	eek();
 		//}
 
+		//if (!tok_is_ident_ish(parse_vec.at(1).next_tok))
+		//{
+		//	eek();
+		//}
 
-		// Only allow no argument defines for now
-		else
-		{
-			eek();
-		}
+		//if (parse_vec.at(2).next_tok != &Tok::LParen)
+		//{
+		//	eek();
+		//}
 
-		define_tbl().insert_or_assign(to_insert);
+		//Define to_insert;
 
-		return true;
+		//to_insert.set_name(parse_vec.at(1).next_sym_str);
+
+		//if (define_tbl().contains(to_insert.name()))
+		//{
+		//	we().err(".def already defined");
+		//}
+
+		//if (parse_vec.at(3).next_tok == &Tok::RParen)
+		//{
+		//	// No arguments, just () stuffs
+		//	for (size_t i=4; i<parse_vec.size(); ++i)
+		//	{
+		//		if (tok_is_ident_ish(parse_vec.at(i).next_tok))
+		//		{
+		//			to_insert.text().push_back(parse_vec.at(i)
+		//				.next_sym_str + '\n');
+		//		}
+		//		else if (parse_vec.at(i).next_tok == &Tok::NatNum)
+		//		{
+		//			to_insert.text().push_back(std::to_string
+		//				(parse_vec.at(i).next_num) + '\n');
+		//		}
+		//		else
+		//		{
+		//			to_insert.text().push_back(parse_vec.at(i).next_tok
+		//				->str() + '\n');
+		//		}
+		//	}
+		//}
+
+		////else
+		////{
+		////	bool found_rparen = false;
+
+
+		////	size_t i, j = 3;
+
+		////	{
+		////		i = j;
+
+		////		while ((i < parse_vec.size())
+		////			&& (parse_vec.at(i).next_tok != &Tok::RParen))
+		////		{
+		////			++i;
+		////		}
+
+		////		if (i >= parse_vec.size())
+		////		{
+		////			eek();
+		////		}
+		////	}
+
+		////	if (i == j + 1)
+		////	{
+		////	}
+
+		////}
+
+
+		////if (!tok_is_ident_ish(parse_vec.at(3).next_tok))
+		////{
+		////	eek();
+		////}
+
+
+		//// Only allow no argument defines for now
+		//else
+		//{
+		//	eek();
+		//}
+
+		//define_tbl().insert_or_assign(to_insert);
+
+		//return true;
 	}
 
 	else if (parse_vec.front().next_tok == &Tok::DotIf)
 	{
-		printout("Found .if\n");
-		std::vector<std::vector<ParseNode>> lines_vec;
+		printout("Found .if, but that should have been taken care of ",
+			"earlier!\n");
+		eek();
+		//std::vector<std::vector<ParseNode>> lines_vec;
 
-		lines_vec.push_back(parse_vec);
-
-
-		const size_t first_line_num = some_outer_index - 1;
-
+		//lines_vec.push_back(parse_vec);
 
 
-		do
-		{
-			std::vector<ParseNode> other_parse_vec;
-			next_line(some_outer_index, some_inner_index, other_parse_vec);
-			//printout(other_parse_vec.size(), "\n");
-			//print_parse_vec(other_parse_vec);
-			lines_vec.push_back((other_parse_vec));
-		} while ((next_tok() != &Tok::Eof) && (next_tok() != &Tok::Bad)
-			&& (lines_vec.back().size() >= 1)
-			&& (lines_vec.back().front().next_tok != &Tok::DotEndIf));
+		//const size_t first_line_num = some_outer_index - 1;
 
-		printout("In .if:  \n");
-		for (const auto& line_iter : lines_vec)
-		{
-			print_parse_vec(line_iter);
-		}
 
-		//printout(lines_vec.size(), "\n");
 
-		//if ((lines_vec.size() >= 1)
-		//	&& (lines_vec.back().size() >= 1)
-		//	&& (lines_vec.back().front().next_tok != &Tok::DotEndIf))
+		//do
 		//{
-		//	we().err("Missing .endif!");
+		//	std::vector<ParseNode> other_parse_vec;
+		//	next_line(some_outer_index, some_inner_index, other_parse_vec);
+		//	//printout(other_parse_vec.size(), "\n");
+		//	//print_parse_vec(other_parse_vec);
+		//	lines_vec.push_back((other_parse_vec));
+		//} while ((next_tok() != &Tok::Eof) && (next_tok() != &Tok::Bad)
+		//	&& (lines_vec.back().size() >= 1)
+		//	&& (lines_vec.back().front().next_tok != &Tok::DotEndIf));
+
+		//printout("In .if:  \n");
+		//for (const auto& line_iter : lines_vec)
+		//{
+		//	print_parse_vec(line_iter);
 		//}
 
-		//handle_dot_if(lines_vec, just_find_defines, first_line_num);
+		////printout(lines_vec.size(), "\n");
+
+		////if ((lines_vec.size() >= 1)
+		////	&& (lines_vec.back().size() >= 1)
+		////	&& (lines_vec.back().front().next_tok != &Tok::DotEndIf))
+		////{
+		////	we().err("Missing .endif!");
+		////}
+
+		////handle_dot_if(lines_vec, just_find_defines, first_line_num);
 
 		return true;
 	}
@@ -536,349 +884,6 @@ void Assembler::handle_dot_if
 	bool just_find_defines, const size_t first_line_num)
 {
 }
-
-void Assembler::finish_line
-	(const std::vector<ParseNode>& some_parse_vec)
-{
-	//for (const auto& node : some_parse_vec)
-	//{
-	//	printout(node.next_tok->str(), "\t\t");
-	//}
-	//printout("\n");
-
-	if (some_parse_vec.size() == 0)
-	{
-		return;
-	}
-
-	
-	//{
-	//size_t index = 0;
-	//const auto temp = handle_expr(some_parse_vec, index);
-
-	//printout(temp, "\n");
-
-	//set_addr(addr() + 4);
-	//}
-
-	//printout("finish_line():  ");
-	//print_parse_vec(some_parse_vec);
-
-
-	if (some_parse_vec.at(0).next_tok != &Tok::Instr)
-	{
-		we().expected_tokens(&Tok::Instr);
-	}
-
-	const auto& instr_vec = __instr_tbl.at(some_parse_vec.at(0)
-		.next_sym_str);
-
-
-
-	bool complete = false;
-
-	for (const auto& instr : instr_vec)
-	{
-		if (parse_instr(instr, some_parse_vec))
-		{
-			complete = true;
-			break;
-		}
-	}
-
-	if (!complete)
-	{
-		we().err("Invalid instruction arguments");
-	}
-
-}
-
-void Assembler::fill_lines()
-{
-	reinit();
-
-	{
-	std::string some_line;
-
-	size_t outer_index = 0, inner_index = 0;
-
-	//while (next_tok() != &Tok::Eof)
-	while (next_char() != EOF)
-	{
-		advance(outer_index, inner_index);
-
-		if ((next_char() != '\n') && (next_char() != EOF))
-		{
-			some_line += next_char();
-		}
-		else // if ((next_char() == '\n') || (next_char() == EOF))
-		{
-			if (next_char() == '\n')
-			{
-				some_line += '\n';
-			}
-
-			// Don't append a blank line
-			if (some_line.size() >= 1)
-			{
-				__lines.push_back(some_line);
-				some_line = "";
-			}
-		}
-	}
-	}
-}
-
-void Assembler::find_defines()
-{
-	size_t define_expand_depth = 0;
-	do
-	{
-		//printout("find_defines():  define_expand_depth:  ",
-		//	define_expand_depth, "\n");
-
-		if (define_expand_depth >= define_expand_max_depth)
-		{
-			we().err("Cannot resolve .defs!\n");
-		}
-
-		set_changed(false);
-		reinit();
-
-		size_t outer_index = 0, inner_index = 0;
-
-		lex(outer_index, inner_index, true);
-
-		while (next_tok() != &Tok::Eof)
-		{
-			line(outer_index, inner_index, true);
-		}
-
-		expand_defines();
-
-		++define_expand_depth;
-
-		//printout("\nfind_defines():  \n");
-
-		//for (const auto& line_iter : __lines)
-		//{
-		//	std::vector<ParseNode> parse_vec;
-		//	std::vector<std::string> iter_vec({line_iter});
-
-		//	split(parse_vec, iter_vec);
-		//	printout(line_iter);
-		//	printout("parse_vec:  ");
-		//	print_parse_vec(parse_vec);
-		//}
-
-	} while (changed());
-}
-
-void Assembler::expand_defines()
-{
-	auto eek = [&]() -> void
-	{
-		we().err("Unknown .def!");
-	};
-
-
-	auto attempt_expand_defn = [&](std::string& iter, Define& defn, 
-		const std::vector<ParsePos>& pos_vec, size_t i,
-		std::vector<ParseNode>& line_parse_vec) -> bool
-	{
-		std::vector<ParseNode> text_parse_vec;
-
-
-		split(text_parse_vec, defn.text());
-
-		if (line_parse_vec.front().next_tok == &Tok::DotDef)
-		{
-			// sneaky comment insertion
-			//iter.insert(0, "@");
-			//printout("sneaky comment insertion\n");
-			iter.insert(0, ";");
-
-
-			return false;
-		}
-		else if (tok_is_comment(line_parse_vec.front().next_tok))
-		{
-			return false;
-		}
-
-
-		// Erase the define instance
-		{
-			size_t j = pos_vec.at(i).inner_index;
-			//auto show_to_erase = [&]() -> void
-			//{
-			//	printout("Erasing \"", iter.at(j), "\"\n");
-			//};
-			//iter.erase(j, defn.name().size());
-			for (size_t k=0; k<defn.name().size(); ++k)
-			{
-				//show_to_erase();
-				iter.at(j++) = ' ';
-			}
-
-
-			if (defn.args().size() != 0)
-			{
-				++i;
-				if (line_parse_vec.at(i).next_tok != &Tok::LParen)
-				{
-					eek();
-				}
-
-				j = pos_vec.at(i).inner_index;
-				for (size_t k=0; 
-					k<line_parse_vec.at(i).next_tok->str().size(); 
-					++k)
-				{
-					//show_to_erase();
-					iter.at(j++) = ' ';
-				}
-
-				++i;
-
-				while ((i < line_parse_vec.size())
-					&& (line_parse_vec.at(i).next_tok != &Tok::RParen))
-				{
-					j = pos_vec.at(i).inner_index;
-					for (size_t k=0; 
-						k<line_parse_vec.at(i).next_tok->str().size(); 
-						++k)
-					{
-						//show_to_erase();
-						iter.at(j++) = ' ';
-					}
-					++i;
-				}
-
-				if (i >= line_parse_vec.size())
-				{
-					eek();
-				}
-
-
-
-				if (line_parse_vec.at(i).next_tok != &Tok::RParen)
-				{
-					eek();
-				}
-				
-				j = pos_vec.at(i).inner_index;
-				for (size_t k=0; 
-					k<line_parse_vec.at(i).next_tok->str().size(); 
-					++k)
-				{
-					//show_to_erase();
-					iter.at(j++) = ' ';
-				}
-			}
-
-		}
-
-		size_t j = pos_vec.at(i).inner_index;
-
-		//printout("stuff:  ", iter, "\n");
-
-
-		for (const auto& parse_iter : text_parse_vec)
-		{
-			if (tok_is_ident_ish(parse_iter.next_tok))
-			{
-				iter.insert(j, parse_iter.next_sym_str + " ");
-				j += parse_iter.next_sym_str.size() 
-					+ std::string(" ").size();
-			}
-			else if (parse_iter.next_tok == &Tok::NatNum)
-			{
-				std::string str = std::to_string(parse_iter.next_num);
-				iter.insert(j, str + " ");
-				j += str.size() + std::string(" ").size();
-			}
-			else
-			{
-				iter.insert(j, parse_iter.next_tok->str() + " ");
-				j += parse_iter.next_tok->str().size() 
-					+ std::string(" ").size();
-			}
-		}
-
-		return true;
-
-	};
-
-	for (std::string& iter : __lines)
-	{
-		//printout("Start:\n", iter);
-		size_t define_expand_depth = 0;
-
-		for (; 
-			define_expand_depth < define_expand_max_depth;
-			++define_expand_depth)
-		{
-			bool can_break = true;
-
-			//printout(iter);
-			std::vector<std::string> iter_vec({iter});
-
-			std::vector<ParseNode> line_parse_vec;
-			std::vector<ParsePos> pos_vec;
-
-			split(line_parse_vec, iter_vec, &pos_vec);
-
-			if ((line_parse_vec.size() >= 1) 
-				&& tok_is_comment(line_parse_vec.front().next_tok))
-			{
-				can_break = true;
-				break;
-			}
-
-			//printout("old iter:  ", iter);
-			for (size_t i=0; i<line_parse_vec.size(); ++i)
-			{
-				const auto& parse_iter = line_parse_vec.at(i);
-
-				if (tok_is_ident_ish(parse_iter.next_tok)
-					&& define_tbl().contains(parse_iter.next_sym_str))
-				{
-					if (line_parse_vec.front().next_tok != &Tok::DotDef)
-					{
-						//printout("Can't break\n");
-						can_break = false;
-						set_changed(true);
-					}
-
-					attempt_expand_defn(iter, 
-						define_tbl().at(parse_iter.next_sym_str), 
-						pos_vec, i, line_parse_vec);
-
-					break;
-				}
-			}
-			//printout("new iter:  ", iter);
-
-			//printout(iter);
-
-			if (can_break)
-			{
-				//printout("Can break\n");
-				break;
-			}
-		}
-		//printout("define_expand_depth:  ", define_expand_depth, "\n");
-
-		if (define_expand_depth >= define_expand_max_depth)
-		{
-			we().err("Cannot resolve .defs!\n");
-		}
-
-		//printout("\n\n");
-	}
-}
-
 
 void Assembler::split(std::vector<ParseNode>& ret, 
 	std::vector<std::string>& to_split,

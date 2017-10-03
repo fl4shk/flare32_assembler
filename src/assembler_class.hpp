@@ -20,9 +20,9 @@ class Assembler
 {
 private:		// variables
 	// Arbitrary number
-	static constexpr size_t define_expand_max_depth = 9001;
-	//static constexpr size_t define_expand_max_depth = 256;
-	//static constexpr size_t define_expand_max_depth = 4;
+	static constexpr size_t expand_max_depth = 9001;
+	//static constexpr size_t expand_max_depth = 256;
+	//static constexpr size_t expand_max_depth = 4;
 	static constexpr s32 last_pass = 2;
 	WarnError __we;
 	SymbolTable __builtin_sym_tbl, __user_sym_tbl;
@@ -129,22 +129,29 @@ private:		// functions
 		const;
 	void next_line(size_t& some_outer_index, size_t& some_inner_index,
 		std::vector<ParseNode>& some_parse_vec);
-	void line(size_t& some_outer_index, size_t& some_inner_index, 
-		bool just_find_defines=false);
-	
-
-	bool handle_directives(size_t& some_outer_index, 
-		size_t& some_inner_index, size_t& index,
-		const std::vector<ParseNode>& parse_vec,
-		bool just_find_defines);
-	void handle_dot_if(std::vector<std::vector<ParseNode>>& lines_vec,
-		bool just_find_defines, const size_t first_line_num);
+	void line(size_t& some_outer_index, size_t& some_inner_index);
 
 	void finish_line(const std::vector<ParseNode>& some_parse_vec);
 
 	void fill_lines();
-	void find_defines();
-	void expand_defines();
+	//void find_defines();
+	//void expand_defines();
+
+
+
+	// Directives evaluated before much else is done, but still done after
+	// fill_lines() is called.
+	void handle_earlier_directives();
+
+	// Directives evaluated after conditional assembly and .def, evaluated
+	// alongside labels, instructions, and comments.
+	bool handle_later_directives(size_t& some_outer_index, 
+		size_t& some_inner_index, size_t& index,
+		const std::vector<ParseNode>& parse_vec);
+	void handle_dot_if(std::vector<std::vector<ParseNode>>& lines_vec,
+		bool just_find_defines, const size_t first_line_num);
+
+
 
 	//void expand_single_define(std::string& iter, const Define& defn);
 	void split(std::vector<ParseNode>& ret, 
@@ -235,19 +242,6 @@ private:		// functions
 	bool tok_is_punct(PTok some_tok) const;
 	bool tok_is_ident_ish(PTok some_tok) const;
 	bool tok_is_comment(PTok some_tok) const;
-
-	//inline bool next_tok_is_punct() const
-	//{
-	//	return tok_is_punct(next_tok());
-	//}
-	//inline bool next_tok_is_ident_ish() const
-	//{
-	//	return tok_is_ident_ish(next_tok());
-	//}
-
-	
-
-
 
 
 	bool __check_tokens_innards
