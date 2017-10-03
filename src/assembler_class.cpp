@@ -32,7 +32,7 @@ int Assembler::operator () ()
 	fill_lines();
 	//find_defines();
 
-	handle_conditional_assembly();
+	handle_earlier_directives();
 
 
 	// Two passes
