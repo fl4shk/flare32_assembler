@@ -174,10 +174,24 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index)
 
 	size_t index = 1;
 
+	{
+
+	std::vector<ParseNode> later_directives_parse_vec;
+
+	for (const auto& parse_iter : parse_vec)
+	{
+		if (tok_is_comment(parse_iter.next_tok))
+		{
+			break;
+		}
+		later_directives_parse_vec.push_back(parse_iter);
+	}
+
 	if (handle_later_directives(some_outer_index, some_inner_index, index,
-		parse_vec))
+		later_directives_parse_vec))
 	{
 		return;
+	}
 	}
 
 
@@ -613,7 +627,7 @@ bool Assembler::handle_later_directives(size_t& some_outer_index,
 		if (pass() > 0)
 		{
 			// .org expr
-			set_addr(__handle_expr(parse_vec, index));
+			set_addr(better_expr(parse_vec, index));
 			//printout("addr(), last_addr():  ", addr(), ", ", last_addr(),
 			//	"\n");
 
@@ -634,7 +648,7 @@ bool Assembler::handle_later_directives(size_t& some_outer_index,
 			// .db expr, expr2, ...
 			for (;;)
 			{
-				__codegen.gen8(__handle_expr(parse_vec, index));
+				__codegen.gen8(better_expr(parse_vec, index));
 				if (pass() == last_pass)
 				{
 					printout("\n");
@@ -1059,7 +1073,7 @@ bool Assembler::__parse_instr_uimm16
 		return false;
 	}
 
-	expr_result = instr_expr(some_parse_vec, index);
+	expr_result = better_expr(some_parse_vec, index);
 
 	__codegen.encode_and_gen(regs, expr_result, instr);
 
@@ -1078,7 +1092,7 @@ bool Assembler::__parse_instr_simm16
 		return false;
 	}
 
-	expr_result = instr_expr(some_parse_vec, index);
+	expr_result = better_expr(some_parse_vec, index);
 
 	__codegen.encode_and_gen(regs, expr_result, instr);
 
@@ -1097,7 +1111,7 @@ bool Assembler::__parse_instr_imm32
 		return false;
 	}
 
-	expr_result = instr_expr(some_parse_vec, index);
+	expr_result = better_expr(some_parse_vec, index);
 
 	__codegen.encode_and_gen(regs, expr_result, instr);
 
@@ -1149,7 +1163,7 @@ bool Assembler::__parse_instr_ra_uimm16
 		return false;
 	}
 
-	expr_result = instr_expr(some_parse_vec, index);
+	expr_result = better_expr(some_parse_vec, index);
 
 	regs.push_back(spvat(1).next_sym_str);
 
@@ -1208,7 +1222,7 @@ bool Assembler::__parse_instr_ra_rb_uimm16
 	regs.push_back(spvat(1).next_sym_str);
 	regs.push_back(spvat(3).next_sym_str);
 
-	expr_result = instr_expr(some_parse_vec, index);
+	expr_result = better_expr(some_parse_vec, index);
 
 	__codegen.encode_and_gen(regs, expr_result, instr);
 
@@ -1236,7 +1250,7 @@ bool Assembler::__parse_instr_ra_rb_simm16
 	regs.push_back(spvat(1).next_sym_str);
 	regs.push_back(spvat(3).next_sym_str);
 
-	expr_result = instr_expr(some_parse_vec, index);
+	expr_result = better_expr(some_parse_vec, index);
 
 	__codegen.encode_and_gen(regs, expr_result, instr);
 
@@ -1293,7 +1307,7 @@ bool Assembler::__parse_instr_ra_rb_rc_simm12
 	regs.push_back(spvat(5).next_sym_str);
 
 
-	expr_result = instr_expr(some_parse_vec, index);
+	expr_result = better_expr(some_parse_vec, index);
 
 
 	__codegen.encode_and_gen(regs, expr_result, instr);
@@ -1354,7 +1368,7 @@ bool Assembler::__parse_instr_ldst_ra_rb_rc_simm12
 	regs.push_back(spvat(4).next_sym_str);
 	regs.push_back(spvat(6).next_sym_str);
 
-	expr_result = instr_expr(some_parse_vec, index, 
+	expr_result = better_expr(some_parse_vec, index, 
 		some_parse_vec.size() - 1);
 
 	__codegen.encode_and_gen(regs, expr_result, instr);
@@ -1417,7 +1431,7 @@ bool Assembler::__parse_instr_ldst_ra_rb_simm12
 	regs.push_back(spvat(1).next_sym_str);
 	regs.push_back(spvat(4).next_sym_str);
 
-	expr_result = instr_expr(some_parse_vec, index,
+	expr_result = better_expr(some_parse_vec, index,
 		some_parse_vec.size() - 1);
 
 	__codegen.encode_and_gen(regs, expr_result, instr);
@@ -1439,7 +1453,7 @@ bool Assembler::__parse_instr_branch
 		return false;
 	}
 
-	expr_result = instr_expr(some_parse_vec, index) - addr();
+	expr_result = better_expr(some_parse_vec, index) - addr();
 
 	switch (instr->enc_group())
 	{
@@ -1491,7 +1505,7 @@ bool Assembler::__parse_instr_ldst_ra_rb_imm32
 	regs.push_back(spvat(1).next_sym_str);
 	regs.push_back(spvat(4).next_sym_str);
 
-	expr_result = instr_expr(some_parse_vec, index,
+	expr_result = better_expr(some_parse_vec, index,
 		some_parse_vec.size() - 1);
 
 	__codegen.encode_and_gen(regs, expr_result, instr);
@@ -1521,7 +1535,7 @@ bool Assembler::__parse_instr_ra_rb_imm32
 	regs.push_back(spvat(3).next_sym_str);
 
 
-	expr_result = instr_expr(some_parse_vec, index);
+	expr_result = better_expr(some_parse_vec, index);
 
 	__codegen.encode_and_gen(regs, expr_result, instr);
 
@@ -2050,7 +2064,7 @@ bool Assembler::__parse_instr_ra_pc
 #undef spvat
 
 
-s64 Assembler::instr_expr(const std::vector<ParseNode>& some_parse_vec, 
+s64 Assembler::better_expr(const std::vector<ParseNode>& some_parse_vec, 
 	size_t& index, size_t valid_end_index)
 {
 	if (valid_end_index == static_cast<size_t>(-1))

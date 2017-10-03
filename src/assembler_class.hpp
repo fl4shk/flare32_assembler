@@ -230,7 +230,7 @@ private:		// functions
 		(const std::vector<ParseNode>& some_parse_vec, PInstr instr);
 
 
-	s64 instr_expr(const std::vector<ParseNode>& some_parse_vec, 
+	s64 better_expr(const std::vector<ParseNode>& some_parse_vec, 
 		size_t& index, size_t valid_end_index=-1);
 	s64 __handle_expr(const std::vector<ParseNode>& some_parse_vec, 
 		size_t& index);
