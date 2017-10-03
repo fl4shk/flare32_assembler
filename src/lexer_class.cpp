@@ -42,6 +42,32 @@ void Lexer::__advance_innards(int& some_next_char,
 		some_next_tok = tok;
 	};
 
+	auto fake_getc = [&]() -> int
+	{
+		if (some_inner_index >= some_str_vec->at(some_outer_index).size())
+		{
+			some_inner_index = 0;
+			++some_outer_index;
+
+			//if (some_outer_index < some_str_vec->size())
+			//{
+			//	printout("returning \\n\n");
+			//	return '\n';
+			//}
+			//else
+			if (some_outer_index >= some_str_vec->size())
+			{
+				//printout("returning EOF\n");
+				return EOF;
+			}
+		}
+
+		const auto ret = some_str_vec->at(some_outer_index)
+			.at(some_inner_index++);
+		//printout("returning '", ret, "'\n");
+
+		return ret;
+	};
 
 
 	if (some_str_vec == nullptr)
@@ -57,20 +83,13 @@ void Lexer::__advance_innards(int& some_next_char,
 	}
 	else // if (some_str_vec != nullptr)
 	{
-		if (some_outer_index >= some_str_vec->size())
+		if (next_char() == EOF)
 		{
-			set_next_char(EOF);
 			set_next_tok(&Tok::Eof);
 			return;
 		}
-		set_next_char((*some_str_vec).at(some_outer_index)
-			.at(some_inner_index++));
 
-		if (some_inner_index >= some_str_vec->at(some_outer_index).size())
-		{
-			some_inner_index = 0;
-			++some_outer_index;
-		}
+		set_next_char(fake_getc());
 	}
 
 	if (next_char() == '\n')
@@ -135,14 +154,30 @@ void Lexer::__lex_innards(int& some_next_char,
 		__advance_innards(some_next_char, some_next_tok,
 			some_next_sym_str, some_next_num, some_line_num,  
 			some_outer_index, some_inner_index, some_str_vec);
+		//switch (next_char())
+		//{
+		//	case '\n':
+		//		printout("lex:  \\n\n");
+		//		break;
+
+		//	case EOF:
+		//		printout("lex:  EOF\n");
+		//		break;
+
+		//	default:
+		//		printout("lex:  '", (char)next_char(), "'\n");
+		//		break;
+		//}
 	};
 
 
-	//while (isspace(next_char()) && (next_char() != '\n'))
 	while (isspace(next_char()) && (next_char() != '\n'))
+	//while (isspace(next_char()) && (next_char() != '\n')
+	//	&& (next_char() != EOF))
 	{
 		call_advance();
 	}
+
 
 	if (pos != nullptr)
 	{
@@ -152,6 +187,7 @@ void Lexer::__lex_innards(int& some_next_char,
 
 	if (next_char() == '\n')
 	{
+		printout("lex:  Setting next_tok to newline\n");
 		set_next_tok(&Tok::Newline);
 		call_advance();
 		return;
@@ -159,6 +195,7 @@ void Lexer::__lex_innards(int& some_next_char,
 
 	if (next_char() == EOF)
 	{
+		printout("lex:  Setting next_tok to EOF\n");
 		set_next_tok(&Tok::Eof);
 		return;
 	}
@@ -185,7 +222,6 @@ void Lexer::__lex_innards(int& some_next_char,
 			else if (next_str == Tok::varname.str()) \
 			{ \
 				set_next_tok(&Tok::varname); \
-				call_advance(); \
 				return; \
 			}
 

@@ -1,7 +1,7 @@
 #include "misc_includes.hpp"
 #include "assembler_class.hpp"
 
-
+flare32::Assembler assembler;
 
 
 int main(int argc, char** argv)
@@ -11,6 +11,7 @@ int main(int argc, char** argv)
 		printerr("Usage:  ", argv[0], " input_file\n");
 		exit(1);
 	}
-	flare32::Assembler assembler(argv[1]);
+
+	assembler.init(argv[1]);
 	return assembler();
 }

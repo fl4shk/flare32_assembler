@@ -52,7 +52,13 @@ private:		// variables
 	std::FILE* __infile = nullptr;
 
 public:		// functions
-	Assembler(char* s_input_filename);
+	Assembler();
+	inline Assembler(char* s_input_filename) : Assembler()
+	{
+		init(s_input_filename);
+	}
+
+	void init(char* s_input_filename);
 
 	int operator () ();
 
@@ -119,22 +125,31 @@ private:		// functions
 	//		some_outer_index, some_inner_index, &some_lines);
 	//}
 
+	void print_parse_vec(const std::vector<ParseNode> some_parse_vec)
+		const;
 	void next_line(size_t& some_outer_index, size_t& some_inner_index,
 		std::vector<ParseNode>& some_parse_vec);
 	void line(size_t& some_outer_index, size_t& some_inner_index, 
 		bool just_find_defines=false);
+	
 
 	bool handle_directives(size_t& some_outer_index, 
 		size_t& some_inner_index, size_t& index,
 		const std::vector<ParseNode>& parse_vec,
 		bool just_find_defines);
-	void handle_dot_if(std::vector<std::vector<ParseNode>>& vec_vec);
+	void handle_dot_if(std::vector<std::vector<ParseNode>>& lines_vec,
+		bool just_find_defines, const size_t first_line_num);
 
 	void finish_line(const std::vector<ParseNode>& some_parse_vec);
 
 	void fill_lines();
 	void find_defines();
 	void expand_defines();
+
+	//void expand_single_define(std::string& iter, const Define& defn);
+	void split(std::vector<ParseNode>& ret, 
+		std::vector<std::string>& to_split,
+		std::vector<ParsePos>* pos_vec=nullptr);
 
 
 	bool parse_instr(PInstr instr, 
@@ -231,10 +246,6 @@ private:		// functions
 	//}
 
 	
-	void split(std::vector<ParseNode>& ret, 
-		std::vector<std::string>& to_split,
-		std::vector<ParsePos>* pos_vec=nullptr);
-	//void expand_single_define(std::string& iter, const Define& defn);
 
 
 

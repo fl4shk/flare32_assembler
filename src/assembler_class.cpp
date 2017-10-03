@@ -3,12 +3,15 @@
 namespace flare32
 {
 
-Assembler::Assembler(char* s_input_filename) 
+Assembler::Assembler() 
 	: __we(&__line_num),
 	__lexer(&__we, &__builtin_sym_tbl, &__user_sym_tbl, &__define_tbl, 
 	&__instr_tbl),
 	__codegen(&__we, &__addr, &__last_addr, &__pass, last_pass,
 	&__builtin_sym_tbl, &__user_sym_tbl, &__define_tbl, &__instr_tbl)
+{
+}
+void Assembler::init(char* s_input_filename)
 {
 	set_input_filename(s_input_filename);
 	set_infile(fopen(input_filename(), "r"));
@@ -59,6 +62,7 @@ void Assembler::reinit()
 	set_addr(0);
 	set_line_num(0);
 	set_next_char(' ');
+	__prev_tok = nullptr;
 	set_next_tok(nullptr);
 	set_next_sym_str("");
 	set_next_num(-1);
@@ -104,6 +108,16 @@ void Assembler::fill_builtin_sym_tbl()
 	}
 }
 
+void Assembler::print_parse_vec
+	(const std::vector<ParseNode> some_parse_vec) const
+{
+	for (const auto& parse_iter : some_parse_vec)
+	{
+		printout(parse_iter.next_tok != nullptr 
+			? parse_iter.next_tok->str() : "nullptr", " ");
+	}
+	printout("\n");
+}
 
 void Assembler::next_line(size_t& some_outer_index, 
 	size_t& some_inner_index, std::vector<ParseNode>& some_parse_vec)
@@ -111,10 +125,27 @@ void Assembler::next_line(size_t& some_outer_index,
 	while ((next_tok() != &Tok::Newline) && (next_tok() != &Tok::Eof)
 		&& (next_tok() != &Tok::Bad))
 	{
-		some_parse_vec.push_back(ParseNode(next_tok(), next_sym_str(), 
-			next_num()));
+		//bool temp = false;
+		//if (next_tok() != nullptr)
+		{
+			some_parse_vec.push_back(ParseNode(next_tok(), next_sym_str(), 
+				next_num()));
+			printout(next_tok()->str(), "\n");
+			//temp = true;
+		}
 		lex(some_outer_index, some_inner_index, true);
+
+		//if (!temp)
+		//{
+		//	some_parse_vec.push_back(ParseNode(next_tok(), next_sym_str(), 
+		//		next_num()));
+		//}
+
+		//printout(some_parse_vec.back().next_tok->str(), "\n");
 	}
+
+	//printout("next_line():  ");
+	//print_parse_vec(some_parse_vec);
 }
 
 
@@ -128,15 +159,16 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index,
 		lex(some_outer_index, some_inner_index, true);
 	};
 
+
 	next_line(some_outer_index, some_inner_index, parse_vec);
 
 
-	//printout("line():  ");
-	//for (size_t i=0; i<parse_vec.size(); ++i)
-	//{
-	//	printout(parse_vec.at(i).next_tok->str(), " ");
-	//}
-	//printout("\n");
+	printout("line():  ");
+	for (size_t i=0; i<parse_vec.size(); ++i)
+	{
+		printout(parse_vec.at(i).next_tok->str(), " ");
+	}
+	printout("\n");
 
 	if (next_tok() == &Tok::Bad)
 	{
@@ -415,13 +447,6 @@ bool Assembler::handle_directives(size_t& some_outer_index,
 						->str() + '\n');
 				}
 			}
-
-			//printout("Found DotDef\n");
-			//for (const auto& iter : to_insert.text())
-			//{
-			//	printout(iter, " ");
-			//}
-			//printout("\n\n");
 		}
 
 		//else
@@ -470,7 +495,79 @@ bool Assembler::handle_directives(size_t& some_outer_index,
 		return true;
 	}
 
+	else if (parse_vec.front().next_tok == &Tok::DotIf)
+	{
+		printout("Found .if\n");
+		std::vector<std::vector<ParseNode>> lines_vec;
+
+
+		lines_vec.push_back((parse_vec));
+
+		for (const auto& parse_iter : parse_vec)
+		{
+			printout(parse_iter.next_tok != nullptr 
+				? parse_iter.next_tok->str() : "nullptr", " ");
+		}
+		printout("\n");
+
+
+		const size_t first_line_num = some_outer_index - 1;
+
+		std::vector<ParseNode> other_parse_vec;
+
+		printout(next_tok() != nullptr ? next_tok()->str() : "nullptr", 
+			"\n");
+
+		next_line(some_outer_index, some_inner_index, other_parse_vec);
+
+		for (const auto& parse_iter : other_parse_vec)
+		{
+			printout(parse_iter.next_tok != nullptr 
+				? parse_iter.next_tok->str() : "nullptr", " ");
+		}
+		printout("\n");
+
+
+		//do
+		//{
+		//	next_line(some_outer_index, some_inner_index, other_parse_vec);
+		//	printout(other_parse_vec.size(), "\n");
+		//	lines_vec.push_back((other_parse_vec));
+		//} while ((next_tok() != &Tok::Eof) && (next_tok() != &Tok::Bad)
+		//	&& (lines_vec.back().size() >= 1)
+		//	&& (lines_vec.back().front().next_tok != &Tok::DotEndIf));
+
+		//for (const auto& line_iter : lines_vec)
+		//{
+		//	for (const auto& parse_iter : line_iter)
+		//	{
+		//		printout(parse_iter.next_tok != nullptr 
+		//			? parse_iter.next_tok->str() : "nullptr", " ");
+		//	}
+		//	printout("\n");
+		//}
+
+		printout(lines_vec.size(), "\n");
+
+		if ((lines_vec.size() >= 1)
+			&& (lines_vec.back().size() >= 1)
+			&& (lines_vec.back().front().next_tok != &Tok::DotEndIf))
+		{
+			we().err("Missing .endif!");
+		}
+
+		handle_dot_if(lines_vec, just_find_defines, first_line_num);
+
+		return true;
+	}
+
 	return false;
+}
+
+void Assembler::handle_dot_if
+	(std::vector<std::vector<ParseNode>>& lines_vec,
+	bool just_find_defines, const size_t first_line_num)
+{
 }
 
 void Assembler::finish_line
@@ -530,26 +627,106 @@ void Assembler::fill_lines()
 {
 	reinit();
 
+	{
 	std::string some_line;
 
 	size_t outer_index = 0, inner_index = 0;
 
-	while (next_tok() != &Tok::Eof)
+	//while (next_tok() != &Tok::Eof)
+	while (next_char() != EOF)
 	{
 		advance(outer_index, inner_index);
 
-		some_line += next_char();
-		if (next_char() == '\n')
+		//if (next_char() != EOF)
+		//{
+		//	some_line += next_char();
+		//}
+		//else
+		//{
+		//	some_line += '\n';
+		//}
+		//some_line += next_char();
+
+		if ((next_char() != '\n') && (next_char() != EOF))
+		{
+			some_line += next_char();
+		}
+		else // if ((next_char() == '\n') || (next_char() == EOF))
 		{
 			__lines.push_back(some_line);
 			some_line = "";
 		}
 	}
 
-	//for (size_t i=0; i<__lines.size(); ++i)
+	// Append a '\n'
+	//for (auto& line_iter : __lines)
+	for (size_t i=0; i<__lines.size()-1; ++i)
+	{
+		auto& line_iter = __lines.at(i);
+		line_iter += "\n";
+	}
+
+	}
+
+	printout(__lines.size(), "\n");
+
+	for (const auto& line_iter : __lines)
+	{
+		printout(line_iter);
+		//printout(line_iter);
+	}
+	printout("\n");
+
+	{
+	size_t outer_index = 0, inner_index = 0;
+	reinit();
+
+	lex(outer_index, inner_index, true);
+	//std::vector<ParseNode> parse_vec;
+
+	//while ((next_tok() != &Tok::Eof)
+	//	&& (next_tok() != &Tok::Bad))
+	////for (size_t i=0; i<__lines.size(); ++i)
+	////while ((next_tok() != &Tok::Eof)
+	////	&& (next_tok() != &Tok::Bad))
+
+	for (size_t i=0; i<20; ++i)
+	//for (;;)
+	{
+		if (next_tok() == &Tok::Eof)
+		{
+			break;
+		}
+
+		//std::vector<ParseNode> parse_vec;
+		//next_line(outer_index, inner_index, parse_vec);
+		////parse_vec.push_back(ParseNode(next_tok(), next_sym_str(),
+		////	next_num()));
+
+		//print_parse_vec(parse_vec);
+		//printout("\n");
+		if (next_tok() == &Tok::Newline)
+		{
+			printout("newline ");
+		}
+		else
+		{
+			printout(next_tok()->str(), " ");
+		}
+
+		lex(outer_index, inner_index, true);
+
+		//printout(next_tok()->str(), "\n");
+
+	}
+
+	//for (const auto& iter : parse_vec)
 	//{
-	//	printout(__lines.at(i));
+	//	printout(iter.next_tok->str(), " ");
 	//}
+	}
+
+	exit(0);
 }
 
 void Assembler::find_defines()
@@ -566,6 +743,7 @@ void Assembler::find_defines()
 		reinit();
 
 		size_t outer_index = 0, inner_index = 0;
+
 		lex(outer_index, inner_index, true);
 
 		while (next_tok() != &Tok::Eof)
@@ -764,6 +942,45 @@ void Assembler::expand_defines()
 		}
 
 		//printout("\n\n");
+	}
+}
+
+
+void Assembler::split(std::vector<ParseNode>& ret, 
+	std::vector<std::string>& to_split,
+	std::vector<ParsePos>* pos_vec)
+{
+	size_t outer_index = 0, inner_index = 0;
+	int some_next_char = ' ';
+	PTok some_prev_tok = nullptr, some_next_tok = nullptr;
+	std::string some_next_sym_str;
+	s64 some_next_num = -1;
+	size_t some_line_num = 0;
+
+	while (some_next_tok != &Tok::Eof)
+	{
+		ParsePos pos;
+		__lexer.__lex_innards(some_next_char, some_next_tok, some_prev_tok,
+			some_next_sym_str, some_next_num, some_line_num, outer_index,
+			inner_index, &to_split, &pos);
+
+		if (pos_vec != nullptr)
+		{
+			pos_vec->push_back(pos);
+		}
+
+		if ((some_next_tok != &Tok::Newline)
+			&& (some_next_tok != &Tok::Eof)
+			&& !tok_is_comment(some_next_tok))
+		{
+			ret.push_back(ParseNode(some_next_tok,
+				some_next_sym_str, some_next_num));
+		}
+
+		if (tok_is_comment(some_next_tok))
+		{
+			break;
+		}
 	}
 }
 
@@ -2144,9 +2361,6 @@ s64 Assembler::handle_factor(const std::vector<ParseNode>& some_parse_vec,
 
 
 
-void Assembler::handle_dot_if(std::vector<std::vector<ParseNode>>& vec_vec)
-{
-}
 
 
 
@@ -2195,43 +2409,6 @@ bool Assembler::tok_is_comment(PTok some_tok) const
 
 
 
-void Assembler::split(std::vector<ParseNode>& ret, 
-	std::vector<std::string>& to_split,
-	std::vector<ParsePos>* pos_vec)
-{
-	size_t outer_index = 0, inner_index = 0;
-	int some_next_char = ' ';
-	PTok some_prev_tok = nullptr, some_next_tok = nullptr;
-	std::string some_next_sym_str;
-	s64 some_next_num = -1;
-	size_t some_line_num = 0;
-
-	while (some_next_tok != &Tok::Eof)
-	{
-		ParsePos pos;
-		__lexer.__lex_innards(some_next_char, some_next_tok, some_prev_tok,
-			some_next_sym_str, some_next_num, some_line_num, outer_index,
-			inner_index, &to_split, &pos);
-
-		if (pos_vec != nullptr)
-		{
-			pos_vec->push_back(pos);
-		}
-
-		if ((some_next_tok != &Tok::Newline)
-			&& (some_next_tok != &Tok::Eof)
-			&& !tok_is_comment(some_next_tok))
-		{
-			ret.push_back(ParseNode(some_next_tok,
-				some_next_sym_str, some_next_num));
-		}
-
-		if (tok_is_comment(some_next_tok))
-		{
-			break;
-		}
-	}
-}
 
 
 
