@@ -665,6 +665,7 @@ void Assembler::fill_lines()
 				some_line += '\n';
 			}
 
+			// Don't append a blank line
 			if (some_line.size() >= 1)
 			{
 				__lines.push_back(some_line);
@@ -688,14 +689,14 @@ void Assembler::fill_lines()
 
 	}
 
-	printout(__lines.size(), "\n");
+	//printout(__lines.size(), "\n");
 
-	for (const auto& line_iter : __lines)
-	{
-		printout(line_iter);
-		//printout(line_iter);
-	}
-	printout("\n");
+	//for (const auto& line_iter : __lines)
+	//{
+	//	printout(line_iter);
+	//	//printout(line_iter);
+	//}
+	//printout("\n");
 
 	{
 	size_t outer_index = 0, inner_index = 0;

@@ -192,7 +192,7 @@ void Lexer::__lex_innards(int& some_next_char,
 
 	if (next_char() == '\n')
 	{
-		printout("lex:  Setting next_tok to newline\n");
+		//printout("lex:  Setting next_tok to newline\n");
 		set_next_tok(&Tok::Newline);
 		call_advance();
 		return;
@@ -200,7 +200,7 @@ void Lexer::__lex_innards(int& some_next_char,
 
 	if (next_char() == EOF)
 	{
-		printout("lex:  Setting next_tok to EOF\n");
+		//printout("lex:  Setting next_tok to EOF\n");
 		set_next_tok(&Tok::Eof);
 		return;
 	}
