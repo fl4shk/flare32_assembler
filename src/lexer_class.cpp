@@ -44,6 +44,11 @@ void Lexer::__advance_innards(int& some_next_char,
 
 	auto fake_getc = [&]() -> int
 	{
+		if (some_outer_index >= some_str_vec->size())
+		{
+			return EOF;
+		}
+
 		if (some_inner_index >= some_str_vec->at(some_outer_index).size())
 		{
 			some_inner_index = 0;
