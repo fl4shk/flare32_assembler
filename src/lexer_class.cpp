@@ -44,6 +44,8 @@ void Lexer::__advance_innards(int& some_next_char,
 
 	auto fake_getc = [&]() -> int
 	{
+		//printout("fake_getc():  ", some_outer_index, " ", some_inner_index,
+		//	"\t");
 		if (some_outer_index >= some_str_vec->size())
 		{
 			return EOF;
@@ -63,13 +65,25 @@ void Lexer::__advance_innards(int& some_next_char,
 			if (some_outer_index >= some_str_vec->size())
 			{
 				//printout("returning EOF\n");
+
+				//printout("\n");
 				return EOF;
 			}
 		}
 
 		const auto ret = some_str_vec->at(some_outer_index)
 			.at(some_inner_index++);
-		//printout("returning '", ret, "'\n");
+
+		//printout("returning '");
+		//if (ret == '\n')
+		//{
+		//	printout("newline");
+		//}
+		//else
+		//{
+		//	printout(ret);
+		//}
+		//printout("'\n");
 
 		return ret;
 	};
