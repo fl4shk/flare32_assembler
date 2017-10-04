@@ -774,12 +774,24 @@ void Assembler::handle_dot_if(size_t& some_outer_index,
 	const std::vector<std::vector<ParseNode>>& lines_vec, 
 	const size_t first_line_num)
 {
-	for (const auto& line_iter : lines_vec)
-	{
-		print_parse_vec(line_iter);
-	}
+	//for (const auto& line_iter : lines_vec)
+	//{
+	//	print_parse_vec(line_iter);
+	//}
+
+
+
+
+
+
 }
 
+bool Assembler::handle_condition(const std::vector<ParseNode>& line_iter,
+	size_t start_index, const size_t end_index)
+{
+	// Temporary
+	return false;
+}
 
 bool Assembler::handle_later_directives(size_t& some_outer_index, 
 	size_t& some_inner_index, size_t& index,

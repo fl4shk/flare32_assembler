@@ -151,7 +151,9 @@ private:		// functions
 	void handle_dot_if(size_t& some_outer_index, size_t& some_inner_index, 
 		const std::vector<std::vector<ParseNode>>& lines_vec,
 		const size_t first_line_num);
-	
+	bool handle_condition(const std::vector<ParseNode>& line_iter,
+		size_t start_index, const size_t end_index);
+
 	inline void insert_comment(std::string& iter)
 	{
 		iter.insert(0, ";");
