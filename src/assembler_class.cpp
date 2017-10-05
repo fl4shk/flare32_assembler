@@ -8,17 +8,22 @@ Assembler::Assembler()
 	__lexer(&__we, &__builtin_sym_tbl, &__user_sym_tbl, &__define_tbl, 
 	&__instr_tbl),
 	__codegen(&__we, &__addr, &__last_addr, &__pass, last_pass,
-	&__builtin_sym_tbl, &__user_sym_tbl, &__define_tbl, &__instr_tbl)
+	&__builtin_sym_tbl, &__user_sym_tbl, &__define_tbl, &__instr_tbl,
+	&__options)
 {
 }
-void Assembler::init(char* s_input_filename)
+void Assembler::init(int s_argc, char** s_argv)
 {
-	set_input_filename(s_input_filename);
+	__argc = s_argc;
+	__argv = s_argv;
+
+
+	set_input_filename(parse_argv());
 	set_infile(fopen(input_filename(), "r"));
 
 	if (infile() == nullptr)
 	{
-		we().err("Cannot read file");
+		err("Cannot read file");
 	}
 
 	__lexer.set_infile(infile());
@@ -61,6 +66,16 @@ int Assembler::operator () ()
 }
 
 
+char* Assembler::parse_argv()
+{
+	if (argc() != 2)
+	{
+		printerr("Usage:  ", argv()[0], " input_file\n");
+		exit(1);
+	}
+
+	return argv()[1];
+}
 
 void Assembler::reinit()
 {
@@ -128,73 +143,26 @@ void Assembler::print_parse_vec
 void Assembler::next_line(size_t& some_outer_index, 
 	size_t& some_inner_index, std::vector<ParseNode>& some_parse_vec)
 {
-	//bool found_comment = false;
-	//while ((next_tok() != &Tok::Newline) && (next_tok() != &Tok::Eof)
-	//	&& (next_tok() != &Tok::Bad))
-	////while (next_tok() != &Tok::Bad)
-	//{
-	//	if (!tok_is_comment(next_tok()))
-	//	{
-	//		found_comment = true;
-	//	}
-	//	//if ((next_tok() == &Tok::Newline)
-	//	//	|| (next_tok() == &Tok::Eof))
-	//	//{
-	//	//	some_parse_vec.push_back(ParseNode(next_tok(), next_sym_str(), 
-	//	//		next_num()));
-
-	//	//	if (next_tok() != &Tok::Eof)
-	//	//	{
-	//	//		lex(some_outer_index, some_inner_index, true);
-	//	//	}
-	//	//	break;
-	//	//}
-
-	//	//if (!found_comment || (next_tok() == &Tok::Newline)
-	//	//	|| (next_tok() == &Tok::Eof))
-	//	//if (!found_comment)
-	//	{
-	//		some_parse_vec.push_back(ParseNode(next_tok(), next_sym_str(), 
-	//			next_num()));
-	//	}
-	//	lex(some_outer_index, some_inner_index, true);
-
-	//}
-
-	//printout("next_line():  ");
-	//print_parse_vec(some_parse_vec);
-
-
 	bool found_comment = false;
+
+	while ((next_tok() != &Tok::Newline) && (next_tok() != &Tok::Eof))
+	{
+		if (tok_is_comment(next_tok()))
+		{
+			found_comment = true;
+		}
+
+		if (!found_comment && (next_tok() != nullptr))
+		{
+			some_parse_vec.push_back(ParseNode(next_tok(), 
+				next_sym_str(), next_num()));
+		}
+		lex(some_outer_index, some_inner_index, true);
+	}
 
 	if (next_tok() == &Tok::Newline)
 	{
 		lex(some_outer_index, some_inner_index, true);
-	}
-
-	else
-	{
-		while ((next_tok() != &Tok::Newline)
-			&& (next_tok() != &Tok::Eof))
-		{
-			if (tok_is_comment(next_tok()))
-			{
-				found_comment = true;
-			}
-
-			//if (!found_comment)
-			//{
-			//}
-
-			if (!found_comment && (next_tok() != nullptr))
-			{
-				some_parse_vec.push_back(ParseNode(next_tok(), 
-					next_sym_str(), next_num()));
-			}
-			lex(some_outer_index, some_inner_index, true);
-
-			//lex(some_outer_index, some_inner_index, true);
-		}
 	}
 
 }
@@ -219,7 +187,7 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index)
 	if (next_tok() == &Tok::Bad)
 	{
 		set_line_num(line_num() + 1);
-		we().err("Invalid syntax");
+		err("Invalid syntax");
 	}
 
 	if ((parse_vec.size() == 0)
@@ -274,12 +242,12 @@ void Assembler::line(size_t& some_outer_index, size_t& some_inner_index)
 			if (user_sym_tbl().at(parse_vec.at(0).next_sym_str).type()
 				== SymType::EquateName)
 			{
-				we().err("Can't use an equate as a label!");
+				err("Can't use an equate as a label!");
 			}
 			else if (user_sym_tbl().at(parse_vec.at(0).next_sym_str)
 				.type() != SymType::Other)
 			{
-				we().err("Invalid label name!");
+				err("Invalid label name!");
 			}
 
 			// Update the value of the label in the user symbol table.
@@ -354,7 +322,7 @@ void Assembler::finish_line
 
 	if (some_parse_vec.at(0).next_tok != &Tok::Instr)
 	{
-		we().expected_tokens(&Tok::Instr);
+		expected_tokens(&Tok::Instr);
 	}
 
 	const auto& instr_vec = __instr_tbl.at(some_parse_vec.at(0)
@@ -375,7 +343,7 @@ void Assembler::finish_line
 
 	if (!complete)
 	{
-		we().err("Invalid instruction arguments");
+		err("Invalid instruction arguments");
 	}
 
 }
@@ -426,7 +394,7 @@ void Assembler::fill_lines()
 //
 //		if (define_expand_depth >= expand_max_depth)
 //		{
-//			we().err("Cannot resolve .defs!\n");
+//			err("Cannot resolve .defs!\n");
 //		}
 //
 //		set_changed(false);
@@ -465,7 +433,7 @@ void Assembler::fill_lines()
 //{
 //	auto eek = [&]() -> void
 //	{
-//		we().err("Unknown .def!");
+//		err("Unknown .def!");
 //	};
 //
 //
@@ -659,7 +627,7 @@ void Assembler::fill_lines()
 //
 //		if (define_expand_depth >= expand_max_depth)
 //		{
-//			we().err("Cannot resolve .defs!\n");
+//			err("Cannot resolve .defs!\n");
 //		}
 //
 //		//printout("\n\n");
@@ -673,29 +641,19 @@ bool Assembler::handle_earlier_directives(size_t& some_outer_index,
 	size_t& some_inner_index, const size_t last_line_num)
 {
 	lex(some_outer_index, some_inner_index, true);
-	//printout(next_tok()->str(), "\n");
 
 	std::vector<std::vector<ParseNode>> lines_vec;
 
 	auto call_find_matching_directive = [&]
-		(std::vector<ParseNode>&& parse_vec, PTok which_tok) -> bool
+		(std::vector<ParseNode>&& parse_vec, PTok start, PTok end) -> bool
 	{
 		return find_matching_directive(some_outer_index, some_inner_index,
-			last_line_num, std::move(parse_vec), lines_vec, which_tok);
+			last_line_num, std::move(parse_vec), lines_vec, start, end);
 	};
-
-	//printout("last_line_num, __lines.size():  ", last_line_num, ", ",
-	//	__lines.size(), "\n");
 
 
 	while (next_tok() != &Tok::Eof)
 	{
-		////std::vector<ParseNode> parse_vec;
-		//lex(some_outer_index, some_inner_index, true);
-		//printout(next_tok()->str(), "\n");
-
-		//printout("line_num:  ", line_num(), "\n");
-
 		if (line_num() > last_line_num)
 		{
 			return false;
@@ -706,9 +664,6 @@ bool Assembler::handle_earlier_directives(size_t& some_outer_index,
 		std::vector<ParseNode> parse_vec;
 		next_line(some_outer_index, some_inner_index, parse_vec);
 
-		//printout("After next_line():  ");
-		//print_parse_vec(parse_vec);
-
 		if (parse_vec.size() == 0)
 		{
 			continue;
@@ -716,13 +671,13 @@ bool Assembler::handle_earlier_directives(size_t& some_outer_index,
 
 		if (parse_vec.front().next_tok == &Tok::DotIf)
 		{
-			const size_t first_line_num = line_num() - 1;
+			const size_t first_line_num = line_num();
 
 			// Find the .endif
 			if (!call_find_matching_directive(std::move(parse_vec),
-				&Tok::DotEndIf))
+				&Tok::DotIf, &Tok::DotEndIf))
 			{
-				we().err("Missing .endif, tried to find it for line ",
+				err("Missing .endif, tried to find it for line ",
 					"number ", first_line_num, "!");
 			}
 
@@ -732,16 +687,37 @@ bool Assembler::handle_earlier_directives(size_t& some_outer_index,
 	}
 
 	return true;
-
 }
 
 
 bool Assembler::find_matching_directive(size_t& some_outer_index,
 	size_t& some_inner_index, const size_t last_line_num,
 	std::vector<ParseNode>&& orig_parse_vec,
-	std::vector<std::vector<ParseNode>>& ret_lines_vec, PTok some_tok)
+	std::vector<std::vector<ParseNode>>& ret_lines_vec, PTok start,
+	PTok end)
 {
+	if (ret_lines_vec.size() != 0)
+	{
+		err("find_matching_directive():  Bug in assembler ",
+			"(ret_lines_vec.size() != 0)!");
+	}
+
 	ret_lines_vec.push_back(std::move(orig_parse_vec));
+
+	if (ret_lines_vec.back().size() == 0)
+	{
+		err("find_matching_directive():  Bug in assembler ",
+			"(ret_lines_vec.back().size() == 0)!");
+	}
+
+	if (ret_lines_vec.back().front().next_tok != start)
+	{
+		err("find_matching_directive():  Bug in assembler ",
+			"(ret_lines_vec.back().front().next_tok != ", start->str(), 
+			")!");
+	}
+
+	size_t num_start_toks = 1, num_end_toks = 0;
 
 	while (next_tok() != &Tok::Eof)
 	{
@@ -755,15 +731,27 @@ bool Assembler::find_matching_directive(size_t& some_outer_index,
 
 		ret_lines_vec.push_back(std::move(other_parse_vec));
 
+		// Ignore blank lines
 		if (ret_lines_vec.back().size() == 0)
 		{
 			continue;
 		}
 
-		if (ret_lines_vec.back().front().next_tok == some_tok)
+		if (ret_lines_vec.back().front().next_tok == start)
+		{
+			++num_start_toks;
+		}
+
+		else if (ret_lines_vec.back().front().next_tok == end)
+		{
+			++num_end_toks;
+		}
+
+		if (num_start_toks == num_end_toks)
 		{
 			return true;
 		}
+
 	}
 
 	return false;
@@ -774,24 +762,92 @@ void Assembler::handle_dot_if(size_t& some_outer_index,
 	const std::vector<std::vector<ParseNode>>& lines_vec, 
 	const size_t first_line_num)
 {
-	//for (const auto& line_iter : lines_vec)
+	for (const auto& line_iter : lines_vec)
+	{
+		print_parse_vec(line_iter);
+	}
+
+
+	std::vector<size_t> condition_line_nums;
+	std::vector<size_t> condition_vec_indices;
+	std::vector<s64> dot_else_line_nums, dot_else_vec_indices;
+
+
+
+	//// Find the line numbers that have conditionals and also for the
+	//// ".else" statement
+	//for (size_t i=0; i<lines_vec.size(); ++i)
 	//{
-	//	print_parse_vec(line_iter);
+	//	const auto& line_iter = lines_vec.at(i);
+	//	if (line_iter.size() >= 1)
+	//	{
+	//		printout("On line ", first_line_num + i, ":  ");
+	//		printout(line_iter.front().next_tok->str(), "\n");
+	//		//if ((line_iter.front().next_tok == &Tok::DotIf)
+	//		//	|| (line_iter.front().next_tok == &Tok::DotElseIf))
+	//		if (line_iter.front().next_tok == &Tok::DotElseIf)
+	//		{
+	//			condition_line_nums.push_back(first_line_num + i);
+	//			condition_vec_indices.push_back(i);
+	//		}
+	//		else if (line_iter.front().next_tok == &Tok::DotElse)
+	//		{
+	//			if (dot_else_line_nums.size() == 0)
+	//			{
+	//				dot_else_line_nums.push_back(first_line_num + i);
+	//				dot_else_vec_indices.push_back(i);
+	//			}
+	//			else
+	//			{
+	//				err("More than one .else!");
+	//			}
+	//		}
+	//	}
 	//}
 
 
+	//// Which line numbers should be commented out?
+	//s64 taken_start = -1, taken_end_exclusive = -1;
 
+
+	//for (size_t i=0; i<condition_line_nums.size(); ++i)
+	//{
+	//	printout("Condition on this line:  ", condition_line_nums.at(i), 
+	//		"\n");
+	//}
+	//if (dot_else_line_nums.size() == 1)
+	//{
+	//	printout(".else on this line:  ", dot_else_line_nums.front(),
+	//		"\n");
+	//}
+
+
+	//if ((taken_start != -1) && (taken_end_exclusive != -1))
+	//{
+	//	// Comment out the entire if elseif else chain
+	//	for (s64 i=first_line_num; 
+	//		i<((s64)first_line_num) + ((s64)lines_vec.size()); 
+	//		++i)
+	//	{
+	//		if ((i < taken_start)
+	//			|| (i >= taken_end_exclusive))
+	//		{
+	//			insert_comment(__lines.at(i));
+	//		}
+	//	}
+	//}
 
 
 
 }
 
 bool Assembler::handle_condition(const std::vector<ParseNode>& line_iter,
-	size_t start_index, const size_t end_index)
+	size_t start_index, const size_t end_index_exclusive)
 {
 	// Temporary
 	return false;
 }
+
 
 bool Assembler::handle_later_directives(size_t& some_outer_index, 
 	size_t& some_inner_index, size_t& index,
@@ -799,7 +855,7 @@ bool Assembler::handle_later_directives(size_t& some_outer_index,
 {
 	auto eek = [&]() -> void
 	{
-		we().err("invalid syntax for ", parse_vec.front().next_tok->str());
+		err("invalid syntax for ", parse_vec.front().next_tok->str());
 	};
 
 	//printout("handle_later_directives():  ");
@@ -818,7 +874,7 @@ bool Assembler::handle_later_directives(size_t& some_outer_index,
 
 			if (index != parse_vec.size())
 			{
-				we().err("extra characters on line");
+				err("extra characters on line");
 			}
 		}
 
@@ -911,7 +967,7 @@ bool Assembler::handle_later_directives(size_t& some_outer_index,
 		if (user_sym_tbl().at(parse_vec.at(1).next_sym_str).type() 
 			!= SymType::EquateName)
 		{
-			we().err("Can't convert a label to an equate!");
+			err("Can't convert a label to an equate!");
 		}
 
 		index = 2;
@@ -958,7 +1014,7 @@ bool Assembler::handle_later_directives(size_t& some_outer_index,
 
 		//if (define_tbl().contains(to_insert.name()))
 		//{
-		//	we().err(".def already defined");
+		//	err(".def already defined");
 		//}
 
 		//if (parse_vec.at(3).next_tok == &Tok::RParen)
@@ -1030,50 +1086,50 @@ bool Assembler::handle_later_directives(size_t& some_outer_index,
 		//return true;
 	}
 
-	else if (parse_vec.front().next_tok == &Tok::DotIf)
-	{
-		printout("Found .if, but that should have been taken care of ",
-			"earlier!\n");
-		eek();
-		//std::vector<std::vector<ParseNode>> lines_vec;
+	//else if (parse_vec.front().next_tok == &Tok::DotIf)
+	//{
+	//	printout("Found .if, but that should have been taken care of ",
+	//		"earlier!\n");
+	//	eek();
+	//	//std::vector<std::vector<ParseNode>> lines_vec;
 
-		//lines_vec.push_back(parse_vec);
-
-
-		//const size_t first_line_num = some_outer_index - 1;
+	//	//lines_vec.push_back(parse_vec);
 
 
+	//	//const size_t first_line_num = some_outer_index - 1;
 
-		//do
-		//{
-		//	std::vector<ParseNode> other_parse_vec;
-		//	next_line(some_outer_index, some_inner_index, other_parse_vec);
-		//	//printout(other_parse_vec.size(), "\n");
-		//	//print_parse_vec(other_parse_vec);
-		//	lines_vec.push_back((other_parse_vec));
-		//} while ((next_tok() != &Tok::Eof) && (next_tok() != &Tok::Bad)
-		//	&& (lines_vec.back().size() >= 1)
-		//	&& (lines_vec.back().front().next_tok != &Tok::DotEndIf));
 
-		//printout("In .if:  \n");
-		//for (const auto& line_iter : lines_vec)
-		//{
-		//	print_parse_vec(line_iter);
-		//}
 
-		////printout(lines_vec.size(), "\n");
+	//	//do
+	//	//{
+	//	//	std::vector<ParseNode> other_parse_vec;
+	//	//	next_line(some_outer_index, some_inner_index, other_parse_vec);
+	//	//	//printout(other_parse_vec.size(), "\n");
+	//	//	//print_parse_vec(other_parse_vec);
+	//	//	lines_vec.push_back((other_parse_vec));
+	//	//} while ((next_tok() != &Tok::Eof) && (next_tok() != &Tok::Bad)
+	//	//	&& (lines_vec.back().size() >= 1)
+	//	//	&& (lines_vec.back().front().next_tok != &Tok::DotEndIf));
 
-		////if ((lines_vec.size() >= 1)
-		////	&& (lines_vec.back().size() >= 1)
-		////	&& (lines_vec.back().front().next_tok != &Tok::DotEndIf))
-		////{
-		////	we().err("Missing .endif!");
-		////}
+	//	//printout("In .if:  \n");
+	//	//for (const auto& line_iter : lines_vec)
+	//	//{
+	//	//	print_parse_vec(line_iter);
+	//	//}
 
-		////handle_dot_if(lines_vec, just_find_defines, first_line_num);
+	//	////printout(lines_vec.size(), "\n");
 
-		return true;
-	}
+	//	////if ((lines_vec.size() >= 1)
+	//	////	&& (lines_vec.back().size() >= 1)
+	//	////	&& (lines_vec.back().front().next_tok != &Tok::DotEndIf))
+	//	////{
+	//	////	err("Missing .endif!");
+	//	////}
+
+	//	////handle_dot_if(lines_vec, just_find_defines, first_line_num);
+
+	//	return true;
+	//}
 
 	return false;
 }
@@ -2256,7 +2312,7 @@ s64 Assembler::better_expr(const std::vector<ParseNode>& some_parse_vec,
 
 	if (index != valid_end_index)
 	{
-		we().err("Invalid expression");
+		err("Invalid expression");
 	}
 
 	return ret;
@@ -2334,9 +2390,9 @@ s64 Assembler::__handle_expr(const std::vector<ParseNode>& some_parse_vec,
 	}
 	else
 	{
-		//we().err("__handle_expr():  3, Eek!\n");
+		//err("__handle_expr():  3, Eek!\n");
 		//return 9001;
-		we().err("Invalid expression");
+		err("Invalid expression");
 	}
 
 
@@ -2446,7 +2502,7 @@ s64 Assembler::__handle_factor(const std::vector<ParseNode>& some_parse_vec,
 {
 	if (index >= some_parse_vec.size())
 	{
-		we().err("Invalid expression!");
+		err("Invalid expression!");
 	}
 
 	//if (next_tok() == &Tok::NatNum)
@@ -2478,15 +2534,15 @@ s64 Assembler::__handle_factor(const std::vector<ParseNode>& some_parse_vec,
 				break;
 
 			case SymType::DefineName:
-				//we().err("Can't use a define in an expression!");
+				//err("Can't use a define in an expression!");
 				break;
 
 			case SymType::MacroName:
-				we().err("Can't use a macro in an expression!");
+				err("Can't use a macro in an expression!");
 				break;
 
 			default:
-				we().err("__handle_factor():  Eek!");
+				err("__handle_factor():  Eek!");
 				break;
 		}
 		
@@ -2500,7 +2556,7 @@ s64 Assembler::__handle_factor(const std::vector<ParseNode>& some_parse_vec,
 	{
 		//expected("token of type \"", Tok::NatNum.str(), "\" or \"", 
 		//	Tok::Ident.str(), "\" or \"", Tok::LParen.str(), "\"!");
-		we().expected_tokens(&Tok::NatNum, &Tok::Ident, &Tok::LParen);
+		expected_tokens(&Tok::NatNum, &Tok::Ident, &Tok::LParen);
 	}
 
 	__lexer.need(some_parse_vec, index, &Tok::LParen);

@@ -233,7 +233,7 @@ void CodeGenerator::encode_and_gen
 	gen16(high_hword);
 	__gen_low(g1g2_low, g3_low, instr);
 
-	if (pass() == last_pass)
+	if (can_output())
 	{
 		printout("\n");
 	}
@@ -264,7 +264,7 @@ void CodeGenerator::__gen_low(u16 g1g2_low, u32 g3_low, PInstr instr)
 
 void CodeGenerator::gen8(s32 v)
 {
-	if (pass() == last_pass)
+	if (can_output())
 	{
 		if (last_addr() != addr())
 		{

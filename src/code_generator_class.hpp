@@ -9,6 +9,7 @@
 
 #include "parse_node_class.hpp"
 #include "warn_error_class.hpp"
+#include "options_class.hpp"
 
 namespace flare32
 {
@@ -23,19 +24,26 @@ private:		// variables
 	SymbolTable * __builtin_sym_tbl = nullptr, * __user_sym_tbl = nullptr;
 	DefineTable* __define_tbl = nullptr;
 	InstructionTable* __instr_tbl = nullptr;
-	
+	Options* __options = nullptr;
+
+
 public:		// functions
 	inline CodeGenerator(WarnError* s_we, size_t* s_addr,
 		size_t* s_last_addr, s32* s_pass, s32 s_last_pass,
 		SymbolTable* s_builtin_sym_tbl, SymbolTable* s_user_sym_tbl,
-		DefineTable* s_define_tbl, InstructionTable* s_instr_tbl)
+		DefineTable* s_define_tbl, InstructionTable* s_instr_tbl,
+		Options* s_options)
 		: __we(s_we), __addr(s_addr), __last_addr(s_last_addr),
 		__pass(s_pass), last_pass(s_last_pass),
 		__builtin_sym_tbl(s_builtin_sym_tbl),
 		__user_sym_tbl(s_user_sym_tbl), __define_tbl(s_define_tbl),
-		__instr_tbl(s_instr_tbl)
+		__instr_tbl(s_instr_tbl), __options(s_options)
 	{
 	}
+
+
+	void display() const;
+
 
 	// Code generator stuff
 	inline void __encode_instr_group(u16& high_hword, PInstr instr) const
@@ -65,17 +73,17 @@ public:		// functions
 
 private:		// functions
 
-	inline auto& we()
+	inline auto& we() const
 	{
 		return *__we;
 	}
 
-	inline auto addr()
+	inline auto addr() const
 	{
 		return *__addr;
 	}
 
-	inline auto last_addr()
+	inline auto last_addr() const
 	{
 		return *__last_addr;
 	}
@@ -91,29 +99,39 @@ private:		// functions
 		return *__last_addr;
 	}
 
-	inline auto pass()
+	inline auto pass() const
 	{
 		return *__pass;
 	}
 
-	inline auto& builtin_sym_tbl()
+	inline auto& builtin_sym_tbl() const
 	{
 		return *__builtin_sym_tbl;
 	}
 
-	inline auto& user_sym_tbl()
+	inline auto& user_sym_tbl() const
 	{
 		return *__user_sym_tbl;
 	}
 
-	inline auto& define_tbl()
+	inline auto& define_tbl() const
 	{
 		return *__define_tbl;
 	}
 
-	inline auto& instr_tbl()
+	inline auto& instr_tbl() const
 	{
 		return *__instr_tbl;
+	}
+
+	inline const auto& options() const
+	{
+		return *__options;
+	}
+
+	inline bool can_output() const
+	{
+		return (pass() == last_pass);
 	}
 
 

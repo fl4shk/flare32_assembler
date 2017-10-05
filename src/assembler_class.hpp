@@ -11,6 +11,7 @@
 #include "parse_node_class.hpp"
 #include "lexer_class.hpp"
 #include "code_generator_class.hpp"
+#include "options_class.hpp"
 
 
 namespace flare32
@@ -30,6 +31,7 @@ private:		// variables
 	InstructionTable __instr_tbl;
 	Lexer __lexer;
 	CodeGenerator __codegen;
+	Options __options;
 
 	std::vector<std::string> __lines;
 
@@ -51,16 +53,28 @@ private:		// variables
 	char* __input_filename = nullptr;
 	std::FILE* __infile = nullptr;
 
+	int __argc;
+	char** __argv;
+
 public:		// functions
 	Assembler();
-	inline Assembler(char* s_input_filename) : Assembler()
+	inline Assembler(int s_argc, char** s_argv) : Assembler()
 	{
-		init(s_input_filename);
+		init(s_argc, s_argv);
 	}
 
-	void init(char* s_input_filename);
+	void init(int s_argc, char** s_argv);
 
 	int operator () ();
+
+	inline auto argc() const
+	{
+		return __argc;
+	}
+	inline auto argv() const
+	{
+		return __argv;
+	}
 
 
 
@@ -87,6 +101,10 @@ private:		// functions
 	gen_getter_and_setter_by_val(infile);
 
 
+	// This function finds out what __input_filename's value should be
+	char* parse_argv();
+
+
 	void reinit();
 	void fill_builtin_sym_tbl();
 
@@ -98,8 +116,23 @@ private:		// functions
 		return next_tok();
 	}
 
+	template<typename... ArgTypes>
+	void err(ArgTypes&&... args) const
+	{
+		__we.err(args...);
+	}
 
+	template<typename... ArgTypes>
+	void expected(ArgTypes&&... args) const
+	{
+		__we.expected(args...);
+	}
 
+	template<typename... ArgTypes>
+	void expected_tokens(ArgTypes&&... args) const
+	{
+		__we.expected_tokens(args...);
+	}
 
 	inline void advance(size_t& some_outer_index, size_t& some_inner_index,
 		bool use_lines=false)
@@ -146,13 +179,16 @@ private:		// functions
 	bool find_matching_directive(size_t& some_outer_index,
 		size_t& some_inner_index, const size_t last_line_num,
 		std::vector<ParseNode>&& orig_parse_vec,
-		std::vector<std::vector<ParseNode>>& ret_lines_vec, PTok some_tok);
+		std::vector<std::vector<ParseNode>>& ret_lines_vec, PTok start,
+		PTok end);
 
 	void handle_dot_if(size_t& some_outer_index, size_t& some_inner_index, 
 		const std::vector<std::vector<ParseNode>>& lines_vec,
 		const size_t first_line_num);
+	
+	// start_index is after "(", end_index_exclusive is ")"
 	bool handle_condition(const std::vector<ParseNode>& line_iter,
-		size_t start_index, const size_t end_index);
+		size_t start_index, const size_t end_index_exclusive);
 
 	inline void insert_comment(std::string& iter)
 	{
