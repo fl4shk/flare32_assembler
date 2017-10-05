@@ -36,12 +36,12 @@ int Assembler::operator () ()
 	set_pass(0);
 	fill_lines();
 
-	{
-	reinit();
-	size_t outer_index = 0, inner_index = 0;
+	//{
+	//reinit();
+	//size_t outer_index = 0, inner_index = 0;
 
-	handle_earlier_directives(outer_index, inner_index, __lines.size());
-	}
+	//handle_earlier_directives(outer_index, inner_index, __lines.size());
+	//}
 
 
 	// Two passes
@@ -143,6 +143,17 @@ void Assembler::print_parse_vec
 void Assembler::next_line(size_t& some_outer_index, 
 	size_t& some_inner_index, std::vector<ParseNode>& some_parse_vec)
 {
+	//printout("next_line():  ", line_num(), ":  ",
+	//	next_tok() == nullptr ? "nullptr" : next_tok()->str(), "\n");
+
+	if (next_tok() == &Tok::Newline)
+	{
+		lex(some_outer_index, some_inner_index, true);
+	}
+
+	//printout("next_line():  ", line_num(), ":  ",
+	//	next_tok() == nullptr ? "nullptr" : next_tok()->str(), "\n");
+
 	bool found_comment = false;
 
 	while ((next_tok() != &Tok::Newline) && (next_tok() != &Tok::Eof))
@@ -157,11 +168,6 @@ void Assembler::next_line(size_t& some_outer_index,
 			some_parse_vec.push_back(ParseNode(next_tok(), 
 				next_sym_str(), next_num()));
 		}
-		lex(some_outer_index, some_inner_index, true);
-	}
-
-	if (next_tok() == &Tok::Newline)
-	{
 		lex(some_outer_index, some_inner_index, true);
 	}
 
