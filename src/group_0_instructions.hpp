@@ -5,8 +5,8 @@
 // Group 0 Instructions
 // 00fo oooo aaaa bbbb
 
-	// f:  1 if can affect flags (and instruction type supports it), 0 if
-	// flags unchanged.
+	// f:  1 if can affect Flags (and instruction type supports it), 0 if
+	// Flags unchanged.
 
 	// o:  opcode
 	// a: rA (destination register usually)
@@ -14,143 +14,143 @@
 
 #define LIST_OF_INSTR_G0_LDST_RA_RB__COLLECTION_0(INSTR_STUFF) \
 /* Load 32-bit value from address rB into rA. */ \
-INSTR_STUFF(0, ldst_ra_rb, Ldr, "ldr") \
+INSTR_STUFF(0, LdStRaRb, Ldr, "ldr") \
 \
 /* Load zero-extended 16-bit value from address rB into rA. */ \
 /* This zero-extends the value. */ \
-INSTR_STUFF(0, ldst_ra_rb, Ldh, "ldh") \
+INSTR_STUFF(0, LdStRaRb, Ldh, "ldh") \
 \
 /* Load sign-extended 16-bit value from address rB into rA. */ \
 /* This sign-extends the value. */ \
-INSTR_STUFF(0, ldst_ra_rb, Ldsh, "ldsh") \
+INSTR_STUFF(0, LdStRaRb, Ldsh, "ldsh") \
 \
 /* Load zero-extended 8-bit value from address rB into rA. */ \
 /* This zero-extends the value. */ \
-INSTR_STUFF(0, ldst_ra_rb, Ldb, "ldb") \
+INSTR_STUFF(0, LdStRaRb, Ldb, "ldb") \
 \
 \
 \
 /* Load sign-extended 8-bit value from address rB into rA. */ \
 /* This sign-extends the value. */ \
-INSTR_STUFF(0, ldst_ra_rb, Ldsb, "ldsb") \
+INSTR_STUFF(0, LdStRaRb, Ldsb, "ldsb") \
 \
 /* Store 32-bit value in rA to address rB. */ \
-INSTR_STUFF(0, ldst_ra_rb, Str, "str") \
+INSTR_STUFF(0, LdStRaRb, Str, "str") \
 \
 /* Store low 16 bits of rA to address rB. */ \
-INSTR_STUFF(0, ldst_ra_rb, Sth, "sth") \
+INSTR_STUFF(0, LdStRaRb, Sth, "sth") \
 \
 /* Store low 8 bits of rA to address rB. */ \
-INSTR_STUFF(0, ldst_ra_rb, Stb, "stb")
+INSTR_STUFF(0, LdStRaRb, Stb, "stb")
 
 
 
 #define LIST_OF_INSTR_G0_RA_RB__COLLECTION_0(INSTR_STUFF) \
 /* rA = rA + rB */ \
-/* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_STUFF(0, ra_rb, Add, "add") \
+/* This instruction can affect N, V, Z, and C Flags. */ \
+INSTR_STUFF(0, RaRb, Add, "add") \
 \
 /* rA = rA + rB + carry_flag */ \
 /* Add with carry */ \
-/* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_STUFF(0, ra_rb, Adc, "adc") \
+/* This instruction can affect N, V, Z, and C Flags. */ \
+INSTR_STUFF(0, RaRb, Adc, "adc") \
 \
 /* rA = rA - rB */ \
-/* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_STUFF(0, ra_rb, Sub, "sub") \
+/* This instruction can affect N, V, Z, and C Flags. */ \
+INSTR_STUFF(0, RaRb, Sub, "sub") \
 \
 /* rA = rA + (~rB) + carry_flag */ \
 /* Subtract with borrow (6502 style) */ \
-/* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_STUFF(0, ra_rb, Sbc, "sbc") \
+/* This instruction can affect N, V, Z, and C Flags. */ \
+INSTR_STUFF(0, RaRb, Sbc, "sbc") \
 \
 \
 \
 /* rA = rB - rA */ \
-/* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_STUFF(0, ra_rb, Rsb, "rsb") \
+/* This instruction can affect N, V, Z, and C Flags. */ \
+INSTR_STUFF(0, RaRb, Rsb, "rsb") \
 \
 /* rA = rA * rB */ \
-INSTR_STUFF(0, ra_rb, Mul, "mul") \
+INSTR_STUFF(0, RaRb, Mul, "mul") \
 \
 /* rA = rA & rB */ \
-/* This instruction can affect the N and Z flags. */ \
-INSTR_STUFF(0, ra_rb, And, "and") \
+/* This instruction can affect the N and Z Flags. */ \
+INSTR_STUFF(0, RaRb, And, "and") \
 \
 /* rA = rA | rB */ \
-/* This instruction can affect the N and Z flags. */ \
-INSTR_STUFF(0, ra_rb, Or, "or") \
+/* This instruction can affect the N and Z Flags. */ \
+INSTR_STUFF(0, RaRb, Or, "or") \
 \
 \
 \
 /* rA = rA ^ rB */ \
-/* This instruction can affect the N and Z flags. */ \
-INSTR_STUFF(0, ra_rb, Xor, "xor") \
+/* This instruction can affect the N and Z Flags. */ \
+INSTR_STUFF(0, RaRb, Xor, "xor") \
 \
 /* Logical shift left */ \
 /* rA = rA << rB */ \
-INSTR_STUFF(0, ra_rb, Lsl, "lsl") \
+INSTR_STUFF(0, RaRb, Lsl, "lsl") \
 \
 /* Logical shift right */ \
-INSTR_STUFF(0, ra_rb, Lsr, "lsr") \
+INSTR_STUFF(0, RaRb, Lsr, "lsr") \
 \
 /* Arithmetic shift right */ \
-INSTR_STUFF(0, ra_rb, Asr, "asr") \
+INSTR_STUFF(0, RaRb, Asr, "asr") \
 \
 \
 \
 /* Rotate rA left by rB bits, then store result in rA. */ \
-INSTR_STUFF(0, ra_rb, Rol, "rol") \
+INSTR_STUFF(0, RaRb, Rol, "rol") \
 \
 /* Rotate rA right by rB bits, then store result in rA. */ \
-INSTR_STUFF(0, ra_rb, Ror, "ror") \
+INSTR_STUFF(0, RaRb, Ror, "ror") \
 \
 /* Rotate rB left (THROUGH carry) by 1 bit, then store result in rA. */ \
 /* This instruction can only affect the C flag. */ \
-INSTR_STUFF(0, ra_rb, Rlc, "rlc") \
+INSTR_STUFF(0, RaRb, Rlc, "rlc") \
 \
 /* Rotate rB right (THROUGH carry) by 1 bit, then store result in rA. */ \
 /* This instruction can only affect the C flag. */ \
-INSTR_STUFF(0, ra_rb, Rrc, "rrc")
+INSTR_STUFF(0, RaRb, Rrc, "rrc")
 
 
 
 #define LIST_OF_INSTR_G0_IRA_RA__COLLECTION_0(INSTR_STUFF) \
 /* Copy rA to the Interrupt Return Address */ \
-INSTR_STUFF(0, ira_ra, Cpy, "cpy")
+INSTR_STUFF(0, IraRa, Cpy, "cpy")
 
 #define LIST_OF_INSTR_G0_RA_IRA__COLLECTION_0(INSTR_STUFF) \
 /* Copy the Interrupt Return Address to rA */ \
-INSTR_STUFF(0, ra_ira, Cpy, "cpy")
+INSTR_STUFF(0, RaIra, Cpy, "cpy")
 
 #define LIST_OF_INSTR_G0_RA_RB__COLLECTION_1(INSTR_STUFF) \
 /* Subroutine call using (rA + rB) as destination address.  */ \
 /* The return address is stored in the link register (lr). */ \
-INSTR_STUFF(0, ra_rb, Callx, "callx") \
+INSTR_STUFF(0, RaRb, Callx, "callx") \
 \
 /* Set pc to destination address in (rA + rB). */ \
-INSTR_STUFF(0, ra_rb, Jumpx, "jumpx")
+INSTR_STUFF(0, RaRb, Jumpx, "jumpx")
 
 
 
 #define LIST_OF_INSTR_G0_RA_PC__COLLECTION_0(INSTR_STUFF) \
 /* Copy pc to rA (this can be used for pc-relative loads */ \
 /* and stores) */ \
-INSTR_STUFF(0, ra_pc, Cpy, "cpy")
+INSTR_STUFF(0, RaPc, Cpy, "cpy")
 
 
 
 #define LIST_OF_INSTR_G0_RA_RB__COLLECTION_2(INSTR_STUFF) \
 /* Copy */ \
 /* rA = rB */ \
-INSTR_STUFF(0, ra_rb, Cpy, "cpy") \
+INSTR_STUFF(0, RaRb, Cpy, "cpy") \
 \
 /* rA = Sign extend of low 16 bits in rB */ \
 /* Note that the high 16 bits of rB are ignored */ \
-INSTR_STUFF(0, ra_rb, Seh, "seh") \
+INSTR_STUFF(0, RaRb, Seh, "seh") \
 \
 /* rA = Sign extend of low 8 bits in rB */ \
-INSTR_STUFF(0, ra_rb, Seb, "seb")
+INSTR_STUFF(0, RaRb, Seb, "seb")
 
 
 

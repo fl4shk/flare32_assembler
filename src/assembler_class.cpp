@@ -113,8 +113,8 @@ void Assembler::fill_builtin_sym_tbl()
 
 	// Special-purpose registers
 	builtin_sym_tbl().insert_or_assign(Symbol("pc", &Tok::RegPc, -1));
-	builtin_sym_tbl().insert_or_assign(Symbol("ira", &Tok::RegIra, -1));
-	builtin_sym_tbl().insert_or_assign(Symbol("flags", &Tok::RegFlags,
+	builtin_sym_tbl().insert_or_assign(Symbol("Ira", &Tok::RegIra, -1));
+	builtin_sym_tbl().insert_or_assign(Symbol("Flags", &Tok::RegFlags,
 		-1));
 
 
@@ -1186,97 +1186,110 @@ bool Assembler::parse_instr(PInstr instr,
 {
 	switch (instr->args())
 	{
-		case InstrArgs::no_args:
+		case InstrArgs::NoArgs:
 			return __parse_instr_no_args(some_parse_vec, 
 				instr);
-		case InstrArgs::uimm16:
+		case InstrArgs::UImm16:
 			return __parse_instr_uimm16(some_parse_vec, 
 				instr);
-		case InstrArgs::simm16:
+		case InstrArgs::SImm16:
 			return __parse_instr_simm16(some_parse_vec, 
 				instr);
-		case InstrArgs::imm32:
+		case InstrArgs::Imm32:
 			return __parse_instr_imm32(some_parse_vec, 
 				instr);
 
-		case InstrArgs::ra:
+		case InstrArgs::Ra:
 			return __parse_instr_ra(some_parse_vec, 
 				instr);
-		case InstrArgs::ra_uimm16:
+		case InstrArgs::RaUImm16:
 			return __parse_instr_ra_uimm16(some_parse_vec, 
 				instr);
-		case InstrArgs::ra_rb:
+		case InstrArgs::RaRb:
 			return __parse_instr_ra_rb(some_parse_vec, 
 				instr);
-		case InstrArgs::ra_rb_uimm16:
+		case InstrArgs::RaRbUImm16:
 			return __parse_instr_ra_rb_uimm16(some_parse_vec, 
 				instr);
-		case InstrArgs::ra_rb_simm16:
+		case InstrArgs::RaRbSImm16:
 			return __parse_instr_ra_rb_simm16(some_parse_vec, 
 				instr);
-		case InstrArgs::ra_rb_rc:
+		case InstrArgs::RaRbRc:
 			return __parse_instr_ra_rb_rc(some_parse_vec, 
 				instr);
-		case InstrArgs::ra_rb_rc_simm12:
+		case InstrArgs::RaRbRcSImm12:
 			return __parse_instr_ra_rb_rc_simm12(some_parse_vec, 
 				instr);
 
-		case InstrArgs::ldst_ra_rb:
+		case InstrArgs::LdStRaRb:
 			return __parse_instr_ldst_ra_rb(some_parse_vec, 
 				instr);
-		case InstrArgs::ldst_ra_rb_rc_simm12:
+		case InstrArgs::LdStRaRbRcSImm12:
 			return __parse_instr_ldst_ra_rb_rc_simm12(some_parse_vec, 
 				instr);
-		case InstrArgs::ldst_ra_rb_rc:
+		case InstrArgs::LdStRaRbRc:
 			return __parse_instr_ldst_ra_rb_rc(some_parse_vec, 
 				instr);
-		case InstrArgs::ldst_ra_rb_simm12:
+		case InstrArgs::LdStRaRbSImm12:
 			return __parse_instr_ldst_ra_rb_simm12(some_parse_vec, 
 				instr);
 
-		case InstrArgs::branch:
+		case InstrArgs::Branch:
 			return __parse_instr_branch(some_parse_vec,
 				instr);
 
 
-		case InstrArgs::ldst_ra_rb_imm32:
+		case InstrArgs::LdStRaRbImm32:
 			return __parse_instr_ldst_ra_rb_imm32(some_parse_vec, 
 				instr);
-		case InstrArgs::ra_rb_imm32:
+		case InstrArgs::RaRbImm32:
 			return __parse_instr_ra_rb_imm32(some_parse_vec, 
 				instr);
 
 
 		// Block moves (ldmia, stmia, stmdb) with number of {} args
-		case InstrArgs::ldst_block_1_to_4:
+		case InstrArgs::LdStBlock1To4:
 			return __parse_instr_ldst_block_1_to_4(some_parse_vec, 
 				instr);
-		case InstrArgs::ldst_block_5_to_8:
+		case InstrArgs::LdStBlock5To8:
 			return __parse_instr_ldst_block_5_to_8(some_parse_vec, 
 				instr);
 
-		case InstrArgs::ira:
+		case InstrArgs::Ira:
 			return __parse_instr_ira(some_parse_vec, 
 				instr);
-		case InstrArgs::ra_ira:
+		case InstrArgs::RaIra:
 			return __parse_instr_ra_ira(some_parse_vec, 
 				instr);
-		case InstrArgs::ira_ra:
+		case InstrArgs::IraRa:
 			return __parse_instr_ira_ra(some_parse_vec, 
 				instr);
 
-		case InstrArgs::ra_flags:
+		case InstrArgs::RaFlags:
 			return __parse_instr_ra_flags(some_parse_vec, 
 				instr);
-		case InstrArgs::flags:
+		case InstrArgs::Flags:
 			return __parse_instr_flags(some_parse_vec, 
 				instr);
-		case InstrArgs::flags_ra:
+		case InstrArgs::FlagsRa:
 			return __parse_instr_flags_ra(some_parse_vec, 
 				instr);
 
-		case InstrArgs::ra_pc:
+		case InstrArgs::RaPc:
 			return __parse_instr_ra_pc(some_parse_vec, 
+				instr);
+
+		case InstrArgs::LongMul:
+			return __parse_instr_long_mul(some_parse_vec,
+				instr);
+		case InstrArgs::LongDivMod:
+			return __parse_instr_long_divmod(some_parse_vec,
+				instr);
+		case InstrArgs::DivMod:
+			return __parse_instr_divmod(some_parse_vec,
+				instr);
+		case InstrArgs::LongBitShift:
+			return __parse_instr_long_bitshift(some_parse_vec,
 				instr);
 	}
 
@@ -2135,7 +2148,7 @@ bool Assembler::__parse_instr_ira
 	size_t index = 1;
 	s64 expr_result = 0;
 
-	// op ira
+	// op Ira
 	if (some_parse_vec.size() != 2)
 	{
 		return false;
@@ -2158,7 +2171,7 @@ bool Assembler::__parse_instr_ra_ira
 	s64 expr_result = 0;
 
 
-	// op rA , ira
+	// op rA , Ira
 	if (some_parse_vec.size() != 4)
 	{
 		return false;
@@ -2183,7 +2196,7 @@ bool Assembler::__parse_instr_ira_ra
 	size_t index = 1;
 	s64 expr_result = 0;
 
-	// op ira , rA
+	// op Ira , rA
 	if (some_parse_vec.size() != 4)
 	{
 		return false;
@@ -2210,7 +2223,7 @@ bool Assembler::__parse_instr_ra_flags
 	s64 expr_result = 0;
 
 
-	// op rA , flags
+	// op rA , Flags
 	if (some_parse_vec.size() != 4)
 	{
 		return false;
@@ -2235,7 +2248,7 @@ bool Assembler::__parse_instr_flags
 	size_t index = 1;
 	s64 expr_result = 0;
 
-	// op flags
+	// op Flags
 	if (some_parse_vec.size() != 2)
 	{
 		return false;
@@ -2257,7 +2270,7 @@ bool Assembler::__parse_instr_flags_ra
 	size_t index = 1;
 	s64 expr_result = 0;
 
-	// op flags , rA
+	// op Flags , rA
 	if (some_parse_vec.size() != 4)
 	{
 		return false;
@@ -2302,6 +2315,195 @@ bool Assembler::__parse_instr_ra_pc
 
 	return true;
 }
+
+bool Assembler::__parse_instr_long_mul
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
+{
+	std::vector<std::string> regs;
+	size_t index = 1;
+	s64 expr_result = 0;
+
+
+	// op rA:rB, rC, rD
+	if (some_parse_vec.size() != 8)
+	{
+		return false;
+	}
+
+
+	if (!check_tokens(some_parse_vec, index, 
+
+		// rA:rB,
+		&Tok::Reg, &Tok::Colon, &Tok::Reg, &Tok::Comma,
+
+		// rC,
+		&Tok::Reg, &Tok::Comma,
+
+		// rD
+		&Tok::Reg))
+	{
+		return false;
+	}
+
+	// rA
+	regs.push_back(spvat(1).next_sym_str);
+
+	// rB
+	regs.push_back(spvat(3).next_sym_str);
+
+	// rC
+	regs.push_back(spvat(5).next_sym_str);
+
+	// rD
+	regs.push_back(spvat(7).next_sym_str);
+
+	__codegen.encode_and_gen(regs, expr_result, instr);
+
+	return true;
+}
+bool Assembler::__parse_instr_long_divmod
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
+{
+	std::vector<std::string> regs;
+	size_t index = 1;
+	s64 expr_result = 0;
+
+
+	// op rA:rB, rC:rD, rE:rF, rG:rH
+	if (some_parse_vec.size() != 16)
+	{
+		return false;
+	}
+
+	if (!check_tokens(some_parse_vec, index, 
+
+		// rA:rB,
+		&Tok::Reg, &Tok::Colon, &Tok::Reg, &Tok::Comma,
+
+		// rC:rD,
+		&Tok::Reg, &Tok::Colon, &Tok::Reg, &Tok::Comma,
+
+		// rE:rF,
+		&Tok::Reg, &Tok::Colon, &Tok::Reg, &Tok::Comma,
+
+		// rG:rH
+		&Tok::Reg, &Tok::Colon, &Tok::Reg))
+	{
+		return false;
+	}
+
+	// rA:rB
+	regs.push_back(spvat(1).next_sym_str);
+	regs.push_back(spvat(3).next_sym_str);
+
+	// rC:rD
+	regs.push_back(spvat(5).next_sym_str);
+	regs.push_back(spvat(7).next_sym_str);
+
+	// rE:rF
+	regs.push_back(spvat(9).next_sym_str);
+	regs.push_back(spvat(11).next_sym_str);
+
+	// rG:rH
+	regs.push_back(spvat(13).next_sym_str);
+	regs.push_back(spvat(15).next_sym_str);
+
+	__codegen.encode_and_gen(regs, expr_result, instr);
+
+	return true;
+}
+bool Assembler::__parse_instr_divmod
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
+{
+	std::vector<std::string> regs;
+	size_t index = 1;
+	s64 expr_result = 0;
+
+
+	// op rA, rB, rC, rD
+	if (some_parse_vec.size() != 8)
+	{
+		return false;
+	}
+
+
+	if (!check_tokens(some_parse_vec, index, 
+		// rA,
+		&Tok::Reg, &Tok::Comma, 
+
+		// rB,
+		&Tok::Reg, &Tok::Comma,
+
+		// rC,
+		&Tok::Reg, &Tok::Comma,
+
+		// rD
+		&Tok::Reg))
+	{
+		return false;
+	}
+
+	// rA
+	regs.push_back(spvat(1).next_sym_str);
+
+	// rB
+	regs.push_back(spvat(3).next_sym_str);
+
+	// rC
+	regs.push_back(spvat(5).next_sym_str);
+
+	// rD
+	regs.push_back(spvat(7).next_sym_str);
+
+	__codegen.encode_and_gen(regs, expr_result, instr);
+
+	return true;
+}
+bool Assembler::__parse_instr_long_bitshift
+	(const std::vector<ParseNode>& some_parse_vec, PInstr instr)
+{
+	std::vector<std::string> regs;
+	size_t index = 1;
+	s64 expr_result = 0;
+
+
+	// op rA:rB, rC:rD, rE:rF
+	if (some_parse_vec.size() != 12)
+	{
+		return false;
+	}
+
+	if (!check_tokens(some_parse_vec, index, 
+
+		// rA:rB,
+		&Tok::Reg, &Tok::Colon, &Tok::Reg, &Tok::Comma,
+
+		// rC:rD,
+		&Tok::Reg, &Tok::Colon, &Tok::Reg, &Tok::Comma,
+
+		// rE:rF,
+		&Tok::Reg, &Tok::Colon, &Tok::Reg))
+	{
+		return false;
+	}
+
+	// rA:rB
+	regs.push_back(spvat(1).next_sym_str);
+	regs.push_back(spvat(3).next_sym_str);
+
+	// rC:rD
+	regs.push_back(spvat(5).next_sym_str);
+	regs.push_back(spvat(7).next_sym_str);
+
+	// rE:rF
+	regs.push_back(spvat(9).next_sym_str);
+	regs.push_back(spvat(11).next_sym_str);
+
+	__codegen.encode_and_gen(regs, expr_result, instr);
+
+	return true;
+}
+
 
 #undef spvat
 
@@ -2449,7 +2651,7 @@ s64 Assembler::__handle_term(const std::vector<ParseNode>& some_parse_vec,
 
 	//const auto some_next_tok = some_parse_vec.at(index).next_tok;
 
-	while ((some_parse_vec.at(index).next_tok == &Tok::Mult) 
+	while ((some_parse_vec.at(index).next_tok == &Tok::Mul) 
 		|| (some_parse_vec.at(index).next_tok == &Tok::Div)
 		|| (some_parse_vec.at(index).next_tok == &Tok::BitAnd) 
 		|| (some_parse_vec.at(index).next_tok == &Tok::BitOr)
@@ -2461,7 +2663,7 @@ s64 Assembler::__handle_term(const std::vector<ParseNode>& some_parse_vec,
 		//lex();
 		++index;
 
-		if (old_next_tok == &Tok::Mult)
+		if (old_next_tok == &Tok::Mul)
 		{
 			ret *= __handle_factor(some_parse_vec, index);
 		}

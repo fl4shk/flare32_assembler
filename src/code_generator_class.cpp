@@ -35,8 +35,8 @@ void CodeGenerator::__encode_high_hword(u16& high_hword,
 
 	switch (instr->args())
 	{
-		case InstrArgs::ldst_block_1_to_4:
-		case InstrArgs::ldst_block_5_to_8:
+		case InstrArgs::LdStBlock1To4:
+		case InstrArgs::LdStBlock5To8:
 			// Encode rA
 			if (regs.size() >= 2)
 			{
@@ -79,7 +79,7 @@ void CodeGenerator::__encode_low(u16& g1g2_low, u32& g3_low,
 	auto handle_enc_group_2 = [&]() -> void
 	{
 		// Non-block moves version
-		if (instr->args() != InstrArgs::ldst_block_1_to_4)
+		if (instr->args() != InstrArgs::LdStBlock1To4)
 		{
 			if (regs.size() == 3)
 			{
@@ -128,8 +128,11 @@ void CodeGenerator::__encode_low(u16& g1g2_low, u32& g3_low,
 
 	auto handle_enc_group_3 = [&]() -> void
 	{
-		// Non-block moves version
-		if (instr->args() != InstrArgs::ldst_block_5_to_8)
+		if ((instr->args() != InstrArgs::LdStBlock5To8)
+			&& (instr->args() != InstrArgs::LongMul)
+			&& (instr->args() != InstrArgs::LongDivMod)
+			&& (instr->args() != InstrArgs::DivMod)
+			&& (instr->args() != InstrArgs::LongBitShift))
 		{
 			//if (regs.size() == 3)
 			//{
@@ -144,8 +147,7 @@ void CodeGenerator::__encode_low(u16& g1g2_low, u32& g3_low,
 			g3_low = expr_result;
 		}
 
-		// Block moves version
-		else
+		else if (instr->args() == InstrArgs::LdStBlock5To8)
 		{
 			clear_and_set_bits_with_range(g3_low, regs.size() - 6, 1, 0);
 
@@ -196,6 +198,39 @@ void CodeGenerator::__encode_low(u16& g1g2_low, u32& g3_low,
 			{
 				we().err("__encode_low()::handle_enc_group_3() else:  ",
 					"Eek!\n");
+			}
+		}
+		else 
+		{
+			if (regs.size() >= 3)
+			{
+				clear_and_set_bits_with_range(g3_low, 
+					builtin_sym_tbl().at(regs.at(2)).value(), 31, 28);
+			}
+			if (regs.size() >= 4)
+			{
+				clear_and_set_bits_with_range(g3_low,
+					builtin_sym_tbl().at(regs.at(3)).value(), 27, 24);
+			}
+			if (regs.size() >= 5)
+			{
+				clear_and_set_bits_with_range(g3_low,
+					builtin_sym_tbl().at(regs.at(4)).value(), 23, 20);
+			}
+			if (regs.size() >= 6)
+			{
+				clear_and_set_bits_with_range(g3_low,
+					builtin_sym_tbl().at(regs.at(5)).value(), 19, 16);
+			}
+			if (regs.size() >= 7)
+			{
+				clear_and_set_bits_with_range(g3_low,
+					builtin_sym_tbl().at(regs.at(6)).value(), 15, 12);
+			}
+			if (regs.size() >= 8)
+			{
+				clear_and_set_bits_with_range(g3_low,
+					builtin_sym_tbl().at(regs.at(7)).value(), 11, 8);
 			}
 		}
 

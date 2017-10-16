@@ -5,8 +5,8 @@
 // Group 1 Instructions
 // 01fo oooo aaaa bbbb  iiii iiii iiii iiii
 
-	// f:  1 if can affect flags (and instruction type supports it), 0 if
-	// flags unchanged.
+	// f:  1 if can affect Flags (and instruction type supports it), 0 if
+	// Flags unchanged.
 
 	// o:  opcode
 	// a: rA
@@ -18,163 +18,163 @@
 #define LIST_OF_INSTR_G1_RA_RB_UIMM16__COLLECTION_0(INSTR_STUFF) \
 \
 /* rA = rB + (zero-extended imm) */ \
-/* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_STUFF(1, ra_rb_uimm16, Addi, "addi") \
+/* This instruction can affect N, V, Z, and C Flags. */ \
+INSTR_STUFF(1, RaRbUImm16, Addi, "addi") \
 \
 /* rA = rB + (zero-extended imm) + carry_flag */ \
 /* Add with carry */ \
-/* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_STUFF(1, ra_rb_uimm16, Adci, "adci") \
+/* This instruction can affect N, V, Z, and C Flags. */ \
+INSTR_STUFF(1, RaRbUImm16, Adci, "adci") \
 \
 /* rA = rB - (zero-extended imm) */ \
-/* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_STUFF(1, ra_rb_uimm16, Subi, "subi") \
+/* This instruction can affect N, V, Z, and C Flags. */ \
+INSTR_STUFF(1, RaRbUImm16, Subi, "subi") \
 \
 /* rA = rB + (~(zero-extended imm)) + carry_flag */ \
 /* Subtract with borrow (6502 style) */ \
-/* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_STUFF(1, ra_rb_uimm16, Sbci, "sbci") \
+/* This instruction can affect N, V, Z, and C Flags. */ \
+INSTR_STUFF(1, RaRbUImm16, Sbci, "sbci") \
 \
 \
 \
 /* rA = (zero-extended imm) - rB */ \
-/* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_STUFF(1, ra_rb_uimm16, Rsbi, "rsbi") \
+/* This instruction can affect N, V, Z, and C Flags. */ \
+INSTR_STUFF(1, RaRbUImm16, Rsbi, "rsbi") \
 \
 /* rA = rB * (zero-extended imm) */ \
-INSTR_STUFF(1, ra_rb_uimm16, Muli, "muli") \
+INSTR_STUFF(1, RaRbUImm16, Muli, "muli") \
 \
 /* rA = rB & (zero-extended imm) */ \
-/* This instruction can affect the N and Z flags. */ \
-INSTR_STUFF(1, ra_rb_uimm16, Andi, "andi") \
+/* This instruction can affect the N and Z Flags. */ \
+INSTR_STUFF(1, RaRbUImm16, Andi, "andi") \
 \
 /* rA = rB | (zero-extended imm) */ \
-/* This instruction can affect the N and Z flags. */ \
-INSTR_STUFF(1, ra_rb_uimm16, Ori, "ori") \
+/* This instruction can affect the N and Z Flags. */ \
+INSTR_STUFF(1, RaRbUImm16, Ori, "ori") \
 \
 \
 \
 /* rA = rB ^ (zero-extended imm) */ \
-/* This instruction can affect the N and Z flags. */ \
-INSTR_STUFF(1, ra_rb_uimm16, Xori, "xori") \
+/* This instruction can affect the N and Z Flags. */ \
+INSTR_STUFF(1, RaRbUImm16, Xori, "xori") \
 \
 /* Logical shift left */ \
 /* rA = rB << (zero-extended imm) */ \
-INSTR_STUFF(1, ra_rb_uimm16, Lsli, "lsli") \
+INSTR_STUFF(1, RaRbUImm16, Lsli, "lsli") \
 \
 /* Logical shift right */ \
-INSTR_STUFF(1, ra_rb_uimm16, Lsri, "lsri") \
+INSTR_STUFF(1, RaRbUImm16, Lsri, "lsri") \
 \
 /* Arithmetic shift right */ \
-INSTR_STUFF(1, ra_rb_uimm16, Asri, "asri") \
+INSTR_STUFF(1, RaRbUImm16, Asri, "asri") \
 \
 \
 \
 /* Rotate  left by (zero-extended imm) bits, then store result in rA. */ \
-INSTR_STUFF(1, ra_rb_uimm16, Roli, "roli") \
+INSTR_STUFF(1, RaRbUImm16, Roli, "roli") \
 \
 /* Rotate  right by (zero-extended imm) bits, then store result in rA. */ \
-INSTR_STUFF(1, ra_rb_uimm16, Rori, "rori")
+INSTR_STUFF(1, RaRbUImm16, Rori, "rori")
 
 #define LIST_OF_INSTR_G1_SIMM16__COLLECTION_0(INSTR_STUFF) \
 /* Branch always,  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, branch, Bra, "bra") \
+INSTR_STUFF(1, Branch, Bra, "bra") \
 \
 /* Branch never (effectively a NOP), */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, branch, Bnv, "bnv") \
+INSTR_STUFF(1, Branch, Bnv, "bnv") \
 \
 \
 \
 /* Branch when Z == 0,  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, branch, Bne, "bne") \
+INSTR_STUFF(1, Branch, Bne, "bne") \
 \
 /* Branch when Z == 1,  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, branch, Beq, "beq") \
+INSTR_STUFF(1, Branch, Beq, "beq") \
 \
 /* Branch when C == 0 [unsigned less than],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, branch, Bcc, "bcc") \
+INSTR_STUFF(1, Branch, Bcc, "bcc") \
 \
 /* Branch when C == 1 [unsigned greater than or equal],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, branch, Bcs, "bcs") \
+INSTR_STUFF(1, Branch, Bcs, "bcs") \
 \
 \
 \
 /* Branch when (C == 0 or Z == 1) [unsigned less than or equal],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, branch, Bls, "bls") \
+INSTR_STUFF(1, Branch, Bls, "bls") \
 \
 /* Branch when (C == 1 and Z == 0) [unsigned greater than],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, branch, Bhi, "bhi") \
+INSTR_STUFF(1, Branch, Bhi, "bhi") \
 \
 /* Branch when N == 0,  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, branch, Bpl, "bpl") \
+INSTR_STUFF(1, Branch, Bpl, "bpl") \
 \
 /* Branch when N == 1,  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, branch, Bmi, "bmi") \
+INSTR_STUFF(1, Branch, Bmi, "bmi") \
 \
 \
 \
 /* Branch when V == 0,  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, branch, Bvc, "bvc") \
+INSTR_STUFF(1, Branch, Bvc, "bvc") \
 \
 /* Branch when V == 1,  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, branch, Bvs, "bvs") \
+INSTR_STUFF(1, Branch, Bvs, "bvs") \
 \
 /* Branch when N == V [signed greater than or equal],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, branch, Bge, "bge") \
+INSTR_STUFF(1, Branch, Bge, "bge") \
 \
 /* Branch when N != V [signed less than],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, branch, Blt, "blt") \
+INSTR_STUFF(1, Branch, Blt, "blt") \
 \
 \
 \
 /* Branch when (N == V and Z == 0) [signed greater than],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, branch, Bgt, "bgt") \
+INSTR_STUFF(1, Branch, Bgt, "bgt") \
 \
 /* Branch when (N != V or Z == 1) [signed less than or equal],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
-INSTR_STUFF(1, branch, Ble, "ble")
+INSTR_STUFF(1, Branch, Ble, "ble")
 
 
 #define LIST_OF_INSTR_G1_RA_RB_SIMM16__COLLECTION_0(INSTR_STUFF) \
 /* rA = rB ^ (sign-extended imm) */ \
-/* This instruction can affect the N and Z flags. */ \
-INSTR_STUFF(1, ra_rb_simm16, Xorsi, "xorsi")
+/* This instruction can affect the N and Z Flags. */ \
+INSTR_STUFF(1, RaRbSImm16, Xorsi, "xorsi")
 
 #define LIST_OF_INSTR_G1_RA_UIMM16__COLLECTION_0(INSTR_STUFF) \
 /* rA bits {31, 30, 29, ..., 18, 17, 16} = 16-bit unsigned immediate  \
 value */ \
-INSTR_STUFF(1, ra_uimm16, Lui, "lui")
+INSTR_STUFF(1, RaUImm16, Lui, "lui")
 
 
 
@@ -182,21 +182,21 @@ INSTR_STUFF(1, ra_uimm16, Lui, "lui")
 //// Compare rB to (zero-extended imm)
 //// temp = rB - (zero-extended imm)
 //// Encoded like this:  subi.f r0, rB, imm
-//// This instruction can affect N, V, Z, and C flags.
+//// This instruction can affect N, V, Z, and C Flags.
 //PSEUDO_INSTR_RB_IMM(cmpi)
 
 // Pseudo instruction:
 //// Compare rB to negated (zero-extended imm)
 //// temp = rB - (-(zero-extended imm))
 //// Encoded like this:  addi.f r0, rB, imm
-//// This instruction can affect N, V, Z, and C flags.
+//// This instruction can affect N, V, Z, and C Flags.
 //PSEUDO_INSTR_RB_IMM(cmni)
 
 // Pseudo instruction:
 //// Compare reversed with immediate value
 //// temp = (zero-extended imm) - rB
 //// Encoded like this:  rsbi.f r0, rB, imm
-//// This instruction can affect N, V, Z, and C flags.
+//// This instruction can affect N, V, Z, and C Flags.
 //PSEUDO_INSTR_RB_IMM(cmri)
 
 // Pseudo instruction:
@@ -217,7 +217,7 @@ INSTR_STUFF(1, ra_uimm16, Lui, "lui")
 // Pseudo instruction:
 //// temp = rB & (zero-extended imm)
 //// Encoded like this:  andi r0, rB, imm
-//// This instruction can affect the N and Z flags.
+//// This instruction can affect the N and Z Flags.
 //PSEUDO_INSTR_RB_IMM(tsti,imm)
 
 #define LIST_OF_GROUP_1_INSTRUCTIONS(INSTR_STUFF) \

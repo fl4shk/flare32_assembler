@@ -37,7 +37,7 @@ TOKEN_STUFF(At, "@") \
 /* "+", "-", etc */ \
 TOKEN_STUFF(Plus, "+") \
 TOKEN_STUFF(Minus, "-") \
-TOKEN_STUFF(Mult, "*") \
+TOKEN_STUFF(Mul, "*") \
 TOKEN_STUFF(Div, "/") \
 \
 /* "&", "|", "^" */ \

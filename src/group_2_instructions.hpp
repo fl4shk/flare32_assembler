@@ -5,8 +5,8 @@
 // Non Block Moves Version:  
 	// 10fo oooo aaaa bbbb  cccc iiii iiii iiii
 
-	// f:  1 if can affect flags (and instruction type supports it), 0 if
-	// flags unchanged.
+	// f:  1 if can affect Flags (and instruction type supports it), 0 if
+	// Flags unchanged.
 
 	// o:  opcode
 	// a: rA
@@ -17,8 +17,8 @@
 // Block Moves Version (stmdb, ldmia, stmia, push, pop):  
 	// 10fo oooo aaaa bbbb  cccc dddd xxxx 00ii
 
-	// f:  1 if can affect flags (and instruction type supports it), 0 if
-	// flags unchanged.
+	// f:  1 if can affect Flags (and instruction type supports it), 0 if
+	// Flags unchanged.
 
 	// o:  opcode
 	// a: rA
@@ -32,145 +32,145 @@
 #define LIST_OF_INSTR_G2_LDST_RA_RB_RC_SIMM12__COLLECTION_0(INSTR_STUFF) \
 /* Load 32-bit value from address (rB + rC + (sign-extended imm)) into 
 rA. */ \
-INSTR_STUFF(2, ldst_ra_rb_rc_simm12, Ldr, "ldr") \
+INSTR_STUFF(2, LdStRaRbRcSImm12, Ldr, "ldr") \
 \
 /* Load zero-extended 16-bit value from address (rB + rC + (sign-extended
 imm)) into rA. */ \
 /* This zero-extends the value. */ \
-INSTR_STUFF(2, ldst_ra_rb_rc_simm12, Ldh, "ldh") \
+INSTR_STUFF(2, LdStRaRbRcSImm12, Ldh, "ldh") \
 \
 /* Load sign-extended 16-bit value from address (rB + rC + (sign-extended
 imm)) into rA. */ \
 /* This sign-extends the value. */ \
-INSTR_STUFF(2, ldst_ra_rb_rc_simm12, Ldsh, "ldsh") \
+INSTR_STUFF(2, LdStRaRbRcSImm12, Ldsh, "ldsh") \
 \
 /* Load zero-extended 8-bit value from address (rB + rC + (sign-extended
  imm)) into rA. */ \
 /* This zero-extends the value. */ \
-INSTR_STUFF(2, ldst_ra_rb_rc_simm12, Ldb, "ldb") \
+INSTR_STUFF(2, LdStRaRbRcSImm12, Ldb, "ldb") \
 \
 \
 \
 /* Load sign-extended 8-bit value from address (rB + rC + (sign-extended
 imm)) into rA. */ \
 /* This sign-extends the value. */ \
-INSTR_STUFF(2, ldst_ra_rb_rc_simm12, Ldsb, "ldsb") \
+INSTR_STUFF(2, LdStRaRbRcSImm12, Ldsb, "ldsb") \
 \
 /* Store 32-bit value in rA to address (rB + rC + (sign-extended 
 imm)). */ \
-INSTR_STUFF(2, ldst_ra_rb_rc_simm12, Str, "str") \
+INSTR_STUFF(2, LdStRaRbRcSImm12, Str, "str") \
 \
 /* Store low 16 bits of rA to address (rB + rC + (sign-extended imm)). */ \
-INSTR_STUFF(2, ldst_ra_rb_rc_simm12, Sth, "sth") \
+INSTR_STUFF(2, LdStRaRbRcSImm12, Sth, "sth") \
 \
 /* Store low 8 bits of rA to address (rB + rC + (sign-extended imm)). */ \
-INSTR_STUFF(2, ldst_ra_rb_rc_simm12, Stb, "stb")
+INSTR_STUFF(2, LdStRaRbRcSImm12, Stb, "stb")
 
 
 #define LIST_OF_INSTR_G2_RA_RB_RC__COLLECTION_0(INSTR_STUFF) \
 /* rA = rB + rC */ \
-/* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_STUFF(2, ra_rb_rc, Add, "add") \
+/* This instruction can affect N, V, Z, and C Flags. */ \
+INSTR_STUFF(2, RaRbRc, Add, "add") \
 \
 /* rA = rB + rC + carry_flag */ \
 /* Add with carry */ \
-/* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_STUFF(2, ra_rb_rc, Adc, "adc") \
+/* This instruction can affect N, V, Z, and C Flags. */ \
+INSTR_STUFF(2, RaRbRc, Adc, "adc") \
 \
 /* rA = rB - rC */ \
-/* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_STUFF(2, ra_rb_rc, Sub, "sub") \
+/* This instruction can affect N, V, Z, and C Flags. */ \
+INSTR_STUFF(2, RaRbRc, Sub, "sub") \
 \
 /* rA = rB + (~rC) + carry_flag */ \
 /* Subtract with borrow (6502 style) */ \
-/* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_STUFF(2, ra_rb_rc, Sbc, "sbc") \
+/* This instruction can affect N, V, Z, and C Flags. */ \
+INSTR_STUFF(2, RaRbRc, Sbc, "sbc") \
 \
 \
 \
 /* rA = rC - rB */ \
-/* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_STUFF(2, ra_rb_rc, Rsb, "rsb") \
+/* This instruction can affect N, V, Z, and C Flags. */ \
+INSTR_STUFF(2, RaRbRc, Rsb, "rsb") \
 \
 /* rA = rB * rC */ \
-INSTR_STUFF(2, ra_rb_rc, Mul, "mul") \
+INSTR_STUFF(2, RaRbRc, Mul, "mul") \
 \
 /* rA = rB & rC */ \
-/* This instruction can affect the N and Z flags. */ \
-INSTR_STUFF(2, ra_rb_rc, And, "and") \
+/* This instruction can affect the N and Z Flags. */ \
+INSTR_STUFF(2, RaRbRc, And, "and") \
 \
 /* rA = rB | rC */ \
-/* This instruction can affect the N and Z flags. */ \
-INSTR_STUFF(2, ra_rb_rc, Or, "or") \
+/* This instruction can affect the N and Z Flags. */ \
+INSTR_STUFF(2, RaRbRc, Or, "or") \
 \
 \
 \
 /* rA = rB ^ rC */ \
-/* This instruction can affect the N and Z flags. */ \
-INSTR_STUFF(2, ra_rb_rc, Xor, "xor") \
+/* This instruction can affect the N and Z Flags. */ \
+INSTR_STUFF(2, RaRbRc, Xor, "xor") \
 \
 /* Logical shift left */ \
 /* rA = rB << rC */ \
-INSTR_STUFF(2, ra_rb_rc, Lsl, "lsl") \
+INSTR_STUFF(2, RaRbRc, Lsl, "lsl") \
 \
 /* Logical shift right */ \
-INSTR_STUFF(2, ra_rb_rc, Lsr, "lsr") \
+INSTR_STUFF(2, RaRbRc, Lsr, "lsr") \
 \
 /* Arithmetic shift right */ \
-INSTR_STUFF(2, ra_rb_rc, Asr, "asr") \
+INSTR_STUFF(2, RaRbRc, Asr, "asr") \
 \
 \
 \
 /* Rotate rC left by rC bits, then store result in rA. */ \
-INSTR_STUFF(2, ra_rb_rc, Rol, "rol") \
+INSTR_STUFF(2, RaRbRc, Rol, "rol") \
 \
 /* Rotate rC right by rC bits, then store result in rA. */ \
-INSTR_STUFF(2, ra_rb_rc, Ror, "ror") \
+INSTR_STUFF(2, RaRbRc, Ror, "ror") \
 \
 /* Fused multiply-add */ \
 /* rA = rA + (rB * rC) */ \
-INSTR_STUFF(2, ra_rb_rc, Fma, "fma") \
+INSTR_STUFF(2, RaRbRc, Fma, "fma") \
 \
 /* Copy rC to rA and to rB */ \
 /* If rA is the same register as rB, then the  */ \
 /* register will only be written once. */ \
-INSTR_STUFF(2, ra_rb_rc, Cpyp, "cpyp")
+INSTR_STUFF(2, RaRbRc, Cpyp, "cpyp")
 
 
 #define LIST_OF_INSTR_G2_LDST_BLOCK_1_TO_4__COLLECTION_0(INSTR_STUFF) \
 /* STore Multiple, Decrement Before */ \
 /* Note that this instruction takes multiple forms */ \
-INSTR_STUFF(2, ldst_block_1_to_4, Stmdb, "stmdb") \
+INSTR_STUFF(2, LdStBlock1To4, Stmdb, "stmdb") \
 \
 \
 /* LoaD Multiple, Increment After */ \
 /* Note that this instruction takes multiple forms */ \
-INSTR_STUFF(2, ldst_block_1_to_4, Ldmia, "ldmia") \
+INSTR_STUFF(2, LdStBlock1To4, Ldmia, "ldmia") \
 \
 \
 /* STore Multiple, Increment After */ \
 /* Note that this instruction takes multiple forms */ \
-INSTR_STUFF(2, ldst_block_1_to_4, Stmia, "stmia")
+INSTR_STUFF(2, LdStBlock1To4, Stmia, "stmia")
 
 
 
 #define LIST_OF_INSTR_G2_NO_ARGS__COLLECTION_0(INSTR_STUFF) \
 /* ENable Interrupts */ \
-INSTR_STUFF(2, no_args, Eni, "eni") \
+INSTR_STUFF(2, NoArgs, Eni, "eni") \
 \
 \
 \
 /* DIsable Interrupts */ \
-INSTR_STUFF(2, no_args, Dii, "dii") \
+INSTR_STUFF(2, NoArgs, Dii, "dii") \
 \
 /* Set the PC to interrupt RETurn address and enable Interrupts */ \
-INSTR_STUFF(2, no_args, Reti, "reti")
+INSTR_STUFF(2, NoArgs, Reti, "reti")
 
 
 #define LIST_OF_INSTR_G2_IRA__COLLECTION_0(INSTR_STUFF) \
 /* Set the PC to the Interrupt Return Address, but DON'T enable */ \
 /* interrupts */ \
-INSTR_STUFF(2, ira, Jump, "jump")
+INSTR_STUFF(2, Ira, Jump, "jump")
 
 /* Reserved for future expansion. */ \
 
@@ -276,26 +276,26 @@ INSTR_STUFF(2, ira, Jump, "jump")
 
 // Pseudo instruction:
 //// temp = rB - rC
-//// This instruction can affect N, V, Z, and C flags.
+//// This instruction can affect N, V, Z, and C Flags.
 //// Encoded like this:  sub.f r0, rB, rC
 //PSEUDO_INSTR_RB_RC(cmp)
 
 // Pseudo instruction:
 //// temp = rB - (-rC)
-//// This instruction can affect N, V, Z, and C flags.
+//// This instruction can affect N, V, Z, and C Flags.
 //// Encoded like this:  add.f r0, rB, rC
 //PSEUDO_INSTR_RB_RC(cmn)
 
 // Pseudo instruction:
 //// temp = rC - rB
-//// This instruction can affect N, V, Z, and C flags.
+//// This instruction can affect N, V, Z, and C Flags.
 //// Encoded like this:  rsb.f r0, rB, rC
 //PSEUDO_INSTR_RB_RC(cmr)
 
 // Pseudo instruction:
 //// temp = rB & rC
 //// Encoded like this:  and.f r0, rB, rC
-//// This instruction can affect the N and Z flags.
+//// This instruction can affect the N and Z Flags.
 //PSEUDO_INSTR_RB_RC(tst)
 
 

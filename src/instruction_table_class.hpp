@@ -22,58 +22,87 @@ namespace flare32
 
 enum class InstrArgs
 {
-	no_args,
-	uimm16,
-	simm16,
-	imm32,
+	NoArgs,
+	UImm16,
+	SImm16,
+	Imm32,
 
-	ra,
-	ra_uimm16,
-	ra_rb,
-	ra_rb_uimm16,
-	ra_rb_simm16,
-	ra_rb_rc,
-	ra_rb_rc_simm12,
+	Ra,
+	RaUImm16,
+	RaRb,
+	RaRbUImm16,
+	RaRbSImm16,
+	RaRbRc,
+	RaRbRcSImm12,
 
-	ldst_ra_rb,
-	ldst_ra_rb_rc_simm12,
-	ldst_ra_rb_rc,
-	ldst_ra_rb_simm12,
+	LdStRaRb,
+	LdStRaRbRcSImm12,
+	LdStRaRbRc,
+	LdStRaRbSImm12,
 
-	branch,
+	Branch,
 
 
-	ldst_ra_rb_imm32,
-	ra_rb_imm32,
-
+	LdStRaRbImm32,
+	RaRbImm32,
 
 	// Block moves (ldmia, stmia, stmdb) with number of {} args
-	ldst_block_1_to_4,
-	ldst_block_5_to_8,
+	LdStBlock1To4,
+	LdStBlock5To8,
 
-	ira,
-	ra_ira,
-	ira_ra,
+	Ira,
+	RaIra,
+	IraRa,
 
-	ra_flags,
-	flags,
-	flags_ra,
+	RaFlags,
+	Flags,
+	FlagsRa,
 
-	ra_pc,
+	RaPc,
 
-	//pseudo_ldst_ra_imm32,
 
-	//pseudo_rb,
-	//pseudo_rb_imm,
-	//pseudo_rb_rc,
-	//pseudo_rb_rc_imm,
-	//pseudo_ra_rc,
-	//pseudo_pc_rb,
+	// umul, smul
+	// 
+	// umul rA:rB, rC, rD
+	// smul rA:rB, rC, rD
+	LongMul,
+
+	// udivmod, sdivmod
+	// 
+	// udivmod rA:rB, rC:rD, rE:rF, rG:rH
+	// sdivmod rA:rB, rC:rD, rE:rF, rG:rH
+	LongDivMod,
+
+
+	// udivmod, sdivmod
+	// 
+	// udivmod rA, rB, rC, rD
+	// sdivmod rA, rB, rC, rD
+	DivMod,
+
+
+	// lsl, lsr, asr with 64-bit arguments
+	// 
+	// lsl rA:rB, rC:rD, rE:rF
+	// lsr rA:rB, rC:rD, rE:rF
+	// asr rA:rB, rC:rD, rE:rF
+	LongBitShift,
+
+
+
+	//PseudoLdStRaImm32,
+
+	//PseudoRb,
+	//PseudoRbImm,
+	//PseudoRbRc,
+	//PseudoRbRcImm,
+	//PseudoRaRc,
+	//PseudoPcRb,
 
 
 	//// Block-move style push and pop
-	//pseudo_ldst_stack_block_1_to_4,
-	//pseudo_ldst_stack_block_5_to_8,
+	//PseudoLdStStackBlock1To4,
+	//PseudoLdStStackBlock5To8,
 };
 
 
@@ -93,7 +122,7 @@ private:		// variables
 
 
 public:		// constants
-	inline Instruction() : Instruction("", 0, InstrArgs::no_args, -1)
+	inline Instruction() : Instruction("", 0, InstrArgs::NoArgs, -1)
 	{
 	}
 	inline Instruction(const std::string& s_str, bool s_affects_flags,

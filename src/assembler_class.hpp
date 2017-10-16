@@ -280,6 +280,16 @@ private:		// functions
 		(const std::vector<ParseNode>& some_parse_vec, PInstr instr);
 
 
+	bool __parse_instr_long_mul
+		(const std::vector<ParseNode>& some_parse_vec, PInstr instr);
+	bool __parse_instr_long_divmod
+		(const std::vector<ParseNode>& some_parse_vec, PInstr instr);
+	bool __parse_instr_divmod
+		(const std::vector<ParseNode>& some_parse_vec, PInstr instr);
+	bool __parse_instr_long_bitshift
+		(const std::vector<ParseNode>& some_parse_vec, PInstr instr);
+
+
 	s64 better_expr(const std::vector<ParseNode>& some_parse_vec, 
 		size_t& index, size_t valid_end_index=-1);
 	s64 __handle_expr(const std::vector<ParseNode>& some_parse_vec, 
