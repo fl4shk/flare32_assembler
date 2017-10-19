@@ -136,8 +136,8 @@ Group 0 Instructions
 
 
 
-		// Copy pc to rA (this can be used for pc-relative loads
-		// and stores)
+		// Copy (pc when instructions starts + 2) to rA (this can
+		// be used for pc-relative loads and stores)
 		cpy rA, pc
 
 		// Copy
@@ -241,90 +241,90 @@ Group 1 Instructions
 		rori rA, rB, imm
 
 		// Branch always, 
-		// to ((pc when instruction starts)
+		// to ((pc when instruction starts + 4)
 		// + (sign-extended 16-bit immediate value))
 		bra imm
 
 		// Branch never (effectively a NOP),
-		// to ((pc when instruction starts)
+		// to ((pc when instruction starts + 4)
 		// + (sign-extended 16-bit immediate value))
 		bnv imm
 
 
 
 		// Branch when Z == 0, 
-		// to ((pc when instruction starts)
+		// to ((pc when instruction starts + 4)
 		// + (sign-extended 16-bit immediate value))
 		bne imm
 
 		// Branch when Z == 1, 
-		// to ((pc when instruction starts)
+		// to ((pc when instruction starts + 4)
 		// + (sign-extended 16-bit immediate value))
 		beq imm
 
 		// Branch when C == 0 [unsigned less than], 
-		// to ((pc when instruction starts)
+		// to ((pc when instruction starts + 4)
 		// + (sign-extended 16-bit immediate value))
 		bcc imm
 
 		// Branch when C == 1 [unsigned greater than or equal], 
-		// to ((pc when instruction starts)
+		// to ((pc when instruction starts + 4)
 		// + (sign-extended 16-bit immediate value))
 		bcs imm
 
 
 
 		// Branch when (C == 0 or Z == 1) [unsigned less than or equal], 
-		// to ((pc when instruction starts)
+		// to ((pc when instruction starts + 4)
 		// + (sign-extended 16-bit immediate value))
 		bls imm
 
 		// Branch when (C == 1 and Z == 0) [unsigned greater than], 
-		// to ((pc when instruction starts)
+		// to ((pc when instruction starts + 4)
 		// + (sign-extended 16-bit immediate value))
 		bhi imm
 
 		// Branch when N == 0, 
-		// to ((pc when instruction starts)
+		// to ((pc when instruction starts + 4)
 		// + (sign-extended 16-bit immediate value))
 		bpl imm
 
 		// Branch when N == 1, 
-		// to ((pc when instruction starts)
+		// to ((pc when instruction starts + 4)
 		// + (sign-extended 16-bit immediate value))
 		bmi imm
 
 
 
 		// Branch when V == 0, 
-		// to ((pc when instruction starts)
+		// to ((pc when instruction starts + 4)
 		// + (sign-extended 16-bit immediate value))
 		bvc imm
 
 		// Branch when V == 1, 
-		// to ((pc when instruction starts)
+		// to ((pc when instruction starts + 4)
 		// + (sign-extended 16-bit immediate value))
 		bvs imm
 
 		// Branch when N == V [signed greater than or equal], 
-		// to ((pc when instruction starts)
+		// to ((pc when instruction starts + 4)
 		// + (sign-extended 16-bit immediate value))
 		bge imm
 
 		// Branch when N != V [signed less than], 
-		// to ((pc when instruction starts)
+		// to ((pc when instruction starts + 4)
 		// + (sign-extended 16-bit immediate value))
 		blt imm
 
 
 
 		// Branch when (N == V and Z == 0) [signed greater than], 
-		// to ((pc when instruction starts)
+		// to ((pc when instruction starts + 4)
 		// + (sign-extended 16-bit immediate value))
 		bgt imm
 
 		// Branch when (N != V or Z == 1) [signed less than or equal], 
-		// to ((pc when instruction starts)
+		// to ((pc when instruction starts + 4)
 		// + (sign-extended 16-bit immediate value))
 		ble imm
 
@@ -969,12 +969,12 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 
 
 
-		// Set pc to destination address in (rA + rB + absolute_addr).
-		jumpa rA, rB, absolute_addr
-
 		// Subroutine call using (rA + rB + absolute_addr) as destination address. 
 		// The return address is stored in the link register (lr).
 		calla rA, rB, absolute_addr
+
+		// Set pc to destination address in (rA + rB + absolute_addr).
+		jumpa rA, rB, absolute_addr
 
 		// rA = 32-bit immediate, rB = same 32-bit immediate
 		// If rA is the same register as rB, then the 
@@ -1268,15 +1268,7 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 
 
 
-		// Pseudo instruction:
-		//// Set pc to destination address in (rA + absolute_addr).
-		//// Encoded like this:  jumpa rA, r0, absolute_addr
-		//jumpa rA, absolute_addr
 
-		// Pseudo instruction:
-		//// Set pc to destination address in (absolute_addr).
-		//// Encoded like this:  jumpa r0, r0, absolute_addr
-		//jumpa absolute_addr
 
 		// Pseudo instruction:
 		//// Subroutine call using (rA + absolute_addr) as destination address. 
@@ -1290,6 +1282,15 @@ Block Moves Version (stmdb, ldmia, stmia, push, pop):
 		//// Encoded like this:  calla r0, r0, absolute_addr
 		//calla absolute_addr
 
+		// Pseudo instruction:
+		//// Set pc to destination address in (rA + absolute_addr).
+		//// Encoded like this:  jumpa rA, r0, absolute_addr
+		//jumpa rA, absolute_addr
+
+		// Pseudo instruction:
+		//// Set pc to destination address in (absolute_addr).
+		//// Encoded like this:  jumpa r0, r0, absolute_addr
+		//jumpa absolute_addr
 
 
 		// Pseudo instruction:

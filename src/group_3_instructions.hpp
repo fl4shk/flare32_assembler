@@ -33,28 +33,84 @@
 	// i:  2-bit immediate value
 
 
+// 32-bit by 32-bit -> 64-bit Multiply Version:
+	// 11fo oooo aaaa bbbb  cccc dddd 0000 0000  0000 0000 0000 0000
+
+	// f:  1 if can affect flags (and instruction type supports it), 0 if
+	// flags unchanged.
+
+	// o:  opcode
+	// a: rA
+	// b: rB
+	// c: rC
+	// d: rD
+
+
+// 64-bit by 64-bit -> 64-bit DivMod Version:
+	// 11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh 0000 0000
+
+	// f:  1 if can affect flags (and instruction type supports it), 0 if
+	// flags unchanged.
+
+	// o:  opcode
+	// a: rA
+	// b: rB
+	// c: rC
+	// d: rD
+	// e: rE
+	// f: rF
+	// g: rG
+	// h: rH
+
+// 32-bit by 32-bit -> 32-bit DivMod Version:
+	// 11fo oooo aaaa bbbb  cccc dddd 0000 0000  0000 0000 0000 0000
+
+	// f:  1 if can affect flags (and instruction type supports it), 0 if
+	// flags unchanged.
+
+	// o:  opcode
+	// a: rA
+	// b: rB
+	// c: rC
+	// d: rD
+
+// 64-bit bitshifted by 64-bit -> 64-bit Version:
+	// 11fo oooo aaaa bbbb  cccc dddd eeee ffff  0000 0000 0000 0000
+
+	// f:  1 if can affect flags (and instruction type supports it), 0 if
+	// flags unchanged.
+
+	// o:  opcode
+	// a: rA
+	// b: rB
+	// c: rC
+	// d: rD
+	// e: rE
+	// f: rF
+
+
 #define LIST_OF_INSTR_G3_LDST_RA_RB_IMM32__COLLECTION_0(INSTR_STUFF) \
 /* Load 32-bit value from address (absolute_addr + rB) into rA. */ \
 INSTR_STUFF(3, LdStRaRbImm32, Ldra, "ldra") \
 \
-/* Load zero-extended 16-bit value from address (absolute_addr + rB) into \
+/* Load zero-extended 16-bit value from address (absolute_addr + rB) into
 rA. */ \
 /* This zero-extends the value. */ \
 INSTR_STUFF(3, LdStRaRbImm32, Ldha, "ldha") \
 \
-/* Load sign-extended 16-bit value from address (absolute_addr + rB) into \
+/* Load sign-extended 16-bit value from address (absolute_addr + rB) into
 rA. */ \
 /* This sign-extends the value. */ \
 INSTR_STUFF(3, LdStRaRbImm32, Ldsha, "ldsha") \
 \
-/* Load zero-extended 8-bit value from address (absolute_addr + rB) into \
+/* Load zero-extended 8-bit value from address (absolute_addr + rB) into
 rA. */ \
 /* This zero-extends the value. */ \
 INSTR_STUFF(3, LdStRaRbImm32, Ldba, "ldba") \
 \
 \
 \
-/* Load sign-extended 8-bit value from address (absolute_addr + rB) into \
+/* Load sign-extended 8-bit value from address (absolute_addr + rB) into
 rA. */ \
 /* This sign-extends the value. */ \
 INSTR_STUFF(3, LdStRaRbImm32, Ldsba, "ldsba") \
@@ -71,13 +127,14 @@ INSTR_STUFF(3, LdStRaRbImm32, Stba, "stba") \
 
 
 #define LIST_OF_INSTR_G3_RA_RB_IMM32__COLLECTION_0(INSTR_STUFF) \
-/* Set pc to destination address in (rA + rB + absolute_addr). */ \
-INSTR_STUFF(3, RaRbImm32, Jumpa, "jumpa") \
-\
-/* Subroutine call using (rA + rB + absolute_addr) as destination  \
+/* Subroutine call using (rA + rB + absolute_addr) as destination
 address. */ \
 /* The return address is stored in the link register (lr). */ \
 INSTR_STUFF(3, RaRbImm32, Calla, "calla") \
+\
+/* Set pc to destination address in (rA + rB + absolute_addr). */ \
+INSTR_STUFF(3, RaRbImm32, Jumpa, "jumpa") \
+\
 \
 /* rA = 32-bit immediate, rB = same 32-bit immediate */ \
 /* If rA is the same register as rB, then the  */ \
@@ -169,16 +226,6 @@ INSTR_STUFF(3, LongBitShift, Asr, "asr") \
 
 
 // Pseudo instruction:
-//// Set pc to destination address in (rA + absolute_addr).
-//// Encoded like this:  jumpa rA, r0, absolute_addr
-//RA_IMM(jumpa)
-
-// Pseudo instruction:
-//// Set pc to destination address in (absolute_addr).
-//// Encoded like this:  jumpa r0, r0, absolute_addr
-//IMM(jumpa)
-
-// Pseudo instruction:
 //// Subroutine call using (rA + absolute_addr) as destination address. 
 //// The return address is stored in the link register (lr).
 //// Encoded like this:  calla rA, r0, absolute_addr
@@ -189,6 +236,17 @@ INSTR_STUFF(3, LongBitShift, Asr, "asr") \
 //// The return address is stored in the link register (lr).
 //// Encoded like this:  calla r0, r0, absolute_addr
 //IMM(calla)
+
+
+// Pseudo instruction:
+//// Set pc to destination address in (rA + absolute_addr).
+//// Encoded like this:  jumpa rA, r0, absolute_addr
+//RA_IMM(jumpa)
+
+// Pseudo instruction:
+//// Set pc to destination address in (absolute_addr).
+//// Encoded like this:  jumpa r0, r0, absolute_addr
+//IMM(jumpa)
 
 
 
