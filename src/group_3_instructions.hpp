@@ -163,26 +163,6 @@ INSTR_STUFF(3, LdStBlock5To8, Ldmia, "ldmia") \
 INSTR_STUFF(3, LdStBlock5To8, Stmia, "stmia") \
 
 
-#define LIST_OF_INSTR_G3_FLAGS__COLLECTION_0(INSTR_STUFF) \
-/* Push Flags as 8-bit value onto the stack (high 4 bits of pushed */ \
-/* value are set to zero before the push) */ \
-INSTR_STUFF(3, Flags, Push, "push") \
-\
-/* Pop 8-bit value from the stack and store low 4 bits to Flags */ \
-INSTR_STUFF(3, Flags, Pop, "pop")
-
-
-
-#define LIST_OF_INSTR_G3_RA_FLAGS__COLLECTION_0(INSTR_STUFF) \
-/* Clear rA, then CoPY FRom Flags to rA */ \
-INSTR_STUFF(3, RaFlags, Cpy, "cpy")
-
-#define LIST_OF_INSTR_G3_FLAGS_RA__COLLECTION_0(INSTR_STUFF) \
-/* Copy to Flags from rA */ \
-/* This instruction can affect N, V, Z, and C Flags. */ \
-INSTR_STUFF(3, FlagsRa, Cpy, "cpy")
-
-
 #define LIST_OF_INSTR_G3_LONG_MUL__COLLECTION_0(INSTR_STUFF) \
 /* 32-bit by 32-bit -> 64-bit result Unsigned Multiply */ \
 INSTR_STUFF(3, LongMul, UMul, "umul") \
@@ -223,6 +203,54 @@ INSTR_STUFF(3, LongBitShift, Asr, "asr") \
 /* Reserved for future expansion. */
 /* Reserved for future expansion. */
 
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+
+
+
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+
+
+
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
 
 
 // Pseudo instruction:
@@ -272,9 +300,6 @@ INSTR_STUFF(3, LongBitShift, Asr, "asr") \
 LIST_OF_INSTR_G3_LDST_RA_RB_IMM32__COLLECTION_0(INSTR_STUFF) \
 LIST_OF_INSTR_G3_RA_RB_IMM32__COLLECTION_0(INSTR_STUFF) \
 LIST_OF_INSTR_G3_LDST_BLOCK_5_TO_8__COLLECTION_0(INSTR_STUFF) \
-LIST_OF_INSTR_G3_FLAGS__COLLECTION_0(INSTR_STUFF) \
-LIST_OF_INSTR_G3_RA_FLAGS__COLLECTION_0(INSTR_STUFF) \
-LIST_OF_INSTR_G3_FLAGS_RA__COLLECTION_0(INSTR_STUFF) \
 LIST_OF_INSTR_G3_LONG_MUL__COLLECTION_0(INSTR_STUFF) \
 LIST_OF_INSTR_G3_LONG_DIVMOD__COLLECTION_0(INSTR_STUFF) \
 LIST_OF_INSTR_G3_DIVMOD__COLLECTION_0(INSTR_STUFF) \

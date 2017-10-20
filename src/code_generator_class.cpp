@@ -18,7 +18,8 @@ void CodeGenerator::__encode_opcode(u16& high_hword, PInstr instr) const
 			const auto& other_instr = outer_iter->at(i);
 			if (instr == other_instr)
 			{
-				clear_and_set_bits_with_range(high_hword, i, 12, 8);
+				//clear_and_set_bits_with_range(high_hword, i, 12, 8);
+				clear_and_set_bits_with_range(high_hword, i, 13, 8);
 				return;
 			}
 		}
@@ -30,7 +31,7 @@ void CodeGenerator::__encode_high_hword(u16& high_hword,
 	const std::vector<std::string>& regs, s64 expr_result, PInstr instr)
 {
 	__encode_instr_group(high_hword, instr);
-	__encode_affects_flags(high_hword, instr);
+	//__encode_affects_flags(high_hword, instr);
 	__encode_opcode(high_hword, instr);
 
 	switch (instr->args())

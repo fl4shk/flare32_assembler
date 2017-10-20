@@ -1,3 +1,4 @@
+
 #ifndef group_0_instructions_hpp
 #define group_0_instructions_hpp
 
@@ -167,8 +168,8 @@ INSTR_STUFF(0, RaRb, RorDotF, "ror.f") \
 \
 \
 \
-/* Rotate rB left (THROUGH carry) by 1 bit, then store result in rA. */ \
-/* This instruction can only affect the C flag. */ \
+/* Rotate rB left (THROUGH carry) by 1 bit, then store result in rA. */ \ \
+/* This instruction can only affect the C flag. */ \ \
 INSTR_STUFF(0, RaRb, Rlc, "rlc") \
 \
 /* Rotate rB right (THROUGH carry) by 1 bit, then store result in rA. */ \
@@ -176,53 +177,14 @@ INSTR_STUFF(0, RaRb, Rlc, "rlc") \
 INSTR_STUFF(0, RaRb, Rrc, "rrc")
 
 
-#define LIST_OF_INSTR_G0_NO_ARGS__COLLECTION_0(INSTR_STUFF) \
-/* ENable Interrupts */ \
-INSTR_STUFF(0, NoArgs, Eni, "eni") \
-\
-/* DIsable Interrupts */ \
-INSTR_STUFF(0, NoArgs, Dii, "dii") \
-\
-\
-\
-/* Set the PC to interrupt RETurn address and enable Interrupts */ \
-INSTR_STUFF(0, NoArgs, Reti, "reti")
-
-
-#define LIST_OF_INSTR_G0_IRA__COLLECTION_0(INSTR_STUFF) \
-/* Set the PC to the Interrupt Return Address, but DON'T enable */ \
-/* interrupts */ \
-INSTR_STUFF(0, Ira, Jump, "jump")
-
-#define LIST_OF_INSTR_G0_RA_IRA__COLLECTION_0(INSTR_STUFF) \
-/* Copy the Interrupt Return Address to rA */ \
-INSTR_STUFF(0, RaIra, Cpy, "cpy")
 
 #define LIST_OF_INSTR_G0_IRA_RA__COLLECTION_0(INSTR_STUFF) \
 /* Copy rA to the Interrupt Return Address */ \
 INSTR_STUFF(0, IraRa, Cpy, "cpy")
 
-
-
-
-#define LIST_OF_INSTR_G0_FLAGS__COLLECTION_0(INSTR_STUFF) \
-/* Push flags as 8-bit value onto the stack (high 4 bits of pushed */ \
-/* value are set to zero before the push) */ \
-INSTR_STUFF(0, Flags, Push, "push") \
-\
-/* Pop 8-bit value from the stack and store low 4 bits to flags */ \
-INSTR_STUFF(0, Flags, Pop, "pop")
-
-#define LIST_OF_INSTR_G0_RA_FLAGS__COLLECTION_0(INSTR_STUFF) \
-/* Clear rA, then CoPY FRom Flags to rA */ \
-INSTR_STUFF(0, RaFlags, Cpy, "cpy")
-
-#define LIST_OF_INSTR_G0_FLAGS_RA__COLLECTION_0(INSTR_STUFF) \
-/* Copy to flags from rA */ \
-/* This instruction can affect N, V, Z, and C flags. */ \
-INSTR_STUFF(0, FlagsRa, Cpy, "cpy")
-
-
+#define LIST_OF_INSTR_G0_RA_IRA__COLLECTION_0(INSTR_STUFF) \
+/* Copy the Interrupt Return Address to rA */ \
+INSTR_STUFF(0, RaIra, Cpy, "cpy")
 
 #define LIST_OF_INSTR_G0_RA_RB__COLLECTION_1(INSTR_STUFF) \
 /* Subroutine call using (rA + rB) as destination address.  */ \
@@ -233,18 +195,18 @@ INSTR_STUFF(0, RaRb, Callx, "callx") \
 INSTR_STUFF(0, RaRb, Jumpx, "jumpx")
 
 
+
 #define LIST_OF_INSTR_G0_RA_PC__COLLECTION_0(INSTR_STUFF) \
-/* Copy (pc when instructions starts + 2) to rA (this can */ \
-/* be used for pc-relative loads and stores) */ \
+/* Copy pc to rA (this can be used for pc-relative loads */ \
+/* and stores) */ \
 INSTR_STUFF(0, RaPc, Cpy, "cpy")
+
 
 
 #define LIST_OF_INSTR_G0_RA_RB__COLLECTION_2(INSTR_STUFF) \
 /* Copy */ \
 /* rA = rB */ \
 INSTR_STUFF(0, RaRb, Cpy, "cpy") \
-\
-\
 \
 /* rA = Sign extend of low 16 bits in rB */ \
 /* Note that the high 16 bits of rB are ignored */ \
@@ -253,6 +215,26 @@ INSTR_STUFF(0, RaRb, Seh, "seh") \
 /* rA = Sign extend of low 8 bits in rB */ \
 INSTR_STUFF(0, RaRb, Seb, "seb")
 
+
+
+#define LIST_OF_INSTR_G0_FLAGS__COLLECTION_0(INSTR_STUFF) \
+/* Push Flags as 8-bit value onto the stack (high 4 bits of pushed */ \
+/* value are set to zero before the push) */ \
+INSTR_STUFF(0, Flags, Push, "push") \
+\
+/* Pop 8-bit value from the stack and store low 4 bits to Flags */ \
+INSTR_STUFF(0, Flags, Pop, "pop")
+
+
+
+#define LIST_OF_INSTR_G0_RA_FLAGS__COLLECTION_0(INSTR_STUFF) \
+/* Clear rA, then CoPY FRom Flags to rA */ \
+INSTR_STUFF(0, RaFlags, Cpy, "cpy")
+
+#define LIST_OF_INSTR_G0_FLAGS_RA__COLLECTION_0(INSTR_STUFF) \
+/* Copy to Flags from rA */ \
+/* This instruction can affect N, V, Z, and C Flags. */ \
+INSTR_STUFF(0, FlagsRa, Cpy, "cpy")
 
 /* Reserved for future expansion. */
 /* Reserved for future expansion. */
@@ -294,15 +276,14 @@ INSTR_STUFF(0, RaRb, Seb, "seb")
 #define LIST_OF_GROUP_0_INSTRUCTIONS(INSTR_STUFF) \
 LIST_OF_INSTR_G0_LDST_RA_RB__COLLECTION_0(INSTR_STUFF) \
 LIST_OF_INSTR_G0_RA_RB__COLLECTION_0(INSTR_STUFF) \
-LIST_OF_INSTR_G0_NO_ARGS__COLLECTION_0(INSTR_STUFF) \
-LIST_OF_INSTR_G0_IRA__COLLECTION_0(INSTR_STUFF) \
-LIST_OF_INSTR_G0_RA_IRA__COLLECTION_0(INSTR_STUFF) \
 LIST_OF_INSTR_G0_IRA_RA__COLLECTION_0(INSTR_STUFF) \
-LIST_OF_INSTR_G0_FLAGS__COLLECTION_0(INSTR_STUFF) \
-LIST_OF_INSTR_G0_RA_FLAGS__COLLECTION_0(INSTR_STUFF) \
-LIST_OF_INSTR_G0_FLAGS_RA__COLLECTION_0(INSTR_STUFF) \
+LIST_OF_INSTR_G0_RA_IRA__COLLECTION_0(INSTR_STUFF) \
 LIST_OF_INSTR_G0_RA_RB__COLLECTION_1(INSTR_STUFF) \
 LIST_OF_INSTR_G0_RA_PC__COLLECTION_0(INSTR_STUFF) \
 LIST_OF_INSTR_G0_RA_RB__COLLECTION_2(INSTR_STUFF) \
+LIST_OF_INSTR_G0_FLAGS__COLLECTION_0(INSTR_STUFF) \
+LIST_OF_INSTR_G0_RA_FLAGS__COLLECTION_0(INSTR_STUFF) \
+LIST_OF_INSTR_G0_FLAGS_RA__COLLECTION_0(INSTR_STUFF) \
+
 
 #endif		// group_0_instructions_hpp

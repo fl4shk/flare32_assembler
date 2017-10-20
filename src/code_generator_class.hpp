@@ -51,11 +51,11 @@ public:		// functions
 		clear_and_set_bits_with_range(high_hword, instr->enc_group(),
 			15, 14);
 	}
-	inline void __encode_affects_flags(u16& high_hword, PInstr instr) const
-	{
-		clear_and_set_bits_with_range(high_hword, instr->affects_flags(),
-			13, 13);
-	}
+	//inline void __encode_affects_flags(u16& high_hword, PInstr instr) const
+	//{
+	//	clear_and_set_bits_with_range(high_hword, instr->affects_flags(),
+	//		13, 13);
+	//}
 	void __encode_opcode(u16& high_hword, PInstr instr) const;
 	void __encode_high_hword(u16& high_hword, 
 		const std::vector<std::string>& regs, s64 expr_result,

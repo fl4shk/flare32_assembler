@@ -74,7 +74,72 @@ INSTR_STUFF(1, RaRbUImm16, Asri, "asri") \
 INSTR_STUFF(1, RaRbUImm16, Roli, "roli") \
 \
 /* Rotate  right by (zero-extended imm) bits, then store result in rA. */ \
-INSTR_STUFF(1, RaRbUImm16, Rori, "rori")
+INSTR_STUFF(1, RaRbUImm16, Rori, "rori") \
+\
+\
+/* rA = rB + (zero-extended imm) */ \
+/* This instruction can affect N, V, Z, and C flags. */ \
+INSTR_STUFF(1, RaRbUImm16, AddiDotF, "addi.f") \
+\
+/* rA = rB + (zero-extended imm) + carry_flag */ \
+/* Add with carry */ \
+/* This instruction can affect N, V, Z, and C flags. */ \
+INSTR_STUFF(1, RaRbUImm16, AdciDotF, "adci.f") \
+\
+\
+\
+/* rA = rB - (zero-extended imm) */ \
+/* This instruction can affect N, V, Z, and C flags. */ \
+INSTR_STUFF(1, RaRbUImm16, SubiDotF, "subi.f") \
+\
+/* rA = rA + (~rB) + carry_flag */ \
+/* Subtract with borrow (6502 style) */ \
+/* This instruction can affect N, V, Z, and C flags. */ \
+INSTR_STUFF(1, RaRbUImm16, SbciDotF, "sbci.f") \
+\
+/* rA = rB - rA */ \
+/* This instruction can affect N, V, Z, and C flags. */ \
+INSTR_STUFF(1, RaRbUImm16, RsbiDotF, "rsbi.f") \
+\
+/* rA = rB * (zero-extended imm) */ \
+INSTR_STUFF(1, RaRbUImm16, MuliDotF, "muli.f") \
+\
+\
+\
+/* rA = rB & (zero-extended imm) */ \
+/* This instruction can affect the N and Z flags. */ \
+INSTR_STUFF(1, RaRbUImm16, AndiDotF, "andi.f") \
+\
+/* rA = rB | (zero-extended imm) */ \
+/* This instruction can affect the N and Z flags. */ \
+INSTR_STUFF(1, RaRbUImm16, OriDotF, "ori.f") \
+\
+/* rA = rB ^ (zero-extended imm) */ \
+/* This instruction can affect the N and Z flags. */ \
+INSTR_STUFF(1, RaRbUImm16, XoriDotF, "xori.f") \
+\
+/* Logical shift left */ \
+/* rA = rB << (zero-extended imm) */ \
+INSTR_STUFF(1, RaRbUImm16, LsliDotF, "lsli.f") \
+\
+\
+\
+/* Logical shift right */ \
+INSTR_STUFF(1, RaRbUImm16, LsriDotF, "lsri.f") \
+\
+/* Arithmetic shift right */ \
+INSTR_STUFF(1, RaRbUImm16, AsriDotF, "asri.f") \
+\
+/* Rotate rB left by (zero-extended imm) bits, then store result in */ \
+/* rA. */ \
+INSTR_STUFF(1, RaRbUImm16, RoliDotF, "roli.f") \
+\
+/* Rotate rB right by (zero-extended imm) bits, then store result in */ \
+/* rA. */ \
+INSTR_STUFF(1, RaRbUImm16, RoriDotF, "rori.f") \
+
+
+
 
 #define LIST_OF_INSTR_G1_SIMM16__COLLECTION_0(INSTR_STUFF) \
 /* Branch always,  */ \
@@ -87,8 +152,6 @@ INSTR_STUFF(1, Branch, Bra, "bra") \
 /* + (sign-extended 16-bit immediate value)) */ \
 INSTR_STUFF(1, Branch, Bnv, "bnv") \
 \
-\
-\
 /* Branch when Z == 0,  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
@@ -98,6 +161,8 @@ INSTR_STUFF(1, Branch, Bne, "bne") \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
 INSTR_STUFF(1, Branch, Beq, "beq") \
+\
+\
 \
 /* Branch when C == 0 [unsigned less than],  */ \
 /* to ((pc when instruction starts) */ \
@@ -109,8 +174,6 @@ INSTR_STUFF(1, Branch, Bcc, "bcc") \
 /* + (sign-extended 16-bit immediate value)) */ \
 INSTR_STUFF(1, Branch, Bcs, "bcs") \
 \
-\
-\
 /* Branch when (C == 0 or Z == 1) [unsigned less than or equal],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
@@ -120,6 +183,8 @@ INSTR_STUFF(1, Branch, Bls, "bls") \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
 INSTR_STUFF(1, Branch, Bhi, "bhi") \
+\
+\
 \
 /* Branch when N == 0,  */ \
 /* to ((pc when instruction starts) */ \
@@ -131,8 +196,6 @@ INSTR_STUFF(1, Branch, Bpl, "bpl") \
 /* + (sign-extended 16-bit immediate value)) */ \
 INSTR_STUFF(1, Branch, Bmi, "bmi") \
 \
-\
-\
 /* Branch when V == 0,  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
@@ -143,6 +206,8 @@ INSTR_STUFF(1, Branch, Bvc, "bvc") \
 /* + (sign-extended 16-bit immediate value)) */ \
 INSTR_STUFF(1, Branch, Bvs, "bvs") \
 \
+\
+\
 /* Branch when N == V [signed greater than or equal],  */ \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
@@ -152,8 +217,6 @@ INSTR_STUFF(1, Branch, Bge, "bge") \
 /* to ((pc when instruction starts) */ \
 /* + (sign-extended 16-bit immediate value)) */ \
 INSTR_STUFF(1, Branch, Blt, "blt") \
-\
-\
 \
 /* Branch when (N == V and Z == 0) [signed greater than],  */ \
 /* to ((pc when instruction starts) */ \
@@ -166,6 +229,8 @@ INSTR_STUFF(1, Branch, Bgt, "bgt") \
 INSTR_STUFF(1, Branch, Ble, "ble")
 
 
+
+
 #define LIST_OF_INSTR_G1_RA_RB_SIMM16__COLLECTION_0(INSTR_STUFF) \
 /* rA = rB ^ (sign-extended imm) */ \
 /* This instruction can affect the N and Z Flags. */ \
@@ -176,6 +241,30 @@ INSTR_STUFF(1, RaRbSImm16, Xorsi, "xorsi")
 value */ \
 INSTR_STUFF(1, RaUImm16, Lui, "lui")
 
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+
+
+
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
 
 
 // Pseudo instruction:

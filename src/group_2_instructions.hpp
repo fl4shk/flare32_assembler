@@ -127,6 +127,68 @@ INSTR_STUFF(2, RaRbRc, Rol, "rol") \
 /* Rotate rC right by rC bits, then store result in rA. */ \
 INSTR_STUFF(2, RaRbRc, Ror, "ror") \
 \
+\
+/* rA = rB + rC */ \
+/* This instruction can affect N, V, Z, and C flags. */ \
+INSTR_STUFF(1, RaRbRc, AddDotF, "add.f") \
+\
+/* rA = rB + rC + carry_flag */ \
+/* Add with carry */ \
+/* This instruction can affect N, V, Z, and C flags. */ \
+INSTR_STUFF(1, RaRbRc, AdcDotF, "adc.f") \
+\
+\
+\
+/* rA = rB - rC */ \
+/* This instruction can affect N, V, Z, and C flags. */ \
+INSTR_STUFF(1, RaRbRc, SubDotF, "sub.f") \
+\
+/* rA = rA + (~rB) + carry_flag */ \
+/* Subtract with borrow (6502 style) */ \
+/* This instruction can affect N, V, Z, and C flags. */ \
+INSTR_STUFF(1, RaRbRc, SbcDotF, "sbc.f") \
+\
+/* rA = rB - rA */ \
+/* This instruction can affect N, V, Z, and C flags. */ \
+INSTR_STUFF(1, RaRbRc, RsbDotF, "rsb.f") \
+\
+/* rA = rB * rC */ \
+INSTR_STUFF(1, RaRbRc, MulDotF, "mul.f") \
+\
+\
+\
+/* rA = rB & rC */ \
+/* This instruction can affect the N and Z flags. */ \
+INSTR_STUFF(1, RaRbRc, AndDotF, "and.f") \
+\
+/* rA = rB | rC */ \
+/* This instruction can affect the N and Z flags. */ \
+INSTR_STUFF(1, RaRbRc, OrDotF, "or.f") \
+\
+/* rA = rB ^ rC */ \
+/* This instruction can affect the N and Z flags. */ \
+INSTR_STUFF(1, RaRbRc, XorDotF, "xor.f") \
+\
+/* Logical shift left */ \
+/* rA = rB << rC */ \
+INSTR_STUFF(1, RaRbRc, LslDotF, "lsl.f") \
+\
+\
+\
+/* Logical shift right */ \
+INSTR_STUFF(1, RaRbRc, LsrDotF, "lsr.f") \
+\
+/* Arithmetic shift right */ \
+INSTR_STUFF(1, RaRbRc, AsrDotF, "asr.f") \
+\
+/* Rotate rB left by rC bits, then store result in rA. */ \
+INSTR_STUFF(1, RaRbRc, RolDotF, "rol.f") \
+\
+/* Rotate rB right by rB bits, then store result in rA. */ \
+INSTR_STUFF(1, RaRbRc, RorDotF, "ror.f") \
+\
+\
+\
 /* Fused multiply-add */ \
 /* rA = rA + (rB * rC) */ \
 INSTR_STUFF(2, RaRbRc, Fma, "fma") \
@@ -154,25 +216,13 @@ INSTR_STUFF(2, LdStBlock1To4, Stmia, "stmia")
 
 
 
-#define LIST_OF_INSTR_G2_NO_ARGS__COLLECTION_0(INSTR_STUFF) \
-/* ENable Interrupts */ \
-INSTR_STUFF(2, NoArgs, Eni, "eni") \
-\
-\
-\
-/* DIsable Interrupts */ \
-INSTR_STUFF(2, NoArgs, Dii, "dii") \
-\
-/* Set the PC to interrupt RETurn address and enable Interrupts */ \
-INSTR_STUFF(2, NoArgs, Reti, "reti")
+/* Reserved for future expansion. */
 
 
-#define LIST_OF_INSTR_G2_IRA__COLLECTION_0(INSTR_STUFF) \
-/* Set the PC to the Interrupt Return Address, but DON'T enable */ \
-/* interrupts */ \
-INSTR_STUFF(2, Ira, Jump, "jump")
-
-/* Reserved for future expansion. */ \
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
+/* Reserved for future expansion. */
 
 
 
@@ -315,7 +365,5 @@ INSTR_STUFF(2, Ira, Jump, "jump")
 LIST_OF_INSTR_G2_LDST_RA_RB_RC_SIMM12__COLLECTION_0(INSTR_STUFF) \
 LIST_OF_INSTR_G2_RA_RB_RC__COLLECTION_0(INSTR_STUFF) \
 LIST_OF_INSTR_G2_LDST_BLOCK_1_TO_4__COLLECTION_0(INSTR_STUFF) \
-LIST_OF_INSTR_G2_NO_ARGS__COLLECTION_0(INSTR_STUFF) \
-LIST_OF_INSTR_G2_IRA__COLLECTION_0(INSTR_STUFF)
 
 #endif		// group_2_instructions_hpp

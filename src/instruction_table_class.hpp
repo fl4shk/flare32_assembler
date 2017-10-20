@@ -160,23 +160,16 @@ public:		// static constant variables
 	#define INSTR_STUFF(enc_group, args, varname, value) \
 	varname##_##args##_##enc_group,
 
-	#define INSTR_STUFF_AFFECTS_FLAGS(enc_group, args, varname, value) \
-	varname##_##args##_##enc_group##_affects_flags,
-
 	static const Instruction 
 		LIST_OF_INSTRUCTIONS(INSTR_STUFF)
-
-		LIST_OF_INSTRUCTIONS(INSTR_STUFF_AFFECTS_FLAGS)
 
 		Dummy;
 
 	#undef INSTR_STUFF
-	#undef INSTR_STUFF_AFFECTS_FLAGS
 
 	static const std::vector<PInstr> instr_g0_vec, instr_g1_vec,
 		instr_g2_vec, instr_g3_vec;
 
-	//static const std::vector<PInstr> instr_vec;
 	static const std::vector<const std::vector<PInstr>*> instr_vec;
 
 public:		// functions
