@@ -100,6 +100,36 @@ std::ostream& osprint_arr(std::ostream& os, ArrType* to_print, size_t size)
 }
 
 
+inline std::string strappcom()
+{
+	return std::string();
+}
+template<typename Type>
+inline std::string strappcom(const Type& to_concat)
+{
+	return sconcat(to_concat, ", ");
+}
+
+template<typename FirstType, typename... RemArgTypes>
+inline std::string strappcom(const FirstType& first_val,
+	RemArgTypes&&... rem_args)
+{
+	std::string ret = std::move(strappcom(first_val));
+	ret += std::move(strappcom(rem_args...));
+	return ret;
+}
+
+template<typename FirstType, typename... RemArgTypes>
+inline std::string strappcom2(const FirstType& first_val,
+	RemArgTypes&&... rem_args)
+{
+	std::string ret = std::move(strappcom(first_val, rem_args...));
+
+	ret = std::move(ret.substr(0, ret.size() - std::string(", ").size()));
+
+	return ret;
+}
+
 }
 
 }
