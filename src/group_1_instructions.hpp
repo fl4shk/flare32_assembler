@@ -234,8 +234,8 @@ INSTR_STUFF(1, Branch, Ble, "ble")
 INSTR_STUFF(1, RaRbSImm16, Xorsi, "xorsi")
 
 #define LIST_OF_INSTR_G1_RA_UIMM16__COLLECTION_0(INSTR_STUFF) \
-/* rA bits {31, 30, 29, ..., 18, 17, 16} = 16-bit unsigned immediate  \
-value */ \
+/* rA bits {31, 30, 29, ..., 18, 17, 16} = 16-bit unsigned immediate */ \
+/* value */ \
 INSTR_STUFF(1, RaUImm16, Lui, "lui")
 
 /* Reserved for future expansion. */

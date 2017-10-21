@@ -24,34 +24,34 @@
 
 
 #define LIST_OF_INSTR_G2_LDST_RA_RB_RC_SIMM12__COLLECTION_0(INSTR_STUFF) \
-/* Load 32-bit value from address (rB + rC + (sign-extended imm)) into 
-rA. */ \
+/* Load 32-bit value from address (rB + rC + (sign-extended imm)) into */ \
+/* rA. */ \
 INSTR_STUFF(2, LdStRaRbRcSImm12, Ldr, "ldr") \
 \
-/* Load zero-extended 16-bit value from address (rB + rC + (sign-extended
-imm)) into rA. */ \
+/* Load zero-extended 16-bit value from address (rB + rC */ \
+/* + (sign-extended imm)) into rA. */ \
 /* This zero-extends the value. */ \
 INSTR_STUFF(2, LdStRaRbRcSImm12, Ldh, "ldh") \
 \
-/* Load sign-extended 16-bit value from address (rB + rC + (sign-extended
-imm)) into rA. */ \
+/* Load sign-extended 16-bit value from address (rB + rC */ \
+/* + (sign-extended imm)) into rA. */ \
 /* This sign-extends the value. */ \
 INSTR_STUFF(2, LdStRaRbRcSImm12, Ldsh, "ldsh") \
 \
-/* Load zero-extended 8-bit value from address (rB + rC + (sign-extended
- imm)) into rA. */ \
+/* Load zero-extended 8-bit value from address (rB + rC */ \
+/* + (sign-extended imm)) into rA. */ \
 /* This zero-extends the value. */ \
 INSTR_STUFF(2, LdStRaRbRcSImm12, Ldb, "ldb") \
 \
 \
 \
-/* Load sign-extended 8-bit value from address (rB + rC + (sign-extended
-imm)) into rA. */ \
+/* Load sign-extended 8-bit value from address (rB + rC */ \
+/* + (sign-extended imm)) into rA. */ \
 /* This sign-extends the value. */ \
 INSTR_STUFF(2, LdStRaRbRcSImm12, Ldsb, "ldsb") \
 \
-/* Store 32-bit value in rA to address (rB + rC + (sign-extended 
-imm)). */ \
+/* Store 32-bit value in rA to address (rB + rC */ \
+/* + (sign-extended imm)). */ \
 INSTR_STUFF(2, LdStRaRbRcSImm12, Str, "str") \
 \
 /* Store low 16 bits of rA to address (rB + rC + (sign-extended imm)). */ \

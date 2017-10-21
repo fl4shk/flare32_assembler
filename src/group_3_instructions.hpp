@@ -78,25 +78,25 @@
 /* Load 32-bit value from address (absolute_addr + rB) into rA. */ \
 INSTR_STUFF(3, LdStRaRbImm32, Ldra, "ldra") \
 \
-/* Load zero-extended 16-bit value from address (absolute_addr + rB) into
-rA. */ \
+/* Load zero-extended 16-bit value from address (absolute_addr + rB) */ \
+/* into rA. */ \
 /* This zero-extends the value. */ \
 INSTR_STUFF(3, LdStRaRbImm32, Ldha, "ldha") \
 \
-/* Load sign-extended 16-bit value from address (absolute_addr + rB) into
-rA. */ \
+/* Load sign-extended 16-bit value from address (absolute_addr + rB) */ \
+/* into rA. */ \
 /* This sign-extends the value. */ \
 INSTR_STUFF(3, LdStRaRbImm32, Ldsha, "ldsha") \
 \
-/* Load zero-extended 8-bit value from address (absolute_addr + rB) into
-rA. */ \
+/* Load zero-extended 8-bit value from address (absolute_addr + rB) */ \
+/* into rA. */ \
 /* This zero-extends the value. */ \
 INSTR_STUFF(3, LdStRaRbImm32, Ldba, "ldba") \
 \
 \
 \
-/* Load sign-extended 8-bit value from address (absolute_addr + rB) into
-rA. */ \
+/* Load sign-extended 8-bit value from address (absolute_addr + rB) */ \
+/* into rA. */ \
 /* This sign-extends the value. */ \
 INSTR_STUFF(3, LdStRaRbImm32, Ldsba, "ldsba") \
 \
@@ -112,8 +112,8 @@ INSTR_STUFF(3, LdStRaRbImm32, Stba, "stba") \
 
 
 #define LIST_OF_INSTR_G3_RA_RB_IMM32__COLLECTION_0(INSTR_STUFF) \
-/* Subroutine call using (rA + rB + absolute_addr) as destination
-address. */ \
+/* Subroutine call using (rA + rB + absolute_addr) as destination */ \
+/* address. */ \
 /* The return address is stored in the link register (lr). */ \
 INSTR_STUFF(3, RaRbImm32, Calla, "calla") \
 \
@@ -157,19 +157,19 @@ INSTR_STUFF(3, LongMul, SMul, "smul") \
 
 
 #define LIST_OF_INSTR_G3_LONG_DIVMOD__COLLECTION_0(INSTR_STUFF) \
-/* 64-bit by 64-bit -> 64-bit quotient and 64-bit remainder Unsigned
-Division */ \
+/* 64-bit by 64-bit -> 64-bit quotient and 64-bit remainder Unsigned */ \
+/* Division */ \
 INSTR_STUFF(3, LongDivMod, UDivMod, "udivmod") \
-/* 64-bit by 64-bit -> 64-bit quotient and 64-bit remainder Signed
-Division */ \
+/* 64-bit by 64-bit -> 64-bit quotient and 64-bit remainder Signed */ \
+/* Division */ \
 INSTR_STUFF(3, LongDivMod, SDivMod, "sdivmod") \
 
 #define LIST_OF_INSTR_G3_DIVMOD__COLLECTION_0(INSTR_STUFF) \
-/* 32-bit by 32-bit -> 32-bit quotient and 32-bit remainder Unsigned
-Division */ \
+/* 32-bit by 32-bit -> 32-bit quotient and 32-bit remainder Unsigned */ \
+/* Division */ \
 INSTR_STUFF(3, DivMod, UDivMod, "udivmod") \
-/* 32-bit by 32-bit -> 32-bit quotient and 32-bit remainder Signed
-Division */ \
+/* 32-bit by 32-bit -> 32-bit quotient and 32-bit remainder Signed */ \
+/* Division */ \
 INSTR_STUFF(3, DivMod, SDivMod, "sdivmod") \
 
 
