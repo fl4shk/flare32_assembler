@@ -3,10 +3,7 @@
 
 // Group 2 Instructions
 // Non Block Moves Version:  
-	// 10fo oooo aaaa bbbb  cccc iiii iiii iiii
-
-	// f:  1 if can affect Flags (and instruction type supports it), 0 if
-	// Flags unchanged.
+	// 10oo oooo aaaa bbbb  cccc iiii iiii iiii
 
 	// o:  opcode
 	// a: rA
@@ -15,10 +12,7 @@
 	// i:  12-bit immediate value
 
 // Block Moves Version (stmdb, ldmia, stmia, push, pop):  
-	// 10fo oooo aaaa bbbb  cccc dddd xxxx 00ii
-
-	// f:  1 if can affect Flags (and instruction type supports it), 0 if
-	// Flags unchanged.
+	// 10oo oooo aaaa bbbb  cccc dddd xxxx 00ii
 
 	// o:  opcode
 	// a: rA
@@ -323,12 +317,6 @@ INSTR_STUFF(2, LdStBlock1To4, Stmia, "stmia")
 //INSTR_LDST_RA_RB_IMM(stbxi)
 
 
-
-// Pseudo instruction:
-//// temp = rB - rC
-//// This instruction can affect N, V, Z, and C Flags.
-//// Encoded like this:  sub.f r0, rB, rC
-//PSEUDO_INSTR_RB_RC(cmp)
 
 // Pseudo instruction:
 //// temp = rB - (-rC)

@@ -3,10 +3,7 @@
 
 
 // Group 0 Instructions
-// 00fo oooo aaaa bbbb
-
-	// f:  1 if can affect Flags (and instruction type supports it), 0 if
-	// Flags unchanged.
+// 00oo oooo aaaa bbbb
 
 	// o:  opcode
 	// a: rA (destination register usually)
@@ -251,15 +248,13 @@ INSTR_STUFF(0, RaRb, Cpy, "cpy") \
 INSTR_STUFF(0, RaRb, Seh, "seh") \
 \
 /* rA = Sign extend of low 8 bits in rB */ \
-INSTR_STUFF(0, RaRb, Seb, "seb")
+INSTR_STUFF(0, RaRb, Seb, "seb") \
+\
+\
+/* Compare rA to rB */ \
+/* This instruction can affect N, V, Z, and C flags. */ \
+INSTR_STUFF(0, RaRb, Cmp, "cmp")
 
-
-/* Reserved for future expansion. */
-/* Reserved for future expansion. */
-
-/* Reserved for future expansion. */
-/* Reserved for future expansion. */
-/* Reserved for future expansion. */
 /* Reserved for future expansion. */
 
 /* Reserved for future expansion. */

@@ -3,10 +3,7 @@
 
 
 // Group 1 Instructions
-// 01fo oooo aaaa bbbb  iiii iiii iiii iiii
-
-	// f:  1 if can affect Flags (and instruction type supports it), 0 if
-	// Flags unchanged.
+// 01oo oooo aaaa bbbb  iiii iiii iiii iiii
 
 	// o:  opcode
 	// a: rA

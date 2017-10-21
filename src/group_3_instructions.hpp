@@ -4,10 +4,7 @@
 
 // Group 3 Instructions
 // Non Block Moves Version:  
-	// 11fo oooo aaaa bbbb  iiii iiii iiii iiii  iiii iiii iiii iiii
-
-	// f:  1 if can affect Flags (and instruction type supports it), 0 if
-	// Flags unchanged.
+	// 11oo oooo aaaa bbbb  iiii iiii iiii iiii  iiii iiii iiii iiii
 
 	// o:  opcode
 	// a: rA
@@ -15,10 +12,7 @@
 	// i:  32-bit immediate value
 
 // Block Moves Version (stmdb, ldmia, stmia, push, pop):  
-	// 11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh xxxx 00ii
-
-	// f:  1 if can affect Flags (and instruction type supports it), 0 if
-	// Flags unchanged.
+	// 11oo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh xxxx 00ii
 
 	// o:  opcode
 	// a: rA
@@ -34,10 +28,7 @@
 
 
 // 32-bit by 32-bit -> 64-bit Multiply Version:
-	// 11fo oooo aaaa bbbb  cccc dddd 0000 0000  0000 0000 0000 0000
-
-	// f:  1 if can affect flags (and instruction type supports it), 0 if
-	// flags unchanged.
+	// 11oo oooo aaaa bbbb  cccc dddd 0000 0000  0000 0000 0000 0000
 
 	// o:  opcode
 	// a: rA
@@ -47,10 +38,7 @@
 
 
 // 64-bit by 64-bit -> 64-bit DivMod Version:
-	// 11fo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh 0000 0000
-
-	// f:  1 if can affect flags (and instruction type supports it), 0 if
-	// flags unchanged.
+	// 11oo oooo aaaa bbbb  cccc dddd eeee ffff  gggg hhhh 0000 0000
 
 	// o:  opcode
 	// a: rA
@@ -63,7 +51,7 @@
 	// h: rH
 
 // 32-bit by 32-bit -> 32-bit DivMod Version:
-	// 11fo oooo aaaa bbbb  cccc dddd 0000 0000  0000 0000 0000 0000
+	// 11oo oooo aaaa bbbb  cccc dddd 0000 0000  0000 0000 0000 0000
 
 	// f:  1 if can affect flags (and instruction type supports it), 0 if
 	// flags unchanged.
@@ -75,10 +63,7 @@
 	// d: rD
 
 // 64-bit bitshifted by 64-bit -> 64-bit Version:
-	// 11fo oooo aaaa bbbb  cccc dddd eeee ffff  0000 0000 0000 0000
-
-	// f:  1 if can affect flags (and instruction type supports it), 0 if
-	// flags unchanged.
+	// 11oo oooo aaaa bbbb  cccc dddd eeee ffff  0000 0000 0000 0000
 
 	// o:  opcode
 	// a: rA
